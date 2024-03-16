@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static LearnLink.Data.Constants.DataConstants;
 
 namespace LearnLink.Data.Models
 {
@@ -8,6 +9,7 @@ namespace LearnLink.Data.Models
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(MaxNameLength)]
         public string Name { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LearnLink.Data.Models
 {
@@ -11,12 +12,14 @@ namespace LearnLink.Data.Models
         public int StudentId { get; set; }
 
         [Required]
+        [ForeignKey(nameof(StudentId))]
         public Student Stundent { get; set; } = null!;
 
         [Required]
         public int SubjectId { get; set; }
 
         [Required]
+        [ForeignKey(nameof(SubjectId))]
         public Subject Subject { get; set; } = null!;
 
         [Required]
