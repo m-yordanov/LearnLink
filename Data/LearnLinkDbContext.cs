@@ -21,6 +21,10 @@ namespace LearnLink.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Grade>()
+                .Property(g => g.Value)
+                .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<Grade>()
                 .HasOne(g => g.Student)
                 .WithMany(s => s.Grades)
                 .HasForeignKey(g => g.StudentId)
