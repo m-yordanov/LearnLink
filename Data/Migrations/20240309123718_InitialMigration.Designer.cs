@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LearnLink.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(LearnLinkDbContext))]
     [Migration("20240309123718_InitialMigration")]
     partial class InitialMigration
     {

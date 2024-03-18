@@ -13,7 +13,7 @@ namespace LearnLink.Data.Models
 
         [Required]
         [ForeignKey(nameof(StudentId))]
-        public Student Stundent { get; set; } = null!;
+        public Student Student { get; set; } = null!;
 
         [Required]
         public int SubjectId { get; set; }

@@ -25,5 +25,9 @@ namespace LearnLink.Data.Models
 
         [Required]
         public IdentityUser IdentityUser { get; set; } = null!;
+
+        public ICollection<Grade> Grades { get; set; } = new List<Grade>();
+
+        public ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
     }
 }

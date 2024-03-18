@@ -11,14 +11,14 @@ namespace LearnLink.Data.Models
 
         [Required]
         [MaxLength(MaxNameLength)]
-        string FirstName { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(MaxNameLength)]
-        string LastName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
 
         [Required]
-        string Email { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         public string UserId { get; set; } = string.Empty;
