@@ -26,10 +26,12 @@ namespace LearnLink.Data.Models
         public int TeacherId { get; set; }
 
         [Required]
+        [ForeignKey (nameof(TeacherId))]
         public Teacher Teacher { get; set;} = null!;
 
         [Required]
-        public int Value { get; set; }
+        [Range(2.00, 6.00, ErrorMessage = "Grade must be between 2.00 and 6.00.")]
+        public decimal Value { get; set; }
 
         [Required]
         public DateTime DateAndTime { get; set; }
