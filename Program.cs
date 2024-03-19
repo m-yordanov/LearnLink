@@ -10,6 +10,7 @@ builder.Services.AddDbContext<LearnLinkDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles <IdentityRole>()
     .AddEntityFrameworkStores<LearnLinkDbContext>();
 builder.Services.AddControllersWithViews();
 
