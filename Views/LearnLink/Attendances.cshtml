@@ -1,5 +1,29 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<LearnLink.Models.AttendanceViewModel>
+
 @{
+    ViewData["Title"] = "Your attendances";
 }
+
+<h1>Attendances</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date and Time</th>
+            <th>Status</th>
+            <th>Subject</th>
+            <th>Teacher</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var attendance in Model)
+        {
+            <tr>
+                <td>@attendance.DateAndTime</td>
+                <td>@attendance.Status</td>
+                <td>@attendance.Subject</td>
+                <td>@(attendance.TeacherFirstName + " " + attendance.TeacherLastName)</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -24,6 +24,13 @@ namespace LearnLink.Data.Models
         public Subject Subject { get; set; } = null!;
 
         [Required]
+        public int TeacherId { get; set; }
+
+        [Required]
+        [ForeignKey(nameof(TeacherId))]
+        public Teacher Teacher { get; set; } = null!;
+
+        [Required]
         public AttendanceStatus Status { get; set; }
 
 
