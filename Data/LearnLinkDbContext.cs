@@ -53,6 +53,12 @@ namespace LearnLink.Data
                 .WithMany()
                 .HasForeignKey(a => a.SubjectId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Attendance>()
+                .HasOne(a => a.Teacher)
+                .WithMany()
+                .HasForeignKey(a => a.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
