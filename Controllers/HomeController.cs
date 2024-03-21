@@ -15,7 +15,13 @@ namespace LearnLink.Controllers
 
         public IActionResult Index()
         {
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return View("~/Views/LearnLink/HomePage.cshtml");
+            }
+
             return View();
+
         }
 
         public IActionResult Privacy()
