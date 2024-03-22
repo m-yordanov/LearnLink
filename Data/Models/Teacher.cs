@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using static LearnLink.Data.Constants.DataConstants;
 
 namespace LearnLink.Data.Models
@@ -23,7 +24,7 @@ namespace LearnLink.Data.Models
         [Required]
         public string UserId { get; set; } = string.Empty;
 
-        [Required]
+        [ForeignKey(nameof(UserId))]
         public IdentityUser IdentityUser { get; set; } = null!;
     }
 }

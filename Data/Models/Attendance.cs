@@ -10,23 +10,20 @@ namespace LearnLink.Data.Models
         public int Id { get; set; }
 
         [Required]
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
 
-        [Required]
         [ForeignKey(nameof(StudentId))]
         public Student Student { get; set; } = null!;
 
         [Required]
         public int SubjectId { get; set;}
 
-        [Required]
         [ForeignKey(nameof(SubjectId))]
         public Subject Subject { get; set; } = null!;
 
         [Required]
-        public int TeacherId { get; set; }
+        public string TeacherId { get; set; }
 
-        [Required]
         [ForeignKey(nameof(TeacherId))]
         public Teacher Teacher { get; set; } = null!;
 

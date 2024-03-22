@@ -1,4 +1,5 @@
 ﻿using LearnLink.Data.Models;
+using LearnLink.Data.SeedDbContext;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,47 +19,14 @@ namespace LearnLink.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new StudentConfiguration());
+            modelBuilder.ApplyConfiguration(new TeacherConfiguration());
+            modelBuilder.ApplyConfiguration(new SubjectConfiguration());
+            modelBuilder.ApplyConfiguration(new GradeConfiguration());
+            modelBuilder.ApplyConfiguration(new AttendanceConfiguration());
+
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Grade>()
-                .Property(g => g.Value)
-                .HasColumnType("decimal(18, 2)");
-
-            modelBuilder.Entity<Grade>()
-                .HasOne(g => g.Student)
-                .WithMany(s => s.Grades)
-                .HasForeignKey(g => g.StudentId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Grade>()
-                .HasOne(g => g.Subject)
-                .WithMany()
-                .HasForeignKey(g => g.SubjectId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Grade>()
-                .HasOne(g => g.Teacher)
-                .WithMany()
-                .HasForeignKey(g => g.TeacherId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Attendance>()
-                .HasOne(a => a.Student)
-                .WithMany(s => s.Attendances)
-                .HasForeignKey(a => a.StudentId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Attendance>()
-                .HasOne(a => a.Subject)
-                .WithMany()
-                .HasForeignKey(a => a.SubjectId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Attendance>()
-                .HasOne(a => a.Teacher)
-                .WithMany()
-                .HasForeignKey(a => a.TeacherId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
