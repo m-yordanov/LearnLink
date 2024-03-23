@@ -109,8 +109,8 @@ namespace LearnLink.Data.SeedDbContext
             FirstAttendance = new Attendance()
             {
                 Id = 1,
-                StudentId = StudentUser.Id,
-                TeacherId = TeacherUser.Id,
+                StudentId = Student.Id,
+                TeacherId = Teacher.Id,
                 SubjectId = FirstSubject.Id,
                 Status = AttendanceStatus.Present,
                 DateAndTime = DateTime.Now
@@ -118,8 +118,8 @@ namespace LearnLink.Data.SeedDbContext
             SecondAttendance = new Attendance()
             {
                 Id = 2,
-                StudentId = StudentUser.Id,
-                TeacherId = TeacherUser.Id,
+                StudentId = Student.Id,
+                TeacherId = Student.Id,
                 SubjectId = SecondSubject.Id,
                 Status = AttendanceStatus.Late,
                 DateAndTime = DateTime.Now
@@ -131,8 +131,8 @@ namespace LearnLink.Data.SeedDbContext
             FirstGrade = new Grade()
             {
                 Id = 1,
-                StudentId = StudentUser.Id,
-                TeacherId = TeacherUser.Id,
+                StudentId = Student.Id,
+                TeacherId = Teacher.Id,
                 SubjectId = FirstSubject.Id,
                 Value = 5.50M,
                 DateAndTime = DateTime.Now
@@ -140,8 +140,8 @@ namespace LearnLink.Data.SeedDbContext
             SecondGrade = new Grade()
             {
                 Id = 2,
-                StudentId = StudentUser.Id,
-                TeacherId = TeacherUser.Id,
+                StudentId = Student.Id,
+                TeacherId = Teacher.Id,
                 SubjectId = SecondSubject.Id,
                 Value = 5.00M,
                 DateAndTime = DateTime.Now
