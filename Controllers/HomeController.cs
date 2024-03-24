@@ -1,4 +1,5 @@
 ﻿using LearnLink.Models;
+using LearnLink.Models.Home;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -17,7 +18,7 @@ namespace LearnLink.Controllers
         {
             if (User?.Identity != null && User.Identity.IsAuthenticated)
             {
-                return View("~/Views/LearnLink/HomePage.cshtml");
+                return View(new IndexViewModel());
             }
 
             return View();

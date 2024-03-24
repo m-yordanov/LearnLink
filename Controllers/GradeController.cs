@@ -11,7 +11,7 @@ public class GradeController : Controller
         _context = context;
     }
 
-    public IActionResult Index()
+    public IActionResult All()
     {
         var studentName = User.Identity.Name;
         var studentGrades = _context.Grades
