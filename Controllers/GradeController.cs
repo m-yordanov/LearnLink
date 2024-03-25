@@ -13,7 +13,7 @@ public class GradeController : Controller
         data = context;
     }
 
-    public async Task<IActionResult> AllGrades()
+    public async Task<IActionResult> All()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -31,7 +31,7 @@ public class GradeController : Controller
             })
             .ToListAsync();
 
-        return View(nameof(AllGrades), studentGrades);
+        return View(nameof(All), studentGrades);
     }
 }
 
