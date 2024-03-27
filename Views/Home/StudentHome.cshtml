@@ -1,19 +1,33 @@
-﻿@{
+﻿@model LearnLink.Models.StudentHomeViewModel
+
+@{
     ViewData["Title"] = "Home";
 }
 
-<h1>Welcome to Our Application</h1>
+<div class="text-center mb-4">
+    <h1>Welcome to LearnLink, @Model.FirstName!</h1>
+</div>
 
-<div class="menu">
-    <h2>Your Average Grade</h2>
-    <p>Placeholder for average grade</p>
+<hr class="mb-4">
 
-    <h2>Your Attendances</h2>
-    <ul>
-        <li>Placeholder for attendance 1</li>
-        <li>Placeholder for attendance 2</li>
-        <li>Placeholder for attendance 3</li>
-    </ul>
-
-    <a href="@Url.Action("Attendances", "LearnLink")">View All Attendances</a>
+<div class="row">
+    <div class="col-md-6">
+        <div class="menu">
+            <h2>Your Average Grade:</h2>
+            <p>@Model.Grade</p>
+            <a class="btn btn-primary" href="@Url.Action("All", "Grade")">View All Grades</a>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="menu">
+            <h2>Your Recent Attendances:</h2>
+            <ul>
+                @foreach (var attendance in Model.Attendances.Take(3))
+                {
+                    <li>@attendance.Subject.Name - @attendance.Status - @attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</li>
+                }
+            </ul>
+            <a class="btn btn-primary" href="@Url.Action("All", "Attendance")">View All Attendances</a>
+        </div>
+    </div>
 </div>

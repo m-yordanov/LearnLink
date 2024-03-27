@@ -1,18 +1,24 @@
-﻿using LearnLink.Models;
+﻿using LearnLink.Data;
+using LearnLink.Models;
 using LearnLink.Models.Home;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
+using LearnLink.Data.Constants;
 
 namespace LearnLink.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly LearnLinkDbContext data;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, LearnLinkDbContext context)
         {
             _logger = logger;
+            data = context;
         }
 
         public IActionResult Index()
@@ -43,9 +49,29 @@ namespace LearnLink.Controllers
         }
 
         [Authorize(Roles = "Student")]
-        public IActionResult StudentHome()
+        public async Task<IActionResult> StudentHomeAsync()
         {
-            return View();
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var averageGrade = await data.Grades
+                .Where(g => g.Student.UserId == studentId)
+                .AverageAsync(g => g.Value);
+
+            var recentAttendances = await data.Attendances
+                .Include(a => a.Subject)
+                .Where(a => a.Student.UserId == studentId)
+                .OrderByDescending(a => a.DateAndTime)
+                .Take(3)
+                .ToListAsync();
+
+            var viewModel = new StudentHomeViewModel
+            {
+                FirstName = User.Identity.Name, 
+                Grade = averageGrade,
+                Attendances = recentAttendances
+            };
+
+            return View(viewModel);
         }
 
         [Authorize(Roles = "Teacher")]
