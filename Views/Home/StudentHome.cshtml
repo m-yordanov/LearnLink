@@ -15,7 +15,7 @@
         <div class="menu">
             <h2>Your Average Grade:</h2>
             <p>@Model.Grade</p>
-            <a class="btn btn-primary" href="@Url.Action("All", "Grade")">View All Grades</a>
+            <a class="btn btn-primary" href="@Url.Action("AllGrades", "Student")">View All Grades</a>
         </div>
     </div>
     <div class="col-md-6">
@@ -27,7 +27,7 @@
                     <li>@attendance.Subject.Name - @attendance.Status - @attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</li>
                 }
             </ul>
-            <a class="btn btn-primary" href="@Url.Action("All", "Attendance")">View All Attendances</a>
+            <a class="btn btn-primary" href="@Url.Action("AllAttendances", "Student")">View All Attendances</a>
         </div>
     </div>
 </div>
