@@ -14,20 +14,34 @@
     <div class="col-md-6">
         <div class="menu">
             <h2>Your Average Grade:</h2>
-            <p>@Model.Grade</p>
-            <a class="btn btn-primary" href="@Url.Action("AllGrades", "Student")">View All Grades</a>
+            @if (Model.Grade > 0)
+            {
+                <p>@Math.Round(Model.Grade, 2)</p>
+                <a class="btn btn-primary" href="@Url.Action("AllGrades", "Student")">View All Grades</a>
+            }
+            else
+            {
+                <p>You don't have any grades yet.</p>
+            }
         </div>
     </div>
     <div class="col-md-6">
         <div class="menu">
             <h2>Your Recent Attendances:</h2>
-            <ul>
-                @foreach (var attendance in Model.Attendances.Take(3))
-                {
-                    <li>@attendance.Subject.Name - @attendance.Status - @attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</li>
-                }
-            </ul>
-            <a class="btn btn-primary" href="@Url.Action("AllAttendances", "Student")">View All Attendances</a>
+            @if (Model.Attendances.Any())
+            {
+                <ul>
+                    @foreach (var attendance in Model.Attendances.Take(3))
+                    {
+                        <li>@attendance.Subject.Name - @attendance.Status - @attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</li>
+                    }
+                    <a class="btn btn-primary" href="@Url.Action("AllAttendances", "Student")">View All Attendances</a>
+                </ul>
+            }
+            else
+            {
+                <p>You don't have any attendances yet.</p>
+            }
         </div>
     </div>
 </div>

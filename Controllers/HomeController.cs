@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Claims;
 using LearnLink.Data.Constants;
+using LearnLink.Data.Models;
 
 namespace LearnLink.Controllers
 {
@@ -53,25 +54,34 @@ namespace LearnLink.Controllers
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var averageGrade = await data.Grades
-                .Where(g => g.Student.UserId == studentId)
-                .AverageAsync(g => g.Value);
+            var student = await data.Students.FirstOrDefaultAsync(s => s.UserId == studentId);
 
-            var recentAttendances = await data.Attendances
-                .Include(a => a.Subject)
-                .Where(a => a.Student.UserId == studentId)
-                .OrderByDescending(a => a.DateAndTime)
-                .Take(3)
-                .ToListAsync();
-
-            var viewModel = new StudentHomeViewModel
+            if (student != null)
             {
-                FirstName = User.Identity.Name, 
-                Grade = averageGrade,
-                Attendances = recentAttendances
-            };
+                var averageGrade = await data.Grades
+                    .Where(g => g.Student.UserId == studentId)
+                    .AverageAsync(g => (decimal?)g.Value);
 
-            return View(viewModel);
+                var recentAttendances = await data.Attendances
+                    .Include(a => a.Subject)
+                    .Where(a => a.Student.UserId == studentId)
+                    .OrderByDescending(a => a.DateAndTime)
+                    .Take(3)
+                    .ToListAsync();
+
+                var viewModel = new StudentHomeViewModel
+                {
+                    FirstName = User.Identity.Name,
+                    Grade = averageGrade ?? 0,
+                    Attendances = recentAttendances
+                };
+
+                return View(viewModel);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [Authorize(Roles = "Teacher")]
