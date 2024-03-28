@@ -1,4 +1,5 @@
 ﻿using LearnLink.Data.Models;
+using static LearnLink.Data.Constants.DataConstants;
 using LearnLink.Data;
 using LearnLink.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -6,10 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace LearnLink.Controllers
 {
     using LearnLink.Data;
+    using LearnLink.Data.Constants;
     using LearnLink.Models;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
+    using NuGet.DependencyResolver;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
@@ -103,5 +106,78 @@ namespace LearnLink.Controllers
             return RedirectToAction("AddGrade");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AddAttendance()
+        {
+            var students = await data.Students.ToListAsync();
+            var subjects = await data.Subjects.ToListAsync();
+
+            var viewModel = new AddAttendanceViewModel
+            {
+                StudentOptions = students.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = $"{s.FirstName} {s.LastName}"
+                }).ToList(),
+                SubjectOptions = subjects.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name
+                }).ToList()
+            };
+
+            if (TempData.ContainsKey("AttendanceAdded") && (bool)TempData["AttendanceAdded"])
+            {
+                viewModel.AttendanceAddedSuccessfully = true;
+
+                TempData.Remove("AttendanceAdded");
+            }
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAttendance(AddAttendanceViewModel viewModel)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var teacher = await data.Teachers.FirstOrDefaultAsync(t => t.UserId == userId);
+            var teacherId = teacher.Id;
+
+            if (!ModelState.IsValid)
+            {
+                var students = await data.Students.ToListAsync();
+                var subjects = await data.Subjects.ToListAsync();
+
+                viewModel.StudentOptions = students.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = $"{s.FirstName} {s.LastName}"
+                }).ToList();
+
+                viewModel.SubjectOptions = subjects.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name
+                }).ToList();
+
+                return View(viewModel);
+            }
+
+            var attendance = new Attendance
+            {
+                StudentId = viewModel.SelectedStudentId,
+                SubjectId = viewModel.SelectedSubjectId,
+                Status = viewModel.Status,
+                DateAndTime = viewModel.DateAndTime,
+                TeacherId = teacherId
+            };
+
+            data.Attendances.Add(attendance);
+            await data.SaveChangesAsync();
+
+            TempData["AttendanceAdded"] = true;
+
+            return RedirectToAction("AddAttendance");
+        }
     }
 }
