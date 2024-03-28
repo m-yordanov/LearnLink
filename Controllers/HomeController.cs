@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 using LearnLink.Data.Constants;
 using LearnLink.Data.Models;
+using LearnLink.Models.Home;
 
 namespace LearnLink.Controllers
 {
@@ -44,7 +45,7 @@ namespace LearnLink.Controllers
             }
             else
             {
-                return View(); 
+                return View();
             }
         }
 
@@ -84,9 +85,49 @@ namespace LearnLink.Controllers
         }
 
         [Authorize(Roles = "Teacher")]
-        public IActionResult TeacherHome()
+        public async Task<IActionResult> TeacherHome()
         {
-            return View();
+            var teacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var teacher = await data.Teachers.FirstOrDefaultAsync(s => s.UserId == teacherId);
+
+            if (teacher != null)
+            {
+                var teacherFirstName = await data.Teachers
+                    .Where(t => t.UserId == teacherId)
+                    .Select(t => t.FirstName)
+                    .FirstOrDefaultAsync();
+
+                var recentlyAddedGrades = await data.Grades
+                    .Include(g => g.Subject)
+                    .Include(g => g.Student)
+                    .Where(g => g.Teacher.UserId == teacherId)
+                    .OrderByDescending(g => g.DateAndTime)
+                    .Take(3)
+                    .ToListAsync();
+
+                var recentlyAddedAttendances = await data.Attendances
+                    .Include(a => a.Subject)
+                    .Include(a => a.Student)
+                    .Where(a => a.Teacher.UserId == teacherId)
+                    .OrderByDescending(a => a.DateAndTime)
+                    .Take(3) 
+                    .ToListAsync();
+
+                var viewModel = new TeacherHomeViewModel
+                {
+                    FirstName = teacherFirstName,
+                    Grades = recentlyAddedGrades,
+                    Attendances = recentlyAddedAttendances
+                };
+
+                return View(viewModel);
+            }
+            else
+            {
+                return NotFound();
+            }
+
         }
 
         [Authorize(Roles = "Admin")]

@@ -1,5 +1,41 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model TeacherHomeViewModel
+
 @{
+	ViewData["Title"] = "Home";
 }
+
+<div class="text-center mb-4">
+	<h1>Welcome, @Model.FirstName!</h1>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<h2>Recently Added Grades</h2>
+		@foreach (var grade in Model.Grades.Take(3))
+		{
+			<li>@grade.Student.FirstName @grade.Student.LastName - @grade.Subject.Name - @grade.DateAndTime.ToString("dd.MM.yyyy HH:mm")</li>
+		}
+
+		<div class="mt-4">
+			<a class="btn btn-warning" href="@Url.Action("EditAttendances", "Teacher")">Edit Grades</a>
+			<a class="btn btn-primary" href="@Url.Action("AddGrade", "Teacher")">Add Grades</a>
+		</div>
+	</div>
+
+	<div class="col-md-6">
+		<h2>Recently Added Attendances</h2>
+		@foreach (var attendance in Model.Attendances.Take(3))
+		{
+			<li>@attendance.Student.FirstName @attendance.Student.LastName - @attendance.Subject.Name - @attendance.Status - @attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</li>
+		}
+
+		<div class="mt-4">
+			<a class="btn btn-warning" href="@Url.Action("EditAttendances", "Teacher")">Edit Attendances</a>
+			<a class="btn btn-primary" href="@Url.Action("AddAttendance", "Teacher")">Add Attendances</a>
+		</div>
+	</div>
+</div>
+
+<div class="mt-4">
+	<p>If you need to delete a grade or attendance, please contact administrators at <a href="mailto:admin@mail.com">admin@mail.com</a>.</p>
+</div>

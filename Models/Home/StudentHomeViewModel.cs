@@ -1,6 +1,6 @@
 ﻿using LearnLink.Data.Models;
 
-namespace LearnLink.Models
+namespace LearnLink.Models.Home
 {
     public class StudentHomeViewModel
     {
