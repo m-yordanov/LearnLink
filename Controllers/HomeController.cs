@@ -1,6 +1,5 @@
 ﻿using LearnLink.Data;
 using LearnLink.Models;
-using LearnLink.Models.Home;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

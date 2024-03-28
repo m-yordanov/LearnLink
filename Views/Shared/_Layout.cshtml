@@ -31,10 +31,10 @@
                         else if (User.IsInRole("Teacher"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Teacher" asp-action="Index">Add Grades</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Teacher" asp-action="AddGrade">Add Grades</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Teacher" asp-action="Index">Add Attendances</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Teacher" asp-action="AddAttendance">Add Attendances</a>
                             </li>
                         }
                         else if (User.IsInRole("Student"))

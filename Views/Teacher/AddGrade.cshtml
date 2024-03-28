@@ -1,0 +1,52 @@
+﻿@model LearnLink.Models.AddGradeViewModel
+
+@{
+    ViewData["Title"] = "Add Grade";
+}
+<div class="text-center mb-4">
+<h1>Add Grade</h1>
+</div>
+
+@if (Model.GradeAddedSuccessfully)
+{
+    <div class="alert alert-success" role="alert">
+        Grade added successfully!
+    </div>
+}
+<form asp-controller="Teacher" asp-action="AddGrade" method="post">
+    <div class="form-group">
+        <label for="selectedStudentId">Select Student:</label>
+        <select id="selectedStudentId" name="SelectedStudentId" class="form-control">
+            <option value="">-- Select Student --</option>
+            @foreach (var studentOption in Model.StudentOptions)
+            {
+                <option value="@studentOption.Value">@studentOption.Text</option>
+            }
+        </select>
+        <span asp-validation-for="SelectedStudentId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="selectedSubjectId">Select Subject:</label>
+        <select id="selectedSubjectId" name="SelectedSubjectId" class="form-control">
+            <option value="">-- Select Subject --</option>
+            @foreach (var subjectOption in Model.SubjectOptions)
+            {
+                <option value="@subjectOption.Value">@subjectOption.Text</option>
+            }
+        </select>
+        <span asp-validation-for="SelectedSubjectId" class="text-danger"></span>
+    </div>
+
+
+    <div class="form-group">
+        <label for="grade">Grade:</label>
+        <input type="number" id="grade" name="Grade" class="form-control" value="@Model.Grade" step="0.01" />
+        <span asp-validation-for="Grade" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+
+</form>
