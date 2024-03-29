@@ -17,8 +17,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
 })
-.AddRoles <IdentityRole>()
+.AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<LearnLinkDbContext>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
