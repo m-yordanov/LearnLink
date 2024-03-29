@@ -71,7 +71,7 @@ namespace LearnLink.Controllers
 
                 var viewModel = new StudentHomeViewModel
                 {
-                    FirstName = User.Identity.Name,
+                    FirstName = student.FirstName,
                     Grade = averageGrade ?? 0,
                     Attendances = recentAttendances
                 };
@@ -93,11 +93,6 @@ namespace LearnLink.Controllers
 
             if (teacher != null)
             {
-                var teacherFirstName = await data.Teachers
-                    .Where(t => t.UserId == teacherId)
-                    .Select(t => t.FirstName)
-                    .FirstOrDefaultAsync();
-
                 var recentlyAddedGrades = await data.Grades
                     .Include(g => g.Subject)
                     .Include(g => g.Student)
@@ -116,7 +111,7 @@ namespace LearnLink.Controllers
 
                 var viewModel = new TeacherHomeViewModel
                 {
-                    FirstName = teacherFirstName,
+                    FirstName = teacher.FirstName,
                     Grades = recentlyAddedGrades,
                     Attendances = recentlyAddedAttendances
                 };
