@@ -6,9 +6,9 @@ namespace LearnLink.Data.SeedDbContext
 {
     internal class SeedData
     {
-        public IdentityUser StudentUser { get; set; }
+        public ApplicationUser StudentUser { get; set; }
 
-        public IdentityUser TeacherUser { get; set; }
+        public ApplicationUser TeacherUser { get; set; }
 
         public Student Student { get; set; }
 
@@ -17,6 +17,8 @@ namespace LearnLink.Data.SeedDbContext
         public Subject FirstSubject { get; private set; }
 
         public Subject SecondSubject { get; private set; }
+
+        public Subject ThirdSubject { get; private set; }
 
         public Attendance FirstAttendance { get; private set; }
         
@@ -38,27 +40,31 @@ namespace LearnLink.Data.SeedDbContext
 
         private void SeedUsers()
         {
-            var hasher = new PasswordHasher<IdentityUser>();
+            var hasher = new PasswordHasher<ApplicationUser>();
 
-            StudentUser = new IdentityUser()
+            StudentUser = new ApplicationUser()
             {
                 Id = "dea12856-c098-4129-b3f3-b893d8395082",
                 UserName = "student@mail.com",
                 NormalizedUserName = "student@mail.com",
                 Email = "student@mail.com",
-                NormalizedEmail = "student@mail.com"
+                NormalizedEmail = "student@mail.com",
+                FirstName = "Ivan",
+                LastName = "Petrov"
             };
 
             StudentUser.PasswordHash =
                  hasher.HashPassword(StudentUser, "/g_(q(G380B5");
 
-            TeacherUser = new IdentityUser()
+            TeacherUser = new ApplicationUser()
             {
                 Id = "6d5800ce-d726-4fc8-83d9-d6b3ac1f592d",
                 UserName = "teacher@mail.com",
                 NormalizedUserName = "teacher@mail.com",
                 Email = "teacher@mail.com",
-                NormalizedEmail = "teacher@mail.com"
+                NormalizedEmail = "teacher@mail.com",
+                FirstName = "Viktor",
+                LastName = "Georgiev"
             };
 
             TeacherUser.PasswordHash =
@@ -70,8 +76,8 @@ namespace LearnLink.Data.SeedDbContext
             Student = new Student()
             {
                 Id = 1,
-                FirstName = "Ivan",
-                LastName = "Petrov",
+                FirstName = StudentUser.FirstName,
+                LastName = StudentUser.LastName,
                 Email = StudentUser.Email,
                 UserId = StudentUser.Id
             };
@@ -82,8 +88,8 @@ namespace LearnLink.Data.SeedDbContext
             Teacher = new Teacher()
             {
                 Id = 1,
-                FirstName = "Viktor",
-                LastName = "Georgiev",
+                FirstName = TeacherUser.FirstName,
+                LastName = TeacherUser.LastName,
                 Email = TeacherUser.Email,
                 UserId = TeacherUser.Id
             };
@@ -101,6 +107,11 @@ namespace LearnLink.Data.SeedDbContext
             {
                 Id = 2,
                 Name = "Geography"
+            };
+            ThirdSubject = new Subject()
+            {
+                Id = 3,
+                Name = "Mathematics"
             };
         }
 

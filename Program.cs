@@ -1,4 +1,5 @@
 using LearnLink.Data;
+using LearnLink.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,7 @@ builder.Services.AddDbContext<LearnLinkDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = false;
@@ -62,14 +63,14 @@ using(var scope = app.Services.CreateScope())
 using (var scope = app.Services.CreateScope())
 {
     var userManager =
-        scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
     string email = "admin@gmail.com";
     string password = "!52gk6(q4JSx";
 
     if (await userManager.FindByEmailAsync(email) == null)
     {
-        var user = new IdentityUser();
+        var user = new ApplicationUser();
         user.UserName = email;
         user.Email = email;
 

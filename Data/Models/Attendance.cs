@@ -30,7 +30,6 @@ namespace LearnLink.Data.Models
         [Required]
         public AttendanceStatus Status { get; set; }
 
-
         [Required]
         public DateTime DateAndTime { get; set; }
     }

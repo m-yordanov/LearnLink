@@ -2,8 +2,15 @@
 {
     public static class DataConstants
     {
-        public const int MaxNameLength = 50;
+		public const string DateTimeFormat = "dd.MM.yyyy HH:mm";
 
-        public const string DateTimeFormat = "dd.MM.yyyy HH:mm";
+        //Subject
+		public const int SubjectMaxNameLength = 50;
+
+        //Teacher and Student
+        public const int MaxNameLength = 30;
+
+        //UserIdentity
+        public const int UserFirstNameMaxLength = 20;
     }
 }

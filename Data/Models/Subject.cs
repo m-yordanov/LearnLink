@@ -9,7 +9,7 @@ namespace LearnLink.Data.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(MaxNameLength)]
+        [MaxLength(SubjectMaxNameLength)]
         public string Name { get; set; } = string.Empty;
     }
 }

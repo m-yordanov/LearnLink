@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using static LearnLink.Data.Constants.DataConstants;
 
 namespace LearnLink.Data.Models
 {
-    public class Teacher
+    public class ApplicationUser : IdentityUser
     {
-        [Key]
-        public int Id { get; set; } 
-
         [Required]
         [MaxLength(MaxNameLength)]
         public string FirstName { get; set; } = string.Empty;
@@ -17,14 +13,5 @@ namespace LearnLink.Data.Models
         [Required]
         [MaxLength(MaxNameLength)]
         public string LastName { get; set; } = string.Empty;
-
-        [Required]
-        public string Email { get; set; } = string.Empty;
-
-        [Required]
-        public string UserId { get; set; } = string.Empty;
-
-        [ForeignKey(nameof(UserId))]
-        public ApplicationUser IdentityUser { get; set; } = null!;
     }
 }

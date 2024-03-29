@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink.Data
 {
-    public class LearnLinkDbContext : IdentityDbContext
+    public class LearnLinkDbContext : IdentityDbContext<ApplicationUser>
     {
         public LearnLinkDbContext(DbContextOptions<LearnLinkDbContext> options)
             : base(options)

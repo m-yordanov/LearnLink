@@ -25,7 +25,7 @@ namespace LearnLink.Data.Models
         public string UserId { get; set; } = string.Empty;
 
         [ForeignKey(nameof(UserId))]
-        public IdentityUser IdentityUser { get; set; } = null!;
+        public ApplicationUser IdentityUser { get; set; } = null!;
 
         public ICollection<Grade> Grades { get; set; } = new List<Grade>();
 
