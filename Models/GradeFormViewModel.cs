@@ -4,8 +4,10 @@ using static LearnLink.Data.Common.ErrorConstants;
 
 namespace LearnLink.Models
 {
-    public class AddGradeViewModel
+    public class GradeFormViewModel
     {
+        public int Id { get; set; }
+
         public string StudentFirstName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = RequiredErrorMessage)]
@@ -22,6 +24,8 @@ namespace LearnLink.Models
 
         public List<SelectListItem> StudentOptions { get; set; } = new List<SelectListItem>();
 
-        public bool GradeAddedSuccessfully { get; internal set; }
+        public bool GradeAddedSuccessfully { get; set; }
+
+        public bool GradeEditedSuccessfully { get; set; }
     }
 }

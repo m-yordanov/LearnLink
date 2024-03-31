@@ -29,6 +29,6 @@ namespace LearnLink.Models
 
         public List<SelectListItem> StatusOptions { get; set; } = new List<SelectListItem>();
 
-        public bool AttendanceAddedSuccessfully { get; internal set; }
+        public bool AttendanceAddedSuccessfully { get; set; }
     }
 }

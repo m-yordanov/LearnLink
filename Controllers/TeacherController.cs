@@ -32,7 +32,7 @@ namespace LearnLink.Controllers
             var students = await data.Students.ToListAsync();
             var subjects = await data.Subjects.ToListAsync();
 
-            var viewModel = new AddGradeViewModel
+            var viewModel = new GradeFormViewModel
             {
                 StudentOptions = students.Select(s => new SelectListItem
                 {
@@ -57,7 +57,7 @@ namespace LearnLink.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddGrade(AddGradeViewModel viewModel)
+        public async Task<IActionResult> AddGrade(GradeFormViewModel viewModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
             var teacher = await data.Teachers.FirstOrDefaultAsync(t => t.UserId == userId);
