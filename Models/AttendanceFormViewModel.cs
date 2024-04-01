@@ -7,8 +7,10 @@ using static LearnLink.Data.Constants.DataConstants;
 
 namespace LearnLink.Models
 {
-    public class AddAttendanceViewModel
+    public class AttendanceFormViewModel
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Please select a student.")]
         public int SelectedStudentId { get; set; }
 

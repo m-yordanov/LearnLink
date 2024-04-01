@@ -12,6 +12,10 @@ namespace LearnLink.Models
 
         public string Subject { get; set; } = string.Empty;
 
+        public string StudentFirstName { get; set; } = string.Empty;
+
+        public string StudentLastName { get; set; } = string.Empty;
+
         public string TeacherFirstName { get; set; } = string.Empty;
 
         public string TeacherLastName { get; set; } = string.Empty;
