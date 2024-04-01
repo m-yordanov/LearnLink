@@ -118,51 +118,6 @@ namespace LearnLink.Controllers
             return RedirectToAction(nameof(AllGrades));
         }
 
-        public async Task<IActionResult> DeleteGrade(int id)
-        {
-            var grade = await data.Grades
-                .Include(g => g.Student)
-                .Include(g => g.Teacher)
-                .Include(g => g.Subject)
-                .FirstOrDefaultAsync(g => g.Id == id);
-
-            if (grade == null)
-            {
-                return NotFound();
-            }
-
-            var viewModel = new GradeViewModel
-            {
-                Id = grade.Id,
-                Subject = grade.Subject.Name,
-                StudentFirstName = grade.Student.FirstName,
-                StudentLastName = grade.Student.LastName,
-                TeacherFirstName = grade.Teacher.FirstName,
-                TeacherLastName = grade.Teacher.LastName,
-                Value = grade.Value,
-                DateAndTime = grade.DateAndTime
-            };
-
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var grade = await data.Grades.FindAsync(id);
-
-            if (grade == null)
-            {
-                return NotFound();
-            }
-
-            data.Grades.Remove(grade);
-            await data.SaveChangesAsync();
-
-            return RedirectToAction(nameof(AllGrades));
-        }
-
         public async Task<IActionResult> AllAttendances()
         {
             var attendances = await data.Attendances
@@ -215,12 +170,12 @@ namespace LearnLink.Controllers
                     Text = s.Name
                 }).ToList(),
                 StatusOptions = Enum.GetValues(typeof(AttendanceStatus))
-                                    .Cast<AttendanceStatus>()
-                                    .Select(status => new SelectListItem
-                                    {
-                                        Value = ((int)status).ToString(),
-                                        Text = status.ToString()
-                                    }).ToList()
+                    .Cast<AttendanceStatus>()
+                    .Select(status => new SelectListItem
+                    {
+                        Value = ((int)status).ToString(),
+                        Text = status.ToString()
+                    }).ToList()
             };
 
             return View(viewModel);
@@ -280,5 +235,90 @@ namespace LearnLink.Controllers
             return RedirectToAction(nameof(AllAttendances));
         }
 
+        public async Task<IActionResult> DeleteGrade(int id)
+        {
+            var grade = await data.Grades
+                .Include(g => g.Student)
+                .Include(g => g.Teacher)
+                .Include(g => g.Subject)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (grade == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new GradeViewModel
+            {
+                Id = grade.Id,
+                Subject = grade.Subject.Name,
+                StudentFirstName = grade.Student.FirstName,
+                StudentLastName = grade.Student.LastName,
+                TeacherFirstName = grade.Teacher.FirstName,
+                TeacherLastName = grade.Teacher.LastName,
+                Value = grade.Value,
+                DateAndTime = grade.DateAndTime
+            };
+
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> DeleteAttendance(int id)
+        {
+            var attendance = await data.Attendances
+                .Include(a => a.Student)
+                .Include(a => a.Teacher)
+                .Include(a => a.Subject)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (attendance == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new AttendanceViewModel
+            {
+                Id = attendance.Id,
+                StudentFirstName = attendance.Student.FirstName,
+                StudentLastName = attendance.Student.LastName,
+                TeacherFirstName = attendance.Teacher.FirstName,
+                TeacherLastName = attendance.Teacher.LastName,
+                Status = attendance.Status,
+                DateAndTime = attendance.DateAndTime
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id, string entityType)
+        {
+            switch (entityType)
+            {
+                case "Grade":
+                    var grade = await data.Grades.FindAsync(id);
+                    if (grade == null)
+                    {
+                        return NotFound();
+                    }
+                    data.Grades.Remove(grade);
+                    await data.SaveChangesAsync();
+                    return RedirectToAction(nameof(AllGrades));
+
+                case "Attendance":
+                    var attendance = await data.Attendances.FindAsync(id);
+                    if (attendance == null)
+                    {
+                        return NotFound();
+                    }
+                    data.Attendances.Remove(attendance);
+                    await data.SaveChangesAsync();
+                    return RedirectToAction(nameof(AllAttendances));
+
+                default:
+                    return BadRequest("Invalid entity type");
+            }
+        }
     }
 }
