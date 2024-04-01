@@ -1,0 +1,29 @@
+﻿@model GradeViewModel
+@{
+    ViewBag.Title = "Delete Grade";
+}
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center">Subject</h3>
+                <p class="mb-0"><strong>Student:</strong> @(Model.StudentFirstName + " " + Model.StudentLastName)</p>
+                <p class="mb-0"><strong>Teacher:</strong> @(Model.TeacherFirstName + " " + Model.TeacherLastName)</p>
+                <p class="mb-0"><strong>Grade:</strong> @Model.Value</p>
+                <p class="mb-0"><strong>Date and Time:</strong> @Model.DateAndTime.ToString("dd.MM.yyyy HH:mm")</p>
+                <p class="text-danger mt-3">"Are you sure you want to delete this grade?"</p>
+            </div>
+            <div class="card-footer">
+                <form asp-action="DeleteConfirmed" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                    <a asp-action="AllGrades" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

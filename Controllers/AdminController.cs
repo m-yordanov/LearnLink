@@ -116,5 +116,50 @@ namespace LearnLink.Controllers
 
             return RedirectToAction(nameof(AllGrades));
         }
+
+        public async Task<IActionResult> DeleteGrade(int id)
+        {
+            var grade = await data.Grades
+                .Include(g => g.Student)
+                .Include(g => g.Teacher)
+                .Include(g => g.Subject) 
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (grade == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new GradeViewModel
+            {
+                Id = grade.Id,
+                Subject = grade.Subject.Name,
+                StudentFirstName = grade.Student.FirstName,
+                StudentLastName = grade.Student.LastName,
+                TeacherFirstName = grade.Teacher.FirstName,
+                TeacherLastName = grade.Teacher.LastName,
+                Value = grade.Value,
+                DateAndTime = grade.DateAndTime
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var grade = await data.Grades.FindAsync(id);
+
+            if (grade == null)
+            {
+                return NotFound();
+            }
+
+            data.Grades.Remove(grade);
+            await data.SaveChangesAsync();
+
+            return RedirectToAction(nameof(AllGrades));
+        }
     }
 }
