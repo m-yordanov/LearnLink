@@ -1,0 +1,36 @@
+﻿@model IEnumerable<LearnLink.Models.AttendanceViewModel>
+
+@{
+    ViewData["Title"] = "All Attendances";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Student</th>
+            <th>Status</th>
+            <th>Date and Time</th>
+            <th>Teacher</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var attendance in Model)
+        {
+            <tr>
+                <td>@attendance.Subject</td>
+                <td>@(attendance.StudentFirstName + " " + attendance.StudentLastName)</td>
+                <td>@attendance.Status</td>
+                <td>@attendance.DateAndTime.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@(attendance.TeacherFirstName + " " + attendance.TeacherLastName)</td>
+                <td>
+                    <a asp-controller="Admin" asp-action="EditAttendance" asp-route-id="@attendance.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Edit</a>
+                    <a asp-controller="Admin" asp-action="DeleteAttendance" asp-route-id="@attendance.Id" class="btn btn-danger mb-2 w-100 p-3 fw-bold">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

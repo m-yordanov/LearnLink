@@ -112,7 +112,7 @@ namespace LearnLink.Controllers
             var students = await data.Students.ToListAsync();
             var subjects = await data.Subjects.ToListAsync();
 
-            var viewModel = new AddAttendanceViewModel
+            var viewModel = new AttendanceFormViewModel
             {
                 StudentOptions = students.Select(s => new SelectListItem
                 {
@@ -137,7 +137,7 @@ namespace LearnLink.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAttendance(AddAttendanceViewModel viewModel)
+        public async Task<IActionResult> AddAttendance(AttendanceFormViewModel viewModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var teacher = await data.Teachers.FirstOrDefaultAsync(t => t.UserId == userId);
