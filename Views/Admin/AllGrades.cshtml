@@ -6,6 +6,65 @@
 
 <h1>@ViewData["Title"]</h1>
 
+<button id="toggleFiltersBtn" class="btn btn-primary">Filters</button>
+
+<div id="filterWrapper" style="display: none;">
+    @using (Html.BeginForm("AllGrades", "Admin", FormMethod.Get))
+    {
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="student">Student:</label>
+                    <select name="selectedStudent" class="form-control">
+                        <option value="">All</option>
+                        @foreach (var student in Model.Select(x => x.StudentFirstName + " " + x.StudentLastName).Distinct())
+                        {
+                            <option value="@student">@student</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="teacher">Teacher:</label>
+                    <select name="selectedTeacher" class="form-control">
+                        <option value="">All</option>
+                        @foreach (var teacher in Model.Select(x => x.TeacherFirstName + " " + x.TeacherLastName).Distinct())
+                        {
+                            <option value="@teacher">@teacher</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="subject">Subject:</label>
+                    <select name="selectedSubject" class="form-control">
+                        <option value="">All</option>
+                        @foreach (var subject in Model.Select(x => x.Subject).Distinct())
+                        {
+                            <option value="@subject">@subject</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="dateBefore">Before Date:</label>
+                    <input type="date" name="dateBefore" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="dateAfter">After Date:</label>
+                    <input type="date" name="dateAfter" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Apply Filter</button>
+    }
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -34,3 +93,16 @@
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        document.getElementById("toggleFiltersBtn").addEventListener("click", function() {
+            var filterWrapper = document.getElementById("filterWrapper");
+            if (filterWrapper.style.display === "none") {
+                filterWrapper.style.display = "block";
+            } else {
+                filterWrapper.style.display = "none";
+            }
+        });
+    </script>
+}

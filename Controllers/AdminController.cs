@@ -17,7 +17,7 @@ namespace LearnLink.Controllers
             data = context;
         }
 
-        public async Task<IActionResult> AllGrades()
+        public async Task<IActionResult> AllGrades(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime dateBefore, DateTime dateAfter)
         {
             var grades = await data.Grades
                 .Select(g => new GradeViewModel
@@ -29,11 +29,51 @@ namespace LearnLink.Controllers
                     Value = g.Value,
                     DateAndTime = g.DateAndTime,
                     TeacherFirstName = g.Teacher.FirstName,
-                    TeacherLastName = g.Teacher.LastName
+                    TeacherLastName = g.Teacher.LastName,
                 })
                 .ToListAsync();
 
-            return View(grades);
+            var filteredGrades = grades;
+
+
+            if (!string.IsNullOrEmpty(selectedStudent))
+            {
+                filteredGrades = filteredGrades.Where(g => (g.StudentFirstName + " " + g.StudentLastName).Contains(selectedStudent)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(selectedTeacher))
+            {
+                filteredGrades = filteredGrades.Where(g => (g.TeacherFirstName + " " + g.TeacherLastName).Contains(selectedTeacher)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(selectedSubject))
+            {
+                filteredGrades = filteredGrades.Where(g => g.Subject == selectedSubject).ToList();
+            }
+
+            if (dateBefore != default)
+            {
+                filteredGrades = filteredGrades.Where(g => g.DateAndTime < dateBefore).ToList();
+            }
+
+            if (dateAfter != default)
+            {
+                filteredGrades = filteredGrades.Where(g => g.DateAndTime > dateAfter).ToList();
+            }
+
+            var distinctStudents = grades.Select(g => g.StudentFirstName + " " + g.StudentLastName).Distinct();
+            var distinctTeachers = grades.Select(g => g.TeacherFirstName + " " + g.TeacherLastName).Distinct();
+            var distinctSubjects = grades.Select(g => g.Subject).Distinct();
+
+            var model = new GradeViewModel
+            {
+                Grades = filteredGrades,
+                StudentOptions = distinctStudents.Select(s => new SelectListItem { Value = s, Text = s }),
+                TeacherOptions = distinctTeachers.Select(t => new SelectListItem { Value = t, Text = t }),
+                SubjectOptions = distinctSubjects.Select(s => new SelectListItem { Value = s, Text = s })
+            };
+
+            return View(model.Grades);
         }
 
         [HttpGet]
