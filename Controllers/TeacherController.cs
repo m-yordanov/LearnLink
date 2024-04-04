@@ -1,55 +1,34 @@
-﻿using LearnLink.Data.Models;
-using static LearnLink.Data.Constants.DataConstants;
-using LearnLink.Data;
-using LearnLink.Models;
+﻿using LearnLink.Models;
+using LearnLink.Services;
+using LearnLink.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Security.Claims;
 namespace LearnLink.Controllers
 {
-    using LearnLink.Data;
-    using LearnLink.Data.Constants;
-    using LearnLink.Models;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.EntityFrameworkCore;
-    using NuGet.DependencyResolver;
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
-
     public class TeacherController : Controller
     {
-        private readonly LearnLinkDbContext data;
+        private readonly IAttendanceManagementService attendanceManagementService;
+        private readonly IGradeManagementService gradeManagementService;
 
-        public TeacherController(LearnLinkDbContext context)
+        public TeacherController(IGradeManagementService _gradeManagementService, IAttendanceManagementService _attendanceManagementService)
         {
-            data = context;
+            gradeManagementService = _gradeManagementService;
+            attendanceManagementService = _attendanceManagementService;
         }
 
         [HttpGet]
         public async Task<IActionResult> AddGrade()
         {
-            var students = await data.Students.ToListAsync();
-            var subjects = await data.Subjects.ToListAsync();
-
             var viewModel = new GradeFormViewModel
             {
-                StudentOptions = students.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = $"{s.FirstName} {s.LastName}"
-                }).ToList(),
-                SubjectOptions = subjects.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = s.Name
-                }).ToList()
+                StudentOptions = (await gradeManagementService.GetStudentOptionsAsync()).ToList(),
+                SubjectOptions = (await gradeManagementService.GetSubjectOptionsAsync()).ToList()
             };
+
 
             if (TempData.ContainsKey("GradeAdded") && (bool)TempData["GradeAdded"])
             {
                 viewModel.GradeAddedSuccessfully = true;
-
                 TempData.Remove("GradeAdded");
             }
 
@@ -59,77 +38,33 @@ namespace LearnLink.Controllers
         [HttpPost]
         public async Task<IActionResult> AddGrade(GradeFormViewModel viewModel)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
-            var teacher = await data.Teachers.FirstOrDefaultAsync(t => t.UserId == userId);
-            var teacherId = teacher.Id;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await gradeManagementService.AddGradeAsync(viewModel, userId);
 
-            //handle null teacher cases later
-
-            if (!ModelState.IsValid)
+            if (!result)
             {
-                viewModel.StudentOptions = await data.Students
-                    .Select(s => new SelectListItem
-                    {
-                        Value = s.Id.ToString(),
-                        Text = $"{s.FirstName} {s.LastName}"
-                    }).ToListAsync();
-                viewModel.SubjectOptions = await data.Subjects
-                    .Select(s => new SelectListItem
-                    {
-                        Value = s.Id.ToString(),
-                        Text = s.Name
-                    }).ToListAsync();
+                ModelState.AddModelError("", "Failed to add grade.");
+                viewModel.StudentOptions = (await gradeManagementService.GetStudentOptionsAsync()).ToList();
+                viewModel.SubjectOptions = (await gradeManagementService.GetSubjectOptionsAsync()).ToList();
                 return View(viewModel);
             }
 
-            var subjectId = viewModel.SelectedSubjectId;
-            var subject = await data.Subjects.FirstOrDefaultAsync(s => s.Id == subjectId);
-            if (subject == null)
-            {
-                return RedirectToAction("Error", "Home");
-            }
-
-            var grade = new Grade
-            {
-                StudentId = viewModel.SelectedStudentId,
-                Subject = subject,
-                Value = viewModel.Grade,
-                DateAndTime = DateTime.Now,
-                TeacherId = teacher.Id
-            };
-
-            data.Grades.Add(grade);
-            await data.SaveChangesAsync();
-
             TempData["GradeAdded"] = true;
-
             return RedirectToAction("AddGrade");
         }
 
         [HttpGet]
         public async Task<IActionResult> AddAttendance()
         {
-            var students = await data.Students.ToListAsync();
-            var subjects = await data.Subjects.ToListAsync();
-
             var viewModel = new AttendanceFormViewModel
             {
-                StudentOptions = students.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = $"{s.FirstName} {s.LastName}"
-                }).ToList(),
-                SubjectOptions = subjects.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = s.Name
-                }).ToList()
+                StudentOptions = (await attendanceManagementService.GetStudentOptionsAsync()).ToList(),
+                SubjectOptions = (await attendanceManagementService.GetSubjectOptionsAsync()).ToList()
             };
 
             if (TempData.ContainsKey("AttendanceAdded") && (bool)TempData["AttendanceAdded"])
             {
                 viewModel.AttendanceAddedSuccessfully = true;
-
                 TempData.Remove("AttendanceAdded");
             }
 
@@ -140,44 +75,20 @@ namespace LearnLink.Controllers
         public async Task<IActionResult> AddAttendance(AttendanceFormViewModel viewModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var teacher = await data.Teachers.FirstOrDefaultAsync(t => t.UserId == userId);
-            var teacherId = teacher.Id;
+            var result = await attendanceManagementService.AddAttendanceAsync(viewModel, userId);
 
-            if (!ModelState.IsValid)
+            if (!result)
             {
-                var students = await data.Students.ToListAsync();
-                var subjects = await data.Subjects.ToListAsync();
-
-                viewModel.StudentOptions = students.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = $"{s.FirstName} {s.LastName}"
-                }).ToList();
-
-                viewModel.SubjectOptions = subjects.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = s.Name
-                }).ToList();
-
+                ModelState.AddModelError("", "Failed to add attendance.");
+                viewModel.StudentOptions = (await attendanceManagementService.GetStudentOptionsAsync()).ToList();
+                viewModel.SubjectOptions = (await attendanceManagementService.GetSubjectOptionsAsync()).ToList();
                 return View(viewModel);
             }
 
-            var attendance = new Attendance
-            {
-                StudentId = viewModel.SelectedStudentId,
-                SubjectId = viewModel.SelectedSubjectId,
-                Status = viewModel.Status,
-                DateAndTime = viewModel.DateAndTime,
-                TeacherId = teacherId
-            };
-
-            data.Attendances.Add(attendance);
-            await data.SaveChangesAsync();
-
             TempData["AttendanceAdded"] = true;
-
             return RedirectToAction("AddAttendance");
         }
+
+
     }
 }

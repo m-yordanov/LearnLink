@@ -14,6 +14,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddScoped<IGradeService, GradeService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IAttendanceManagementService, AttendanceManagementService>();
+builder.Services.AddScoped<IGradeManagementService, GradeManagementService>();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
