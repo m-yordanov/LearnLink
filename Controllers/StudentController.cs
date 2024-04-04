@@ -1,8 +1,5 @@
-﻿using LearnLink.Data;
-using LearnLink.Models;
-using LearnLink.Services.Interfaces;
+﻿using LearnLink.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 public class StudentController : Controller
