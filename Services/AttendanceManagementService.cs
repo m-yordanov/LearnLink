@@ -45,30 +45,23 @@ namespace LearnLink.Services
             var teacher = await data.Teachers.FirstOrDefaultAsync(t => t.UserId == userId);
             if (teacher == null)
             {
-                // Return false indicating failure due to missing teacher
                 return false;
             }
 
-            // Perform additional validation here if needed
             if (viewModel.SelectedStudentId <= 0 || viewModel.SelectedSubjectId <= 0)
             {
-                // Return false indicating failure due to invalid data
                 return false;
             }
 
-            // Check if the selected student exists
             var student = await data.Students.FirstOrDefaultAsync(s => s.Id == viewModel.SelectedStudentId);
             if (student == null)
             {
-                // Return false indicating failure due to missing student
                 return false;
             }
 
-            // Check if the selected subject exists
             var subject = await data.Subjects.FirstOrDefaultAsync(s => s.Id == viewModel.SelectedSubjectId);
             if (subject == null)
             {
-                // Return false indicating failure due to missing subject
                 return false;
             }
 
@@ -84,7 +77,6 @@ namespace LearnLink.Services
             data.Attendances.Add(attendance);
             await data.SaveChangesAsync();
 
-            // Return true indicating success
             return true;
         }
 
