@@ -11,7 +11,7 @@ namespace LearnLink.Data.SeedDbContext
         {
             var data = new SeedData();
 
-            builder.HasData(new ApplicationUser[] { data.StudentUser, data.TeacherUser });
+            builder.HasData(new ApplicationUser[] { data.StudentUser, data.TeacherUser, data.AdminUser });
         }
     }
 }

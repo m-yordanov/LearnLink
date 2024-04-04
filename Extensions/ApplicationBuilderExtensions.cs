@@ -27,18 +27,18 @@ namespace Microsoft.AspNetCore.Builder
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-                string email = "admin@gmail.com";
-                string password = "!52gk6(q4JSx";
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-                if (await userManager.FindByEmailAsync(email) == null)
+                if (userManager != null && roleManager != null)
                 {
-                    var user = new ApplicationUser();
-                    user.UserName = email;
-                    user.Email = email;
+                    string email = "admin@mail.com";
 
-                    await userManager.CreateAsync(user, password);
+                    var admin = await userManager.FindByEmailAsync(email);
 
-                    await userManager.AddToRoleAsync(user, "Admin");
+                    if (await userManager.FindByEmailAsync(email) != null)
+                    {
+                        await userManager.AddToRoleAsync(admin, "Admin");
+                    }
                 }
             }
         }

@@ -10,6 +10,8 @@ namespace LearnLink.Data.SeedDbContext
 
         public ApplicationUser TeacherUser { get; set; }
 
+        public ApplicationUser AdminUser { get; set; }
+
         public Student Student { get; set; }
 
         public Teacher Teacher { get; set; }
@@ -69,6 +71,20 @@ namespace LearnLink.Data.SeedDbContext
 
             TeacherUser.PasswordHash =
             hasher.HashPassword(TeacherUser, "ce7`oR>)S9Y5");
+
+            AdminUser = new ApplicationUser()
+            {
+                Id = "c2b15954-6a87-4207-8f3d-fb93ef5481f4",
+                UserName = "admin@mail.com",
+                NormalizedUserName = "admin@mail.com",
+                Email = "admin@mail.com",
+                NormalizedEmail = "admin@mail.com",
+                FirstName = "The",
+                LastName = "Admin"
+            };
+
+            AdminUser.PasswordHash =
+            hasher.HashPassword(AdminUser, "3Z4ZSLc1jTXxYiD");
         }
 
         private void SeedStudent()
