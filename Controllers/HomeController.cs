@@ -34,10 +34,6 @@ namespace LearnLink.Controllers
                 {
                     return RedirectToAction("TeacherHome");
                 }
-                else if (User.IsInRole("Admin"))
-                {
-                    return RedirectToAction("AdminHome");
-                }
                 else
                 {
                     return View();
@@ -123,12 +119,6 @@ namespace LearnLink.Controllers
                 return NotFound();
             }
 
-        }
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult AdminHome()
-        {
-            return View();
         }
 
         public IActionResult Privacy()
