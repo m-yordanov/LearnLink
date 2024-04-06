@@ -1,0 +1,119 @@
+﻿@model GradeViewModel
+
+<form method="get" asp-action="AllGrades" asp-controller="Actions">
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="selectedStudent">Student</label>
+            <input type="text" class="form-control" id="selectedStudent" name="selectedStudent" value="@Model.SelectedStudent" />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="selectedTeacher">Teacher</label>
+            <input type="text" class="form-control" id="selectedTeacher" name="selectedTeacher" value="@Model.SelectedTeacher" />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="selectedSubject">Subject</label>
+            <input type="text" class="form-control" id="selectedSubject" name="selectedSubject" value="@Model.SelectedSubject" />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="dateBefore">Before Date</label>
+            <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@Model.DateBefore.ToString("dd.MM.yyyy HH:mm")" />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="dateAfter">After Date</label>
+            <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@Model.DateAfter.ToString("dd.MM.yyyy HH:mm")" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<hr />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Teacher</th>
+            <th>Subject</th>
+            <th>Value</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var grade in Model.FilteredGrades)
+        {
+            <tr>
+                <td>@(grade.Student.FirstName) @(grade.Student.LastName)</td>
+                <td>@(grade.Teacher.FirstName) @(grade.Teacher.LastName)</td>
+                <td>@grade.Subject.Name</td>
+                <td>@grade.Value</td>
+                <td>@grade.DateAndTime.ToShortDateString()</td>
+                <td>
+                    <a asp-controller="Actions" asp-action="EditGrade" asp-route-id="@grade.Id" class="btn btn-primary">Edit</a>
+                    <a asp-controller="Actions" asp-action="DeleteGrade" asp-route-id="@grade.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.TotalCount > 0)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @if (Model.PageNumber > 1)
+            {
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(1)">First</a></li>
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.PageNumber - 1)">Previous</a></li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")"><a class="page-link" href="@BuildPaginationLink(i)">@i</a></li>
+            }
+
+            @if (Model.PageNumber < Model.TotalPages)
+            {
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.PageNumber + 1)">Next</a></li>
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.TotalPages)">Last</a></li>
+            }
+        </ul>
+    </nav>
+}
+
+@functions {
+    public string BuildPaginationLink(int pageNumber)
+    {
+        string baseUrl = $"?pageNumber={pageNumber}&pageSize=@Model.PageSize";
+
+        if (!string.IsNullOrEmpty(Model.SelectedStudent))
+        {
+            baseUrl += $"&selectedStudent={Model.SelectedStudent}";
+        }
+
+        if (!string.IsNullOrEmpty(Model.SelectedTeacher))
+        {
+            baseUrl += $"&selectedTeacher={Model.SelectedTeacher}";
+        }
+
+        if (!string.IsNullOrEmpty(Model.SelectedSubject))
+        {
+            baseUrl += $"&selectedSubject={Model.SelectedSubject}";
+        }
+
+        @if (Model.DateBefore != DateTime.MinValue)
+        {
+            baseUrl += $"&dateBefore={Model.DateBefore.ToString("yyyy-MM-dd")}";
+        }
+
+        @if (Model.DateAfter != DateTime.MinValue)
+        {
+            baseUrl += $"&dateAfter={Model.DateAfter.ToString("yyyy-MM-dd")}";
+        }
+
+
+        return baseUrl;
+    }
+}
+
+

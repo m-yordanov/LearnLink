@@ -1,10 +1,3 @@
-using LearnLink.Data;
-using LearnLink.Data.Models;
-using LearnLink.Services;
-using LearnLink.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationDbContext(builder.Configuration);
@@ -40,7 +33,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-	);
+    );
     
 	app.MapControllerRoute(
 		name: "default",
