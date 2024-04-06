@@ -22,7 +22,7 @@ namespace LearnLink.Areas.Admin.Controllers
         }
 
 
-        public async Task<IActionResult> AllGrades(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 2)
+        public async Task<IActionResult> AllGrades(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 8)
         {
             var gradesViewModel = await gradeService.GetFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredGrades = await gradeService.GetTotalFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
@@ -54,6 +54,40 @@ namespace LearnLink.Areas.Admin.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditGrade(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var grade = await data.Grades.FindAsync(id);
+            if (grade == null)
+            {
+                return NotFound();
+            }
+
+            var students = await data.Students.ToListAsync();
+            var subjects = await data.Subjects.ToListAsync();
+
+            var viewModel = new GradeFormViewModel
+            {
+                Id = grade.Id,
+                StudentOptions = students.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = $"{s.FirstName} {s.LastName}",
+                }).ToList(),
+                SubjectOptions = subjects.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name,
+                }).ToList()
+            };
+
+            return View(viewModel);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

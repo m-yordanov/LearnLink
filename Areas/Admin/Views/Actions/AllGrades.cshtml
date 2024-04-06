@@ -1,30 +1,35 @@
 ﻿@model GradeViewModel
 
-<form method="get" asp-action="AllGrades" asp-controller="Actions">
-    <div class="form-row">
-        <div class="form-group col-md-3">
-            <label for="selectedStudent">Student</label>
-            <input type="text" class="form-control" id="selectedStudent" name="selectedStudent" value="@Model.SelectedStudent" />
+<button id="toggleFilters" class="btn btn-primary">Filters</button>
+
+<div id="filterSection" style="display: none;">
+    <form method="get" id="filterForm" asp-action="AllGrades" asp-controller="Actions">
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="selectedStudent">Student</label>
+                <input type="text" class="form-control" id="selectedStudent" name="selectedStudent" value="@Model.SelectedStudent" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="selectedTeacher">Teacher</label>
+                <input type="text" class="form-control" id="selectedTeacher" name="selectedTeacher" value="@Model.SelectedTeacher" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="selectedSubject">Subject</label>
+                <input type="text" class="form-control" id="selectedSubject" name="selectedSubject" value="@Model.SelectedSubject" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dateBefore">Before Date</label>
+                <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd")  : string.Empty)" asp-format="dd.MM.yyyy"/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dateAfter">After Date</label>
+                <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy"/>
+            </div>
         </div>
-        <div class="form-group col-md-3">
-            <label for="selectedTeacher">Teacher</label>
-            <input type="text" class="form-control" id="selectedTeacher" name="selectedTeacher" value="@Model.SelectedTeacher" />
-        </div>
-        <div class="form-group col-md-3">
-            <label for="selectedSubject">Subject</label>
-            <input type="text" class="form-control" id="selectedSubject" name="selectedSubject" value="@Model.SelectedSubject" />
-        </div>
-        <div class="form-group col-md-3">
-            <label for="dateBefore">Before Date</label>
-            <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@Model.DateBefore.ToString("dd.MM.yyyy HH:mm")" />
-        </div>
-        <div class="form-group col-md-3">
-            <label for="dateAfter">After Date</label>
-            <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@Model.DateAfter.ToString("dd.MM.yyyy HH:mm")" />
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Filter</button>
-</form>
+        <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
+        <button type="button" id="clearFilters" class="btn btn-danger">Clear</button>
+    </form>
+</div>
 
 <hr />
 
@@ -47,9 +52,9 @@
                 <td>@(grade.Teacher.FirstName) @(grade.Teacher.LastName)</td>
                 <td>@grade.Subject.Name</td>
                 <td>@grade.Value</td>
-                <td>@grade.DateAndTime.ToShortDateString()</td>
+                <td>@grade.DateAndTime.ToString("dd.MM.yyyy HH:mm")</td>
                 <td>
-                    <a asp-controller="Actions" asp-action="EditGrade" asp-route-id="@grade.Id" class="btn btn-primary">Edit</a>
+                    <a asp-controller="Actions" asp-action="EditGrade" asp-route-id="@grade.Id" class="btn btn-warning">Edit</a>
                     <a asp-controller="Actions" asp-action="DeleteGrade" asp-route-id="@grade.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
@@ -57,7 +62,11 @@
     </tbody>
 </table>
 
-@if (Model.TotalCount > 0)
+@if (Model.TotalCount == 0)
+{
+    <p>No grades found.</p>
+}
+else
 {
     <nav aria-label="Page navigation">
         <ul class="pagination">
@@ -115,5 +124,31 @@
         return baseUrl;
     }
 }
+
+<script>
+    document.getElementById("toggleFilters").addEventListener("click", function () {
+        var filterSection = document.getElementById("filterSection");
+        if (filterSection.style.display === "none") {
+            filterSection.style.display = "block";
+        } else {
+            filterSection.style.display = "none";
+        }
+    });
+
+    document.getElementById("applyFilters").addEventListener("click", function () {
+        document.getElementById("filterForm").submit();
+    });
+
+    document.getElementById("clearFilters").addEventListener("click", function () {
+        document.getElementById("selectedStudent").value = "";
+        document.getElementById("selectedTeacher").value = "";
+        document.getElementById("selectedSubject").value = "";
+        document.getElementById("dateBefore").value = "";
+        document.getElementById("dateAfter").value = "";
+
+        document.getElementById("filterForm").submit();
+    });
+</script>
+
 
 
