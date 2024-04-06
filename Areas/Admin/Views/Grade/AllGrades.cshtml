@@ -54,8 +54,8 @@
                 <td>@grade.Value</td>
                 <td>@grade.DateAndTime.ToString("dd.MM.yyyy HH:mm")</td>
                 <td>
-                    <a asp-controller="Actions" asp-action="EditGrade" asp-route-id="@grade.Id" class="btn btn-warning">Edit</a>
-                    <a asp-controller="Actions" asp-action="DeleteGrade" asp-route-id="@grade.Id" class="btn btn-danger">Delete</a>
+                    <a asp-controller="Grade" asp-action="EditGrade" asp-route-id="@grade.Id" class="btn btn-warning">Edit</a>
+                    <a asp-controller="Grade" asp-action="DeleteGrade" asp-route-id="@grade.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }

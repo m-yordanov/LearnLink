@@ -62,5 +62,42 @@ namespace LearnLink.Services
 
             return true;
         }
+
+        public async Task<bool> UpdateGradeAsync(int id, GradeFormViewModel viewModel)
+        {
+            if (id != viewModel.Id)
+            {
+                return false;
+            }
+
+            var grade = await data.Grades.FindAsync(id);
+            if (grade == null)
+            {
+                return false;
+            }
+
+            grade.SubjectId = viewModel.SelectedSubjectId;
+            grade.StudentId = viewModel.SelectedStudentId;
+            grade.Value = viewModel.Grade;
+
+            data.Update(grade);
+            await data.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DeleteGradeAsync(int id)
+        {
+            var grade = await data.Grades.FindAsync(id);
+            if (grade == null)
+            {
+                return false;
+            }
+
+            data.Grades.Remove(grade);
+            await data.SaveChangesAsync();
+
+            return true;
+        }
     }
 }
