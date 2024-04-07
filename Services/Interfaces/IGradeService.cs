@@ -1,7 +1,4 @@
 ﻿using LearnLink.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LearnLink.Services.Interfaces
 {
