@@ -1,36 +1,168 @@
-﻿@model IEnumerable<LearnLink.Models.AttendanceViewModel>
+﻿@model AttendanceViewModel
 
-@{
-    ViewData["Title"] = "All Attendances";
-}
+<button id="toggleFilters" class="btn btn-primary">Filters</button>
 
-<h1>@ViewData["Title"]</h1>
+<div id="filterSection" style="display: none;">
+    <form method="get" id="filterForm" asp-action="AllAttendances" asp-controller="Attendance">
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="selectedStudent">Student</label>
+                <input type="text" class="form-control" id="selectedStudent" name="selectedStudent" value="@Model.SelectedStudent" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="selectedTeacher">Teacher</label>
+                <input type="text" class="form-control" id="selectedTeacher" name="selectedTeacher" value="@Model.SelectedTeacher" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="selectedSubject">Subject</label>
+                <input type="text" class="form-control" id="selectedSubject" name="selectedSubject" value="@Model.SelectedSubject" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="selectedStatus">Status</label>
+                <select class="form-control" id="selectedStatus" name="selectedStatus">
+                    <option value="">-- Select Status --</option>
+                    <option value="Present" selected="@((Model.SelectedStatus == "Present") ? "selected" : null)">Present</option>
+                    <option value="Absent" selected="@((Model.SelectedStatus == "Absent") ? "selected" : null)">Absent</option>
+                    <option value="Late" selected="@((Model.SelectedStatus == "Late") ? "selected" : null)">Late</option>
+                    <option value="Excused" selected="@((Model.SelectedStatus == "Excused") ? "selected" : null)">Excused</option>
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dateBefore">Before Date</label>
+                <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy"/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dateAfter">After Date</label>
+                <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy"/>
+            </div>
+        </div>
+        <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
+        <button type="button" id="clearFilters" class="btn btn-danger">Clear</button>
+    </form>
+</div>
+
+<hr />
 
 <table class="table">
     <thead>
         <tr>
-            <th>Subject</th>
             <th>Student</th>
-            <th>Status</th>
-            <th>Date and Time</th>
             <th>Teacher</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Date</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var attendance in Model)
+        @foreach (var attendance in Model.FilteredAttendances)
         {
             <tr>
-                <td>@attendance.Subject</td>
-                <td>@(attendance.StudentFirstName + " " + attendance.StudentLastName)</td>
+                <td>@(attendance.Student.FirstName) @(attendance.Student.LastName)</td>
+                <td>@(attendance.Teacher.FirstName) @(attendance.Teacher.LastName)</td>
+                <td>@attendance.Subject.Name</td>
                 <td>@attendance.Status</td>
-                <td>@attendance.DateAndTime.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@(attendance.TeacherFirstName + " " + attendance.TeacherLastName)</td>
+                <td>@attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</td>
                 <td>
-                    <a asp-area="Admin" asp-controller="Attendance" asp-action="EditAttendance" asp-route-id="@attendance.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Edit</a>
-                    <a asp-area="Admin" asp-controller="Attendance" asp-action="DeleteAttendance" asp-route-id="@attendance.Id" class="btn btn-danger mb-2 w-100 p-3 fw-bold">Delete</a>
+                    <a asp-controller="Attendance" asp-action="EditAttendance" asp-route-id="@attendance.Id" class="btn btn-warning">Edit</a>
+                    <a asp-controller="Attendance" asp-action="DeleteAttendance" asp-route-id="@attendance.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@if (Model.TotalCount == 0)
+{
+    <p>No attendances found.</p>
+}
+else
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @if (Model.PageNumber > 1)
+            {
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(1)">First</a></li>
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.PageNumber - 1)">Previous</a></li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")"><a class="page-link" href="@BuildPaginationLink(i)">@i</a></li>
+            }
+
+            @if (Model.PageNumber < Model.TotalPages)
+            {
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.PageNumber + 1)">Next</a></li>
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.TotalPages)">Last</a></li>
+            }
+        </ul>
+    </nav>
+}
+
+@functions {
+    public string BuildPaginationLink(int pageNumber)
+    {
+        string baseUrl = $"?pageNumber={pageNumber}&pageSize=@Model.PageSize";
+
+        if (!string.IsNullOrEmpty(Model.SelectedStudent))
+        {
+            baseUrl += $"&selectedStudent={Model.SelectedStudent}";
+        }
+
+        if (!string.IsNullOrEmpty(Model.SelectedTeacher))
+        {
+            baseUrl += $"&selectedTeacher={Model.SelectedTeacher}";
+        }
+
+        if (!string.IsNullOrEmpty(Model.SelectedSubject))
+        {
+            baseUrl += $"&selectedSubject={Model.SelectedSubject}";
+        }
+
+        if (!string.IsNullOrEmpty(Model.SelectedStatus))
+        {
+            baseUrl += $"&selectedStatus={Model.SelectedStatus}";
+        }
+
+        if (Model.DateBefore != DateTime.MinValue)
+        {
+            baseUrl += $"&dateBefore={Model.DateBefore.ToString("yyyy-MM-dd")}";
+        }
+
+        if (Model.DateAfter != DateTime.MinValue)
+        {
+            baseUrl += $"&dateAfter={Model.DateAfter.ToString("yyyy-MM-dd")}";
+        }
+
+        return baseUrl;
+    }
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("toggleFilters").addEventListener("click", function () {
+            var filterSection = document.getElementById("filterSection");
+            if (filterSection.style.display === "none") {
+                filterSection.style.display = "block";
+            } else {
+                filterSection.style.display = "none";
+            }
+        });
+
+        document.getElementById("applyFilters").addEventListener("click", function () {
+            document.getElementById("filterForm").submit();
+        });
+
+        document.getElementById("clearFilters").addEventListener("click", function () {
+            document.getElementById("selectedStudent").value = "";
+            document.getElementById("selectedTeacher").value = "";
+            document.getElementById("selectedSubject").value = "";
+            document.getElementById("selectedStatus").value = "";
+            document.getElementById("dateBefore").value = "";
+            document.getElementById("dateAfter").value = "";
+
+            document.getElementById("filterForm").submit(); 
+        });
+    });
+</script>
