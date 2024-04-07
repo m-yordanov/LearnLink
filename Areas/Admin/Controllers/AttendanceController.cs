@@ -1,8 +1,6 @@
 ﻿using LearnLink.Data;
-using LearnLink.Data.Models;
 using LearnLink.Data.Models.Enums;
 using LearnLink.Models;
-using LearnLink.Services;
 using LearnLink.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,59 +21,24 @@ namespace LearnLink.Areas.Admin.Controllers
             attendanceManagementService = _AttendanceManagementService;
         }
 
-        public async Task<IActionResult> AllAttendances(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> AllAttendances()
         {
-            var attendancesViewModel = await attendanceService.GetFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter, pageNumber, pageSize);
-            var totalFilteredAttendances = await attendanceService.GetTotalFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
+            var attendances = await data.Attendances
+                .Select(a => new AttendanceViewModel
+                {
+                    Id = a.Id,
+                    Subject = a.Subject.Name,
+                    StudentFirstName = a.Student.FirstName,
+                    StudentLastName = a.Student.LastName,
+                    Status = a.Status,
+                    DateAndTime = a.DateAndTime,
+                    TeacherFirstName = a.Teacher.FirstName,
+                    TeacherLastName = a.Teacher.LastName
+                })
+                .ToListAsync();
 
-            int totalPages = (int)Math.Ceiling((double)totalFilteredAttendances / pageSize);
-
-            var attendances = attendancesViewModel.Select(a => new Attendance
-            {
-                Id = a.Id,
-                Subject = new Subject { Name = a.Subject },
-                Student = new Student { FirstName = a.StudentFirstName, LastName = a.StudentLastName },
-                Teacher = new Teacher { FirstName = a.TeacherFirstName, LastName = a.TeacherLastName },
-                Status = a.Status,
-                DateAndTime = a.DateAndTime
-            }).ToList();
-
-            var viewModel = new AttendanceViewModel
-            {
-                FilteredAttendances = attendances,
-                TotalCount = totalFilteredAttendances,
-                PageSize = pageSize,
-                PageNumber = pageNumber,
-                TotalPages = totalPages,
-                SelectedStudent = selectedStudent,
-                SelectedTeacher = selectedTeacher,
-                SelectedSubject = selectedSubject,
-                SelectedStatus = selectedStatus
-            };
-
-            return View(viewModel);
+            return View(attendances);
         }
-        //public async Task<IActionResult> AllAttendances()
-        //{
-        //    var attendances = await data.Attendances
-        //        .Include(a => a.Subject)
-        //        .Include(a => a.Student)
-        //        .Include(a => a.Teacher)
-        //        .Select(a => new AttendanceViewModel
-        //        {
-        //            Id = a.Id,
-        //            Subject = a.Subject.Name,
-        //            StudentFirstName = a.Student.FirstName,
-        //            StudentLastName = a.Student.LastName,
-        //            Status = a.Status,
-        //            DateAndTime = a.DateAndTime,
-        //            TeacherFirstName = a.Teacher.FirstName,
-        //            TeacherLastName = a.Teacher.LastName
-        //        })
-        //        .ToListAsync();
-
-        //    return View(attendances);
-        //}
 
         public async Task<IActionResult> EditAttendance(int? id)
         {

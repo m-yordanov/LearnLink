@@ -34,10 +34,6 @@ namespace LearnLink.Controllers
                 {
                     return RedirectToAction("TeacherHome");
                 }
-                else if (User.IsInRole("Admin"))
-                {
-                    return RedirectToAction("Dashboard", "Home", new { area = "Admin" });
-                }
                 else
                 {
                     return View();
