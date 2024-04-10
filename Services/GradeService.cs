@@ -79,10 +79,6 @@ public class GradeService : IGradeService
 
     public async Task<int> GetTotalFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter)
     {
-        //IQueryable<Grade> query = data.Grades
-        //    .Include(a => a.Subject)
-        //    .Include(a => a.Student)
-        //    .Include(a => a.Teacher);
         var query = data.Grades.AsQueryable();
 
         if (!string.IsNullOrEmpty(selectedStudent))
@@ -130,5 +126,4 @@ public class GradeService : IGradeService
             DateAndTime = g.DateAndTime
         });
     }
-
 }

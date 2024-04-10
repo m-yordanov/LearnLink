@@ -1,12 +1,6 @@
-﻿using LearnLink.Data;
-using LearnLink.Data.Models;
-using LearnLink.Data.Models.Enums;
-using LearnLink.Models;
-using LearnLink.Services;
+﻿using LearnLink.Models;
 using LearnLink.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink.Areas.Admin.Controllers
 {
@@ -14,11 +8,13 @@ namespace LearnLink.Areas.Admin.Controllers
     {
         private readonly IGradeService gradeService;
         private readonly IGradeManagementService gradeManagementService;
+        private readonly IViewCommonService viewCommonService;
 
-        public GradeController(IGradeService _gradeService, IGradeManagementService _gradeManagementService)
+        public GradeController(IGradeService _gradeService, IGradeManagementService _gradeManagementService, IViewCommonService _viewCommonService)
         {
             gradeService = _gradeService;
             gradeManagementService = _gradeManagementService;
+            viewCommonService = _viewCommonService;
         }
 
         public async Task<IActionResult> AllGrades(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
@@ -39,29 +35,9 @@ namespace LearnLink.Areas.Admin.Controllers
                 TotalPages = totalPages,
                 SelectedStudent = selectedStudent,
                 SelectedTeacher = selectedTeacher,
-                SelectedSubject = selectedSubject
+                SelectedSubject = selectedSubject,
+                SubjectOptions = await viewCommonService.GetAvailableSubjectsAsync()
             };
-            //var grades = gradesViewModel.Select(g => new Grade
-            //{
-            //    Id = g.Id,
-            //    Subject = new Subject { Name = g.Subject },
-            //    Student = new Student { FirstName = g.StudentFirstName, LastName = g.StudentLastName },
-            //    Teacher = new Teacher { FirstName = g.TeacherFirstName, LastName = g.TeacherLastName },
-            //    Value = g.Value,
-            //    DateAndTime = g.DateAndTime
-            //});
-
-            //var viewModel = new GradeViewModel
-            //{
-            //    FilteredGrades = grades,
-            //    TotalCount = totalFilteredGrades,
-            //    PageSize = pageSize,
-            //    PageNumber = pageNumber,
-            //    TotalPages = totalPages,
-            //    SelectedStudent = selectedStudent,
-            //    SelectedTeacher = selectedTeacher,
-            //    SelectedSubject = selectedSubject
-            //};
 
             return View(viewModel);
         }
@@ -95,6 +71,9 @@ namespace LearnLink.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
+                viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
+                viewModel.SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList();
+
                 return View(viewModel);
             }
 

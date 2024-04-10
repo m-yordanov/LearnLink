@@ -45,5 +45,7 @@ namespace LearnLink.Models
         public IEnumerable<Attendance> FilteredAttendances { get; set; }
 
         public IEnumerable<SelectListItem> StatusOptions { get; set; }
+
+        public IEnumerable<SelectListItem> SubjectOptions { get; set; }
     }
 }

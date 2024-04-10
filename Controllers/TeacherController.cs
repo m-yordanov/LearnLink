@@ -6,13 +6,15 @@ namespace LearnLink.Controllers
 {
     public class TeacherController : Controller
     {
-        private readonly IAttendanceManagementService attendanceManagementService;
         private readonly IGradeManagementService gradeManagementService;
+        private readonly IAttendanceManagementService attendanceManagementService;
+        private readonly IViewCommonService viewCommonService;
 
-        public TeacherController(IGradeManagementService _gradeManagementService, IAttendanceManagementService _attendanceManagementService)
+        public TeacherController(IGradeManagementService _gradeManagementService, IAttendanceManagementService _attendanceManagementService, IViewCommonService _viewCommonService)
         {
             gradeManagementService = _gradeManagementService;
             attendanceManagementService = _attendanceManagementService;
+            viewCommonService = _viewCommonService;
         }
 
         [HttpGet]
@@ -20,8 +22,8 @@ namespace LearnLink.Controllers
         {
             var viewModel = new GradeFormViewModel
             {
-                StudentOptions = (await gradeManagementService.GetStudentOptionsAsync()).ToList(),
-                SubjectOptions = (await gradeManagementService.GetSubjectOptionsAsync()).ToList()
+                StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList(),
+                SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList()
             };
 
 
@@ -43,8 +45,8 @@ namespace LearnLink.Controllers
             if (!result)
             {
                 ModelState.AddModelError("", "Failed to add grade.");
-                viewModel.StudentOptions = (await gradeManagementService.GetStudentOptionsAsync()).ToList();
-                viewModel.SubjectOptions = (await gradeManagementService.GetSubjectOptionsAsync()).ToList();
+                viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
+                viewModel.SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList();
                 return View(viewModel);
             }
 
@@ -57,8 +59,8 @@ namespace LearnLink.Controllers
         {
             var viewModel = new AttendanceFormViewModel
             {
-                StudentOptions = (await attendanceManagementService.GetStudentOptionsAsync()).ToList(),
-                SubjectOptions = (await attendanceManagementService.GetSubjectOptionsAsync()).ToList()
+                StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList(),
+                SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList()
             };
 
             if (TempData.ContainsKey("AttendanceAdded") && (bool)TempData["AttendanceAdded"])
@@ -79,15 +81,13 @@ namespace LearnLink.Controllers
             if (!result)
             {
                 ModelState.AddModelError("", "Failed to add attendance.");
-                viewModel.StudentOptions = (await attendanceManagementService.GetStudentOptionsAsync()).ToList();
-                viewModel.SubjectOptions = (await attendanceManagementService.GetSubjectOptionsAsync()).ToList();
+                viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
+                viewModel.SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList();
                 return View(viewModel);
             }
 
             TempData["AttendanceAdded"] = true;
             return RedirectToAction("AddAttendance");
         }
-
-
     }
 }

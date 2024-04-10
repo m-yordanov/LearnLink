@@ -16,26 +16,6 @@ namespace LearnLink.Services
             data = context;
         }
 
-        public async Task<IEnumerable<SelectListItem>> GetStudentOptionsAsync()
-        {
-            var students = await data.Students.ToListAsync();
-            return students.Select(s => new SelectListItem
-            {
-                Value = s.Id.ToString(),
-                Text = $"{s.FirstName} {s.LastName}"
-            });
-        }
-
-        public async Task<IEnumerable<SelectListItem>> GetSubjectOptionsAsync()
-        {
-            var subjects = await data.Subjects.ToListAsync();
-            return subjects.Select(s => new SelectListItem
-            {
-                Value = s.Id.ToString(),
-                Text = s.Name
-            });
-        }
-
         public async Task<GradeFormViewModel> EditGetGradeFormViewModelAsync(int id)
         {
             var grade = await data.Grades.FindAsync(id);

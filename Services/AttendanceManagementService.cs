@@ -18,26 +18,6 @@ namespace LearnLink.Services
             data = context;
         }
 
-        public async Task<IEnumerable<SelectListItem>> GetStudentOptionsAsync()
-        {
-            var students = await data.Students.ToListAsync();
-            return students.Select(s => new SelectListItem
-            {
-                Value = s.Id.ToString(),
-                Text = $"{s.FirstName} {s.LastName}"
-            });
-        }
-
-        public async Task<IEnumerable<SelectListItem>> GetSubjectOptionsAsync()
-        {
-            var subjects = await data.Subjects.ToListAsync();
-            return subjects.Select(s => new SelectListItem
-            {
-                Value = s.Id.ToString(),
-                Text = s.Name
-            });
-        }
-
         public async Task<bool> AddAttendanceAsync(AttendanceFormViewModel viewModel, string userId)
         {
             var teacher = await data.Teachers.FirstOrDefaultAsync(t => t.UserId == userId);
@@ -180,11 +160,6 @@ namespace LearnLink.Services
             await data.SaveChangesAsync();
 
             return true;
-        }
-
-        private bool AttendanceExists(int id)
-        {
-            return data.Attendances.Any(e => e.Id == id);
         }
     }
 }

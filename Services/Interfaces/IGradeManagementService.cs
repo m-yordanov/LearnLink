@@ -5,10 +5,6 @@ namespace LearnLink.Services.Interfaces
 {
     public interface IGradeManagementService
     {
-        Task<IEnumerable<SelectListItem>> GetStudentOptionsAsync();
-
-        Task<IEnumerable<SelectListItem>> GetSubjectOptionsAsync();
-
         Task<GradeFormViewModel> EditGetGradeFormViewModelAsync(int id);
 
         Task<GradeViewModel> DeleteGetGradeViewModelAsync(int id);

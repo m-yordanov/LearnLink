@@ -3,7 +3,7 @@
 <button id="toggleFilters" class="btn btn-primary">Filters</button>
 
 <div id="filterSection" style="display: none;">
-    <form method="get" id="filterForm" asp-action="AllGrades" asp-controller="Actions">
+    <form method="get" id="filterForm" asp-action="AllGrades" asp-controller="Grade">
         <div class="form-row">
             <div class="form-group col-md-3">
                 <label for="selectedStudent">Student</label>
@@ -15,8 +15,9 @@
             </div>
             <div class="form-group col-md-3">
                 <label for="selectedSubject">Subject</label>
-                <input type="text" class="form-control" id="selectedSubject" name="selectedSubject" value="@Model.SelectedSubject" />
+                @Html.DropDownList("selectedSubject", new SelectList(Model.SubjectOptions, "Value", "Text"), "-- Select Subject --", new { @class = "form-control" })
             </div>
+
             <div class="form-group col-md-3">
                 <label for="dateBefore">Before Date</label>
                 <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd")  : string.Empty)" asp-format="dd.MM.yyyy"/>

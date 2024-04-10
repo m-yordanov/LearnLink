@@ -1,26 +1,21 @@
-﻿using LearnLink.Data;
-using LearnLink.Data.Models;
-using LearnLink.Data.Models.Enums;
+﻿using LearnLink.Data.Models;
 using LearnLink.Models;
-using LearnLink.Services;
 using LearnLink.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink.Areas.Admin.Controllers
 {
     public class AttendanceController : AdminBaseController
     {
-        private readonly LearnLinkDbContext data;
         private readonly IAttendanceService attendanceService;
         private readonly IAttendanceManagementService attendanceManagementService;
+        private readonly IViewCommonService viewCommonService;
 
-        public AttendanceController(LearnLinkDbContext context, IAttendanceService _attendanceService, IAttendanceManagementService _AttendanceManagementService)
+        public AttendanceController(IAttendanceService _attendanceService, IAttendanceManagementService _AttendanceManagementService, IViewCommonService _viewCommonService)
         {
-            data = context;
             attendanceService = _attendanceService;
             attendanceManagementService = _AttendanceManagementService;
+            viewCommonService = _viewCommonService;
         }
 
         public async Task<IActionResult> AllAttendances(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
@@ -50,7 +45,8 @@ namespace LearnLink.Areas.Admin.Controllers
                 SelectedStudent = selectedStudent,
                 SelectedTeacher = selectedTeacher,
                 SelectedSubject = selectedSubject,
-                SelectedStatus = selectedStatus
+                SelectedStatus = selectedStatus,
+                SubjectOptions = await viewCommonService.GetAvailableSubjectsAsync()
             };
 
             return View(viewModel);
@@ -82,17 +78,8 @@ namespace LearnLink.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                viewModel.StudentOptions = await data.Students.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = $"{s.FirstName} {s.LastName}"
-                }).ToListAsync();
-
-                viewModel.SubjectOptions = await data.Subjects.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = s.Name
-                }).ToListAsync();
+                viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
+                viewModel.SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList();
 
                 return View(viewModel);
             }
@@ -126,6 +113,7 @@ namespace LearnLink.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var result = await attendanceManagementService.DeleteAttendanceAsync(id);
+            
             if (result)
             {
                 return RedirectToAction(nameof(AllAttendances));
