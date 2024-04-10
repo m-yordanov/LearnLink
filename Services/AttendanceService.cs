@@ -130,5 +130,10 @@ namespace LearnLink.Services
 
             return await query.CountAsync();
         }
+
+        public int CalculateTotalPages(int totalFilteredAttendances, int pageSize)
+        {
+            return (int)Math.Ceiling((double)totalFilteredAttendances / pageSize);
+        }
     }
 }

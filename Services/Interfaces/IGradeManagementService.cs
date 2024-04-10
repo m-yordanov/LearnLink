@@ -9,6 +9,10 @@ namespace LearnLink.Services.Interfaces
 
         Task<IEnumerable<SelectListItem>> GetSubjectOptionsAsync();
 
+        Task<GradeFormViewModel> EditGetGradeFormViewModelAsync(int id);
+
+        Task<GradeViewModel> DeleteGetGradeViewModelAsync(int id);
+
         Task<bool> AddGradeAsync(GradeFormViewModel viewModel, string userId);
 
         Task<bool> UpdateGradeAsync(int id, GradeFormViewModel viewModel);

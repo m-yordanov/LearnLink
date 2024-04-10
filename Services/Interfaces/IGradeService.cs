@@ -1,17 +1,18 @@
-﻿using LearnLink.Models;
+﻿using LearnLink.Data.Models;
+using LearnLink.Models;
 
 namespace LearnLink.Services.Interfaces
 {
     public interface IGradeService
     {
         Task<IEnumerable<GradeViewModel>> GetStudentGradesAsync(string userId);
-        
+
         Task<IEnumerable<GradeViewModel>> GetFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber, int pageSize);
-        
+
         Task<int> GetTotalFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter);
 
-        Task<GradeFormViewModel> EditGetGradeFormViewModelAsync(int id);
+        int CalculateTotalPages(int totalFilteredAttendances, int pageSize);
 
-        Task<GradeViewModel> DeleteGetGradeViewModelAsync(int id);
+        public IEnumerable<Grade> MapToGrades(IEnumerable<GradeViewModel> gradesViewModel);
     }
 }

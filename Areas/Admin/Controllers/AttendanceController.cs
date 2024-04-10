@@ -23,12 +23,12 @@ namespace LearnLink.Areas.Admin.Controllers
             attendanceManagementService = _AttendanceManagementService;
         }
 
-        public async Task<IActionResult> AllAttendances(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> AllAttendances(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
         {
             var attendancesViewModel = await attendanceService.GetFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredAttendances = await attendanceService.GetTotalFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
 
-            int totalPages = (int)Math.Ceiling((double)totalFilteredAttendances / pageSize);
+            int totalPages = attendanceService.CalculateTotalPages(totalFilteredAttendances, pageSize);
 
             var attendances = attendancesViewModel.Select(a => new Attendance
             {
@@ -55,27 +55,6 @@ namespace LearnLink.Areas.Admin.Controllers
 
             return View(viewModel);
         }
-        //public async Task<IActionResult> AllAttendances()
-        //{
-        //    var attendances = await data.Attendances
-        //        .Include(a => a.Subject)
-        //        .Include(a => a.Student)
-        //        .Include(a => a.Teacher)
-        //        .Select(a => new AttendanceViewModel
-        //        {
-        //            Id = a.Id,
-        //            Subject = a.Subject.Name,
-        //            StudentFirstName = a.Student.FirstName,
-        //            StudentLastName = a.Student.LastName,
-        //            Status = a.Status,
-        //            DateAndTime = a.DateAndTime,
-        //            TeacherFirstName = a.Teacher.FirstName,
-        //            TeacherLastName = a.Teacher.LastName
-        //        })
-        //        .ToListAsync();
-
-        //    return View(attendances);
-        //}
 
         public async Task<IActionResult> EditAttendance(int? id)
         {
@@ -84,45 +63,16 @@ namespace LearnLink.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var attendance = await data.Attendances.FindAsync(id);
-            if (attendance == null)
+            var viewModel = await attendanceManagementService.GetAttendanceForEditAsync(id.Value);
+            if (viewModel == null)
             {
                 return NotFound();
             }
-
-            var students = await data.Students.ToListAsync();
-            var subjects = await data.Subjects.ToListAsync();
-
-            var viewModel = new AttendanceFormViewModel
-            {
-                SelectedStudentId = attendance.StudentId,
-                SelectedSubjectId = attendance.SubjectId,
-                Status = attendance.Status,
-                DateAndTime = attendance.DateAndTime,
-                StudentOptions = students.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = $"{s.FirstName} {s.LastName}"
-                }).ToList(),
-                SubjectOptions = subjects.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = s.Name
-                }).ToList(),
-                StatusOptions = Enum.GetValues(typeof(AttendanceStatus))
-                    .Cast<AttendanceStatus>()
-                    .Select(status => new SelectListItem
-                    {
-                        Value = ((int)status).ToString(),
-                        Text = status.ToString()
-                    }).ToList()
-            };
 
             return View(viewModel);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditAttendance(int id, AttendanceFormViewModel viewModel)
         {
             if (id != viewModel.Id)
@@ -132,88 +82,58 @@ namespace LearnLink.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                var students = await data.Students.ToListAsync();
-                var subjects = await data.Subjects.ToListAsync();
-
-                viewModel.StudentOptions = students.Select(s => new SelectListItem
+                viewModel.StudentOptions = await data.Students.Select(s => new SelectListItem
                 {
                     Value = s.Id.ToString(),
                     Text = $"{s.FirstName} {s.LastName}"
-                }).ToList();
+                }).ToListAsync();
 
-                viewModel.SubjectOptions = subjects.Select(s => new SelectListItem
+                viewModel.SubjectOptions = await data.Subjects.Select(s => new SelectListItem
                 {
                     Value = s.Id.ToString(),
                     Text = s.Name
-                }).ToList();
-
-                viewModel.StatusOptions = Enum.GetValues(typeof(AttendanceStatus))
-                    .Cast<AttendanceStatus>()
-                    .Select(status => new SelectListItem
-                    {
-                        Value = ((int)status).ToString(),
-                        Text = status.ToString()
-                    }).ToList();
+                }).ToListAsync();
 
                 return View(viewModel);
             }
 
-            var attendance = await data.Attendances.FindAsync(id);
+            var result = await attendanceManagementService.UpdateAttendanceAsync(id, viewModel);
 
-            if (attendance == null)
+            if (result)
             {
-                return NotFound();
+                return RedirectToAction(nameof(AllAttendances));
             }
-
-            attendance.StudentId = viewModel.SelectedStudentId;
-            attendance.SubjectId = viewModel.SelectedSubjectId;
-            attendance.Status = viewModel.Status;
-
-            data.Update(attendance);
-            await data.SaveChangesAsync();
-
-            return RedirectToAction(nameof(AllAttendances));
+            else
+            {
+                return BadRequest();
+            }
         }
 
         public async Task<IActionResult> DeleteAttendance(int id)
         {
-            var attendance = await data.Attendances
-                .Include(a => a.Student)
-                .Include(a => a.Teacher)
-                .Include(a => a.Subject)
-                .FirstOrDefaultAsync(a => a.Id == id);
-
-            if (attendance == null)
+            var viewModel = await attendanceManagementService.GetAttendanceForDeleteAsync(id);
+            
+            if (viewModel == null)
             {
                 return NotFound();
             }
-
-            var viewModel = new AttendanceViewModel
-            {
-                Id = attendance.Id,
-                StudentFirstName = attendance.Student.FirstName,
-                StudentLastName = attendance.Student.LastName,
-                TeacherFirstName = attendance.Teacher.FirstName,
-                TeacherLastName = attendance.Teacher.LastName,
-                Status = attendance.Status,
-                DateAndTime = attendance.DateAndTime
-            };
 
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id, string entityType)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var attendance = await data.Attendances.FindAsync(id);
-            if (attendance == null)
+            var result = await attendanceManagementService.DeleteAttendanceAsync(id);
+            if (result)
+            {
+                return RedirectToAction(nameof(AllAttendances));
+            }
+            else
             {
                 return NotFound();
             }
-            data.Attendances.Remove(attendance);
-            await data.SaveChangesAsync();
-            return RedirectToAction(nameof(AllAttendances));
         }
     }
 }

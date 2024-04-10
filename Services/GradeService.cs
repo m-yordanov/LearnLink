@@ -1,4 +1,5 @@
 ﻿using LearnLink.Data;
+using LearnLink.Data.Models;
 using LearnLink.Models;
 using LearnLink.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -78,6 +79,10 @@ public class GradeService : IGradeService
 
     public async Task<int> GetTotalFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter)
     {
+        //IQueryable<Grade> query = data.Grades
+        //    .Include(a => a.Subject)
+        //    .Include(a => a.Student)
+        //    .Include(a => a.Teacher);
         var query = data.Grades.AsQueryable();
 
         if (!string.IsNullOrEmpty(selectedStudent))
@@ -108,63 +113,22 @@ public class GradeService : IGradeService
         return await query.CountAsync();
     }
 
-    public async Task<GradeFormViewModel> EditGetGradeFormViewModelAsync(int id)
+    public int CalculateTotalPages(int totalFilteredAttendances, int pageSize)
     {
-        var grade = await data.Grades.FindAsync(id);
-        if (grade == null)
-        {
-            return null;
-        }
-
-        var students = await data.Students.ToListAsync();
-        var subjects = await data.Subjects.ToListAsync();
-
-        var viewModel = new GradeFormViewModel
-        {
-            Id = grade.Id,
-            SelectedSubjectId = grade.SubjectId,
-            SelectedStudentId = grade.StudentId,
-            Grade = grade.Value,
-            StudentOptions = students.Select(s => new SelectListItem
-            {
-                Value = s.Id.ToString(),
-                Text = $"{s.FirstName} {s.LastName}"
-            }).ToList(),
-            SubjectOptions = subjects.Select(s => new SelectListItem
-            {
-                Value = s.Id.ToString(),
-                Text = s.Name
-            }).ToList()
-        };
-
-        return viewModel;
+        return (int)Math.Ceiling((double)totalFilteredAttendances / pageSize);
     }
 
-    public async Task<GradeViewModel> DeleteGetGradeViewModelAsync(int id)
+    public IEnumerable<Grade> MapToGrades(IEnumerable<GradeViewModel> gradesViewModel)
     {
-        var grade = await data.Grades
-            .Include(g => g.Student)
-            .Include(g => g.Teacher)
-            .Include(g => g.Subject)
-            .FirstOrDefaultAsync(g => g.Id == id);
-
-        if (grade == null)
+        return gradesViewModel.Select(g => new Grade
         {
-            return null;
-        }
-
-        var viewModel = new GradeViewModel
-        {
-            Id = grade.Id,
-            Subject = grade.Subject.Name,
-            StudentFirstName = grade.Student.FirstName,
-            StudentLastName = grade.Student.LastName,
-            TeacherFirstName = grade.Teacher.FirstName,
-            TeacherLastName = grade.Teacher.LastName,
-            Value = grade.Value,
-            DateAndTime = grade.DateAndTime
-        };
-
-        return viewModel;
+            Id = g.Id,
+            Subject = new Subject { Name = g.Subject },
+            Student = new Student { FirstName = g.StudentFirstName, LastName = g.StudentLastName },
+            Teacher = new Teacher { FirstName = g.TeacherFirstName, LastName = g.TeacherLastName },
+            Value = g.Value,
+            DateAndTime = g.DateAndTime
+        });
     }
+
 }

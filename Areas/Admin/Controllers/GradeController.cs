@@ -2,6 +2,7 @@
 using LearnLink.Data.Models;
 using LearnLink.Data.Models.Enums;
 using LearnLink.Models;
+using LearnLink.Services;
 using LearnLink.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,34 +12,23 @@ namespace LearnLink.Areas.Admin.Controllers
 {
     public class GradeController : AdminBaseController
     {
-        private readonly LearnLinkDbContext data;
         private readonly IGradeService gradeService;
         private readonly IGradeManagementService gradeManagementService;
 
-        public GradeController(LearnLinkDbContext context, IGradeService _gradeService, IGradeManagementService _gradeManagementService)
+        public GradeController(IGradeService _gradeService, IGradeManagementService _gradeManagementService)
         {
-            data = context;
             gradeService = _gradeService;
             gradeManagementService = _gradeManagementService;
         }
 
-
-        public async Task<IActionResult> AllGrades(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 8)
+        public async Task<IActionResult> AllGrades(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
         {
             var gradesViewModel = await gradeService.GetFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredGrades = await gradeService.GetTotalFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
 
-            int totalPages = (int)Math.Ceiling((double)totalFilteredGrades / pageSize);
+            int totalPages = gradeService.CalculateTotalPages(totalFilteredGrades, pageSize);
 
-            var grades = gradesViewModel.Select(g => new Grade
-            {
-                Id = g.Id,
-                Subject = new Subject { Name = g.Subject },
-                Student = new Student { FirstName = g.StudentFirstName, LastName = g.StudentLastName },
-                Teacher = new Teacher { FirstName = g.TeacherFirstName, LastName = g.TeacherLastName },
-                Value = g.Value,
-                DateAndTime = g.DateAndTime
-            });
+            var grades = gradeService.MapToGrades(gradesViewModel);
 
             var viewModel = new GradeViewModel
             {
@@ -51,6 +41,27 @@ namespace LearnLink.Areas.Admin.Controllers
                 SelectedTeacher = selectedTeacher,
                 SelectedSubject = selectedSubject
             };
+            //var grades = gradesViewModel.Select(g => new Grade
+            //{
+            //    Id = g.Id,
+            //    Subject = new Subject { Name = g.Subject },
+            //    Student = new Student { FirstName = g.StudentFirstName, LastName = g.StudentLastName },
+            //    Teacher = new Teacher { FirstName = g.TeacherFirstName, LastName = g.TeacherLastName },
+            //    Value = g.Value,
+            //    DateAndTime = g.DateAndTime
+            //});
+
+            //var viewModel = new GradeViewModel
+            //{
+            //    FilteredGrades = grades,
+            //    TotalCount = totalFilteredGrades,
+            //    PageSize = pageSize,
+            //    PageNumber = pageNumber,
+            //    TotalPages = totalPages,
+            //    SelectedStudent = selectedStudent,
+            //    SelectedTeacher = selectedTeacher,
+            //    SelectedSubject = selectedSubject
+            //};
 
             return View(viewModel);
         }
@@ -63,7 +74,7 @@ namespace LearnLink.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var viewModel = await gradeService.EditGetGradeFormViewModelAsync(id.Value);
+            var viewModel = await gradeManagementService.EditGetGradeFormViewModelAsync(id.Value);
 
             if (viewModel == null)
             {
@@ -100,7 +111,7 @@ namespace LearnLink.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteGrade(int id)
         {
-            var viewModel = await gradeService.DeleteGetGradeViewModelAsync(id);
+            var viewModel = await gradeManagementService.DeleteGetGradeViewModelAsync(id);
 
             if (viewModel == null)
             {
@@ -122,7 +133,7 @@ namespace LearnLink.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return RedirectToAction(nameof(AllGrades)); 
+            return RedirectToAction(nameof(AllGrades));
         }
     }
 }

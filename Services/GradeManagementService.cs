@@ -36,6 +36,66 @@ namespace LearnLink.Services
             });
         }
 
+        public async Task<GradeFormViewModel> EditGetGradeFormViewModelAsync(int id)
+        {
+            var grade = await data.Grades.FindAsync(id);
+            if (grade == null)
+            {
+                return null;
+            }
+
+            var students = await data.Students.ToListAsync();
+            var subjects = await data.Subjects.ToListAsync();
+
+            var viewModel = new GradeFormViewModel
+            {
+                Id = grade.Id,
+                SelectedSubjectId = grade.SubjectId,
+                SelectedStudentId = grade.StudentId,
+                Grade = grade.Value,
+                StudentOptions = students.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = $"{s.FirstName} {s.LastName}"
+                }).ToList(),
+                SubjectOptions = subjects.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name
+                }).ToList()
+            };
+
+            return viewModel;
+        }
+
+        public async Task<GradeViewModel> DeleteGetGradeViewModelAsync(int id)
+        {
+            var grade = await data.Grades
+                .Include(g => g.Student)
+                .Include(g => g.Teacher)
+                .Include(g => g.Subject)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (grade == null)
+            {
+                return null;
+            }
+
+            var viewModel = new GradeViewModel
+            {
+                Id = grade.Id,
+                Subject = grade.Subject.Name,
+                StudentFirstName = grade.Student.FirstName,
+                StudentLastName = grade.Student.LastName,
+                TeacherFirstName = grade.Teacher.FirstName,
+                TeacherLastName = grade.Teacher.LastName,
+                Value = grade.Value,
+                DateAndTime = grade.DateAndTime
+            };
+
+            return viewModel;
+        }
+
         public async Task<bool> AddGradeAsync(GradeFormViewModel viewModel, string userId)
         {
             var teacher = await data.Teachers.FirstOrDefaultAsync(t => t.UserId == userId);

@@ -1,7 +1,9 @@
 ﻿using LearnLink.Data;
 using LearnLink.Data.Models;
+using LearnLink.Data.Models.Enums;
 using LearnLink.Models;
 using LearnLink.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
@@ -76,5 +78,113 @@ namespace LearnLink.Services
             return true;
         }
 
+        public async Task<AttendanceFormViewModel> GetAttendanceForEditAsync(int? id)
+        {
+            if (id == null)
+            {
+                return null;
+            }
+
+            var attendance = await data.Attendances.FindAsync(id);
+
+            if (attendance == null)
+            {
+                return null;
+            }
+
+            var students = await data.Students.ToListAsync();
+            var subjects = await data.Subjects.ToListAsync();
+
+            var viewModel = new AttendanceFormViewModel
+            {
+                SelectedStudentId = attendance.StudentId,
+                SelectedSubjectId = attendance.SubjectId,
+                Status = attendance.Status,
+                DateAndTime = attendance.DateAndTime,
+                StudentOptions = students.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = $"{s.FirstName} {s.LastName}"
+                }).ToList(),
+                SubjectOptions = subjects.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name
+                }).ToList(),
+            };
+
+            return viewModel;
+        }
+
+        public async Task<bool> UpdateAttendanceAsync(int id, AttendanceFormViewModel viewModel)
+        {
+            if (id != viewModel.Id)
+            {
+                return false;
+            }
+
+            var attendance = await data.Attendances.FindAsync(id);
+
+            if (attendance == null)
+            {
+                return false;
+            }
+
+            attendance.SubjectId = viewModel.SelectedSubjectId;
+            attendance.StudentId = viewModel.SelectedStudentId;
+            attendance.Status = viewModel.Status;
+            attendance.DateAndTime = viewModel.DateAndTime;
+
+            data.Update(attendance);
+            await data.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<AttendanceViewModel> GetAttendanceForDeleteAsync(int id)
+        {
+            var attendance = await data.Attendances
+                .Include(a => a.Student)
+                .Include(a => a.Teacher)
+                .Include(a => a.Subject)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (attendance == null)
+            {
+                return null;
+            }
+
+            var viewModel = new AttendanceViewModel
+            {
+                Id = attendance.Id,
+                StudentFirstName = attendance.Student.FirstName,
+                StudentLastName = attendance.Student.LastName,
+                TeacherFirstName = attendance.Teacher.FirstName,
+                TeacherLastName = attendance.Teacher.LastName,
+                Status = attendance.Status,
+                DateAndTime = attendance.DateAndTime
+            };
+
+            return viewModel;
+        }
+
+        public async Task<bool> DeleteAttendanceAsync(int id)
+        {
+            var attendance = await data.Attendances.FindAsync(id);
+            if (attendance == null)
+            {
+                return false;
+            }
+
+            data.Attendances.Remove(attendance);
+            await data.SaveChangesAsync();
+
+            return true;
+        }
+
+        private bool AttendanceExists(int id)
+        {
+            return data.Attendances.Any(e => e.Id == id);
+        }
     }
 }
