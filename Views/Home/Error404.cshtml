@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Error";
+}
+
+
+<style>
+    .error-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    .error-image {
+        max-width: 100%;
+        margin-bottom: 20px; 
+    }
+
+    .error-container p {
+        font-size: 26px; 
+        line-height: 1.5; 
+    }
+</style>
+
+<div class="error-container">
+    <img class="error-image" src="~/images/errors/404.jpg" alt="404 Image" />
+    <p>The resource you are looking for could not be found.</p>
+    <p>Go back to the <a asp-controller="Home" asp-action="Index">Home</a> Page</p>
+</div>

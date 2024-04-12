@@ -106,7 +106,7 @@ namespace LearnLink.Controllers
                     .Include(a => a.Student)
                     .Where(a => a.Teacher.UserId == teacherId)
                     .OrderByDescending(a => a.DateAndTime)
-                    .Take(3) 
+                    .Take(3)
                     .ToListAsync();
 
                 var viewModel = new TeacherHomeViewModel
@@ -130,10 +130,18 @@ namespace LearnLink.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int? statusCode)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var errorViewModel = new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier };
+
+            if (statusCode == 404)
+            {
+                return View("Error404");
+            }
+
+            return View("Error500", errorViewModel);
         }
     }
 }

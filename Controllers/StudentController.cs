@@ -17,6 +17,7 @@ public class StudentController : Controller
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var studentGrades = await gradeService.GetStudentGradesAsync(userId);
+
         return View(nameof(AllGrades), studentGrades);
     }
 
@@ -24,6 +25,7 @@ public class StudentController : Controller
     {
         var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var attendances = await attendanceService.GetStudentAttendancesAsync(studentId);
+        
         return View(nameof(AllAttendances), attendances);
     }
 }
