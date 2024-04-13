@@ -1,11 +1,5 @@
-﻿using LearnLink.Data;
-using LearnLink.Data.Models;
-using LearnLink.Models;
-using LearnLink.Services;
-using LearnLink.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
+﻿using LearnLink.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink.Areas.Admin.Controllers
 {

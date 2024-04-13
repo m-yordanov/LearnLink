@@ -30,7 +30,7 @@ namespace LearnLink.Areas.Admin.Controllers
                 Id = a.Id,
                 Subject = new Subject { Name = a.Subject },
                 Student = new Student { FirstName = a.StudentFirstName, LastName = a.StudentLastName },
-                Teacher = new Teacher { FirstName = a.TeacherFirstName, LastName = a.TeacherLastName },
+                Teacher = new Data.Models.Teacher { FirstName = a.TeacherFirstName, LastName = a.TeacherLastName },
                 Status = a.Status,
                 DateAndTime = a.DateAndTime
             }).ToList();

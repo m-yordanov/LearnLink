@@ -17,7 +17,7 @@
 		}
 
 		<div class="mt-4">
-			<a class="btn btn-primary" href="@Url.Action("AddGrade", "Teacher")">Add Grades</a>
+			<a class="btn btn-primary" asp-area="Teacher" asp-controller="Grade" asp-action="Add">Add Grades</a>
 		</div>
 	</div>
 
@@ -29,8 +29,7 @@
 		}
 
 		<div class="mt-4">
-			<a class="btn btn-warning" href="@Url.Action("EditAttendances", "Teacher")">Edit Attendances</a>
-			<a class="btn btn-primary" href="@Url.Action("AddAttendance", "Teacher")">Add Attendances</a>
+			<a class="btn btn-primary" asp-area="Teacher" asp-controller="Attendance" asp-action="Add">Add Attendances</a>
 		</div>
 	</div>
 </div>
