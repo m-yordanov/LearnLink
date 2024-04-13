@@ -17,7 +17,7 @@ namespace LearnLink.Areas.Admin.Controllers
             viewCommonService = _viewCommonService;
         }
 
-        public async Task<IActionResult> AllGrades(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
+        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
         {
             var gradesViewModel = await gradeService.GetFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredGrades = await gradeService.GetTotalFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
@@ -43,7 +43,7 @@ namespace LearnLink.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditGrade(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -62,7 +62,7 @@ namespace LearnLink.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditGrade(int id, GradeFormViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, GradeFormViewModel viewModel)
         {
             if (id != viewModel.Id)
             {
@@ -84,11 +84,11 @@ namespace LearnLink.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return RedirectToAction(nameof(AllGrades));
+            return RedirectToAction(nameof(All));
         }
 
         [HttpGet]
-        public async Task<IActionResult> DeleteGrade(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var viewModel = await gradeManagementService.DeleteGetGradeViewModelAsync(id);
 
@@ -112,7 +112,7 @@ namespace LearnLink.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return RedirectToAction(nameof(AllGrades));
+            return RedirectToAction(nameof(All));
         }
     }
 }

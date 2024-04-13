@@ -1,6 +1,6 @@
 ﻿@model AttendanceViewModel
 @{
-    ViewBag.Title = "Delete Attendance";
+    ViewData["Title"] = "Delete Attendance";
 }
 
 <h2 class="text-center">@ViewBag.Title</h2>
@@ -22,7 +22,7 @@
                     <input type="hidden" name="entityType" value="Attendance"/>
                     <input type="hidden" asp-for="Id" />
                     <button type="submit" class="btn btn-danger">Confirm Delete</button>
-                    <a asp-action="AllAttendances" class="btn btn-secondary">Cancel</a>
+                    <a asp-action="All" class="btn btn-secondary">Cancel</a>
                 </form>
             </div>
         </div>

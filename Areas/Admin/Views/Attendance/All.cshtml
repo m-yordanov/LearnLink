@@ -1,9 +1,12 @@
 ﻿@model AttendanceViewModel
+@{
+    ViewData["Title"] = "Attendances";
+}
 
 <button id="toggleFilters" class="btn btn-primary">Filters</button>
 
 <div id="filterSection" style="display: none;">
-    <form method="get" id="filterForm" asp-action="AllAttendances" asp-controller="Attendance">
+    <form method="get" id="filterForm" asp-action="All" asp-controller="Attendance">
         <div class="form-row">
             <div class="form-group col-md-3">
                 <label for="selectedStudent">Student</label>
@@ -64,8 +67,8 @@
                 <td>@attendance.Status</td>
                 <td>@attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</td>
                 <td>
-                    <a asp-controller="Attendance" asp-action="EditAttendance" asp-route-id="@attendance.Id" class="btn btn-warning">Edit</a>
-                    <a asp-controller="Attendance" asp-action="DeleteAttendance" asp-route-id="@attendance.Id" class="btn btn-danger">Delete</a>
+                    <a asp-controller="Attendance" asp-action="Edit" asp-route-id="@attendance.Id" class="btn btn-warning">Edit</a>
+                    <a asp-controller="Attendance" asp-action="Delete" asp-route-id="@attendance.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }

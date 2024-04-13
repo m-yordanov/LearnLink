@@ -18,7 +18,7 @@ namespace LearnLink.Areas.Admin.Controllers
             viewCommonService = _viewCommonService;
         }
 
-        public async Task<IActionResult> AllAttendances(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
+        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
         {
             var attendancesViewModel = await attendanceService.GetFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredAttendances = await attendanceService.GetTotalFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
@@ -52,7 +52,7 @@ namespace LearnLink.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        public async Task<IActionResult> EditAttendance(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -69,7 +69,7 @@ namespace LearnLink.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditAttendance(int id, AttendanceFormViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, AttendanceFormViewModel viewModel)
         {
             if (id != viewModel.Id)
             {
@@ -88,7 +88,7 @@ namespace LearnLink.Areas.Admin.Controllers
 
             if (result)
             {
-                return RedirectToAction(nameof(AllAttendances));
+                return RedirectToAction(nameof(All));
             }
             else
             {
@@ -96,7 +96,7 @@ namespace LearnLink.Areas.Admin.Controllers
             }
         }
 
-        public async Task<IActionResult> DeleteAttendance(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var viewModel = await attendanceManagementService.GetAttendanceForDeleteAsync(id);
             
@@ -116,7 +116,7 @@ namespace LearnLink.Areas.Admin.Controllers
             
             if (result)
             {
-                return RedirectToAction(nameof(AllAttendances));
+                return RedirectToAction(nameof(All));
             }
             else
             {

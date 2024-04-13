@@ -17,6 +17,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IAttendanceManagementService, AttendanceManagementService>();
             services.AddScoped<IGradeManagementService, GradeManagementService>();
             services.AddScoped<IViewCommonService, ViewCommonService>();
+            services.AddScoped<ISubjectService, SubjectService>();
+            services.AddScoped<IUserService, UserService>();
 
             return services;
         }

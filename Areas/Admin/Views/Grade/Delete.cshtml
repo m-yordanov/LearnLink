@@ -1,6 +1,6 @@
 ﻿@model GradeViewModel
 @{
-    ViewBag.Title = "Delete Grade";
+    ViewData["Title"] = "Delete Grade";
 }
 
 <h2 class="text-center">@ViewBag.Title</h2>
@@ -22,7 +22,7 @@
                     <input type="hidden" name="entityType" value="Grade"/>
                     <input type="hidden" asp-for="Id" />
                     <button type="submit" class="btn btn-danger">Confirm Delete</button>
-                    <a asp-action="AllGrades" class="btn btn-secondary">Cancel</a>
+                    <a asp-action="All" class="btn btn-secondary">Cancel</a>
                 </form>
             </div>
         </div>

@@ -1,0 +1,73 @@
+﻿@model List<string>
+
+<h1>All Subjects</h1>
+
+<button id="addSubjectBtn" class="btn btn-primary">Add Subject</button>
+
+<div class="modal" id="addSubjectModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Subject</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createSubjectForm" asp-action="Create" method="post">
+                    <div class="form-group">
+                        <label for="subjectNameInput">Subject Name:</label>
+                        <input type="text" class="form-control" id="subjectNameInput" name="subjectName" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Subject Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var subject in Model)
+        {
+            <tr>
+                <td>@subject</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#addSubjectBtn').click(function () {
+                $('#addSubjectModal').modal('show');
+            });
+
+            $('#createSubjectForm').submit(function (event) {
+                event.preventDefault();
+
+                var subjectName = $('#subjectNameInput').val().trim();
+
+                if (subjectName) {
+                    $.post($(this).attr('action'), { subjectName: subjectName })
+                        .done(function () {
+                            $('#addSubjectModal').modal('hide');
+                            location.reload();
+                        })
+                        .fail(function (error) {
+                            console.error('Failed to create subject:', error);
+                            alert('Failed to create subject. Please try again.');
+                        });
+                } else {
+                    alert('Please enter a subject name.');
+                }
+            });
+        });
+    </script>
+}

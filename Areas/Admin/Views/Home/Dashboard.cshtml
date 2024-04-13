@@ -2,4 +2,41 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h1>Welcome to the Admin Dashboard!</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Hello, Admin!</h1>
+        <p>This is your dashboard. Here you can manage various aspects of the application.</p>
+
+        <hr>
+
+        <div class="card">
+            <div class="card-body">
+                <h3>Available Actions</h3>
+                <br />
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a asp-controller="User" asp-action="All" class="btn btn-primary btn-block">Manage Users</a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-controller="Grade" asp-action="All" class="btn btn-success btn-block">Manage Grades</a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-controller="Attendance" asp-action="All" class="btn btn-warning btn-block">Manage Attendances</a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-controller="Subject" asp-action="All" class="btn btn-info btn-block">Manage Subjects</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
