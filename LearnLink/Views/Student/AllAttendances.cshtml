@@ -1,0 +1,31 @@
+﻿@model IEnumerable<AttendanceViewModel>
+
+@{
+    ViewData["Title"] = "Your attendances";
+}
+
+<div class="text-center mb-4">
+<h1>Attendances</h1>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date and Time</th>
+            <th>Status</th>
+            <th>Subject</th>
+            <th>Teacher</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var attendance in Model)
+        {
+            <tr>
+                <td>@attendance.DateAndTime</td>
+                <td>@attendance.Status</td>
+                <td>@attendance.Subject</td>
+                <td>@(attendance.TeacherFirstName + " " + attendance.TeacherLastName)</td>
+            </tr>
+        }
+    </tbody>
+</table>

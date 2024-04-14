@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearnLink", "LearnLink.csproj", "{CBC75B89-E63C-4B5F-8D71-B70BB8966645}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnLink", "LearnLink\LearnLink.csproj", "{CBC75B89-E63C-4B5F-8D71-B70BB8966645}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearnLink.Core", "LearnLink.Core\LearnLink.Core.csproj", "{A9AE9962-7F82-4A89-90ED-E2607A305031}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearnLink.Infrastructure", "LearnLink.Infrastructure\LearnLink.Infrastructure.csproj", "{7C0B205D-1401-44F6-856C-CC51AA5F00E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{CBC75B89-E63C-4B5F-8D71-B70BB8966645}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBC75B89-E63C-4B5F-8D71-B70BB8966645}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBC75B89-E63C-4B5F-8D71-B70BB8966645}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9AE9962-7F82-4A89-90ED-E2607A305031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9AE9962-7F82-4A89-90ED-E2607A305031}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9AE9962-7F82-4A89-90ED-E2607A305031}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9AE9962-7F82-4A89-90ED-E2607A305031}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C0B205D-1401-44F6-856C-CC51AA5F00E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C0B205D-1401-44F6-856C-CC51AA5F00E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C0B205D-1401-44F6-856C-CC51AA5F00E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C0B205D-1401-44F6-856C-CC51AA5F00E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

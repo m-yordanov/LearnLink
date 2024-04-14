@@ -1,0 +1,30 @@
+﻿@model IEnumerable<GradeViewModel>
+
+@{
+    ViewData["Title"] = "Your Grades";
+}
+<div class="text-center mb-4">
+<h1>Grades</h1>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Value</th>
+            <th>Date and Time</th>
+            <th>Teacher</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var grade in Model)
+        {
+            <tr>
+                <td>@grade.Subject</td>
+                <td>@grade.Value</td>
+                <td>@grade.DateAndTime</td>
+                <td>@(grade.TeacherFirstName + " " + grade.TeacherLastName)</td>
+            </tr>
+        }
+    </tbody>
+</table>
