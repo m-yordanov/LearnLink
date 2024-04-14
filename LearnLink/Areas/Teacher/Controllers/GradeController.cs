@@ -38,7 +38,14 @@ namespace LearnLink.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(GradeFormViewModel viewModel)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (!ModelState.IsValid)
+			{
+				viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
+				viewModel.SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList();
+				return View(viewModel);
+			}
+
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await gradeManagementService.AddGradeAsync(viewModel, userId);
 
             if (!result)
@@ -50,7 +57,7 @@ namespace LearnLink.Areas.Teacher.Controllers
             }
 
             TempData["GradeAdded"] = true;
-            return RedirectToAction("AddGrade");
+            return RedirectToAction(nameof(Add));
         }
     }
 }

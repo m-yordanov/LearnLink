@@ -17,11 +17,8 @@ namespace LearnLink.Core.Models
         public int SelectedSubjectId { get; set; }
 
         [Required(ErrorMessage = "Please select the attendance status.")]
-        public AttendanceStatus Status { get; set; } 
+        public AttendanceStatus Status { get; set; }
 
-        [Display(Name = "Date and Time")]
-        [Required(ErrorMessage = RequiredErrorMessage)]
-        [DisplayFormat(DataFormatString = DateTimeFormat, ApplyFormatInEditMode = true)]
         public DateTime DateAndTime { get; set; }
 
         public List<SelectListItem> StudentOptions { get; set; } = new List<SelectListItem>();

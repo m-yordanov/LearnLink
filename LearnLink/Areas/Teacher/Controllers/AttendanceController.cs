@@ -2,6 +2,8 @@
 using LearnLink.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Globalization;
+using LearnLink.Infrastructure.Data.Models.Enums;
 
 namespace LearnLink.Areas.Teacher.Controllers
 {
@@ -37,6 +39,23 @@ namespace LearnLink.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(AttendanceFormViewModel viewModel)
         {
+			if (!ModelState.IsValid)
+			{
+                if (viewModel.SelectedStudentId <= 0)
+                {
+                    ViewData["SelectedStudentIdValidationError"] = "Please select a student.";
+                }
+
+                if (viewModel.SelectedSubjectId <= 0)
+                {
+                    ViewData["SelectedSubjectIdValidationError"] = "Please select a subject.";
+                }
+
+                viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
+                viewModel.SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList();
+                return View(viewModel);
+			}
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await attendanceManagementService.AddAttendanceAsync(viewModel, userId);
 
@@ -49,7 +68,7 @@ namespace LearnLink.Areas.Teacher.Controllers
             }
 
             TempData["AttendanceAdded"] = true;
-            return RedirectToAction("AddAttendance");
+            return RedirectToAction(nameof(Add));
         }
     }
 }

@@ -87,7 +87,6 @@ namespace LearnLink.Core.Services
             if (subject == null)
                 return false;
 
-
             var grade = new Grade
             {
                 StudentId = viewModel.SelectedStudentId,

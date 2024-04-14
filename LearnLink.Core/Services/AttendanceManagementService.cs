@@ -46,7 +46,7 @@ namespace LearnLink.Core.Services
                 StudentId = viewModel.SelectedStudentId,
                 SubjectId = viewModel.SelectedSubjectId,
                 Status = viewModel.Status,
-                DateAndTime = viewModel.DateAndTime,
+                DateAndTime = DateTime.Now,
                 TeacherId = teacher.Id
             };
 

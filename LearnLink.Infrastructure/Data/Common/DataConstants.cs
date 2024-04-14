@@ -2,8 +2,6 @@
 {
     public static class DataConstants
     {
-		public const string DateTimeFormat = "dd.MM.yyyy HH:mm";
-
         //Subject
 		public const int SubjectMaxNameLength = 50;
 
