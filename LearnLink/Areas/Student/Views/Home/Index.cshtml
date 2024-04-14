@@ -17,7 +17,7 @@
             @if (Model.Grade > 0)
             {
                 <p>@Math.Round(Model.Grade, 2)</p>
-                <a class="btn btn-primary" href="@Url.Action("AllGrades", "Student")">View All Grades</a>
+                <a class="btn btn-primary" asp-area="Student" asp-controller="Grade" asp-action="All">View All Grades</a>
             }
             else
             {
@@ -35,7 +35,7 @@
                     {
                         <li>@attendance.Subject.Name - @attendance.Status - @attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</li>
                     }
-                    <a class="btn btn-primary" href="@Url.Action("AllAttendances", "Student")">View All Attendances</a>
+                    <a class="btn btn-primary" asp-area="Student" asp-controller="Attendance" asp-action="All">View All Attendances</a>
                 </ul>
             }
             else

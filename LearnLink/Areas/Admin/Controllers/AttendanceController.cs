@@ -29,7 +29,7 @@ namespace LearnLink.Areas.Admin.Controllers
             {
                 Id = a.Id,
                 Subject = new Subject { Name = a.Subject },
-                Student = new Student { FirstName = a.StudentFirstName, LastName = a.StudentLastName },
+                Student = new Infrastructure.Data.Models.Student { FirstName = a.StudentFirstName, LastName = a.StudentLastName },
                 Teacher = new Infrastructure.Data.Models.Teacher { FirstName = a.TeacherFirstName, LastName = a.TeacherLastName },
                 Status = a.Status,
                 DateAndTime = a.DateAndTime
