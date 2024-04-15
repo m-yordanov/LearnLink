@@ -18,6 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IViewCommonService, ViewCommonService>();
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IHomeService, HomeService>();
 
             return services;
         }
