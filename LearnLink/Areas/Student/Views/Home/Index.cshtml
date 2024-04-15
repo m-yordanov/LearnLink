@@ -35,7 +35,9 @@
                     {
                         <li>@attendance.Subject.Name - @attendance.Status - @attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</li>
                     }
-                    <a class="btn btn-primary" asp-area="Student" asp-controller="Attendance" asp-action="All">View All Attendances</a>
+                    <div class="button-container" style="margin-top: 15px;">
+                        <a class="btn btn-primary" asp-area="Student" asp-controller="Attendance" asp-action="All">View All Attendances</a>
+                    </div>
                 </ul>
             }
             else

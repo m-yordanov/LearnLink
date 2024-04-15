@@ -1,4 +1,4 @@
-﻿using LearnLink.Core.Services;
+﻿using LearnLink.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -6,9 +6,9 @@ namespace LearnLink.Areas.Teacher.Controllers
 {
     public class HomeController : TeacherBaseController
     {
-        private readonly HomeService homeService;
+        private readonly IHomeService homeService;
 
-        public HomeController(HomeService _homeService)
+        public HomeController(IHomeService _homeService)
         {
             homeService = _homeService;
         }

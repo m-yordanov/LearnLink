@@ -27,7 +27,10 @@
                         <option value="@studentOption.Value">@studentOption.Text</option>
                     }
                 </select>
-                <span asp-validation-for="SelectedStudentId" class="text-danger"></span>
+                @if (!string.IsNullOrEmpty(ViewData["SelectedStudentIdValidationError"] as string))
+                {
+                    <span class="text-danger">@ViewData["SelectedStudentIdValidationError"]</span>
+                }
             </div>
 
             <div class="mb-3">
@@ -39,12 +42,15 @@
                         <option value="@subjectOption.Value">@subjectOption.Text</option>
                     }
                 </select>
-                <span asp-validation-for="SelectedSubjectId" class="text-danger"></span>
+                @if (!string.IsNullOrEmpty(ViewData["SelectedSubjectIdValidationError"] as string))
+                {
+                    <span class="text-danger">@ViewData["SelectedSubjectIdValidationError"]</span>
+                }
             </div>
 
             <div class="mb-3">
                 <label asp-for="Grade" class="form-label">Grade:</label>
-                <input asp-for="Grade" class="form-control" aria-required="true" value="2.00" step="0.5" />
+                <input asp-for="Grade" class="form-control" aria-required="true" step="0.5" />
                 <span asp-validation-for="Grade" class="text-danger"></span>
             </div>
 
