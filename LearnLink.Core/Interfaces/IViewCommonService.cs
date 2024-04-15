@@ -9,5 +9,7 @@ namespace LearnLink.Core.Interfaces
         Task<IEnumerable<SelectListItem>> GetStudentOptionsAsync();
 
         Task<IEnumerable<SelectListItem>> GetSubjectOptionsAsync();
+
+        int CalculateTotalPages(int entityTotal, int pageSize);
     }
 }

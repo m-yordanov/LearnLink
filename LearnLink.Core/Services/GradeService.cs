@@ -110,10 +110,66 @@ namespace LearnLink.Core.Services
 			return await query.CountAsync();
 		}
 
-		public int CalculateTotalPages(int totalFilteredAttendances, int pageSize)
-		{
-			return (int)Math.Ceiling((double)totalFilteredAttendances / pageSize);
-		}
+        public async Task<IEnumerable<GradeViewModel>> StudentGetFilteredGradesAsync(string userId, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber, int pageSize)
+        {
+            var query = data.Grades
+                .Include(g => g.Subject)
+                .Include(g => g.Teacher)
+                .Where(g => g.Student.UserId == userId);
+
+            if (!string.IsNullOrEmpty(selectedSubject))
+            {
+                query = query.Where(g => g.Subject.Name == selectedSubject);
+            }
+
+            if (dateBefore != null)
+            {
+                query = query.Where(g => g.DateAndTime < dateBefore);
+            }
+
+            if (dateAfter != null)
+            {
+                query = query.Where(g => g.DateAndTime > dateAfter);
+            }
+
+            return await query
+                .OrderByDescending(g => g.DateAndTime)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(g => new GradeViewModel
+                {
+                    Subject = g.Subject.Name,
+                    Value = g.Value,
+                    DateAndTime = g.DateAndTime,
+                    TeacherFirstName = g.Teacher.FirstName,
+                    TeacherLastName = g.Teacher.LastName
+                })
+                .ToListAsync();
+        }
+
+        public async Task<int> StudentGetTotalFilteredGradesAsync(string userId, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter)
+        {
+            var query = data.Grades
+                .Where(g => g.Student.UserId == userId);
+
+            if (!string.IsNullOrEmpty(selectedSubject))
+            {
+                query = query.Where(g => g.Subject.Name == selectedSubject);
+            }
+
+            if (dateBefore != null)
+            {
+                query = query.Where(g => g.DateAndTime < dateBefore);
+            }
+
+            if (dateAfter != null)
+            {
+                query = query.Where(g => g.DateAndTime > dateAfter);
+            }
+
+            return await query.CountAsync();
+        }
+
 
 		public IEnumerable<Grade> MapToGrades(IEnumerable<GradeViewModel> gradesViewModel)
 		{
@@ -127,6 +183,6 @@ namespace LearnLink.Core.Services
 				DateAndTime = g.DateAndTime
 			});
 		}
-	}
+    }
 }
 

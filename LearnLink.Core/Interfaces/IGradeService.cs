@@ -11,7 +11,10 @@ namespace LearnLink.Core.Interfaces
 
         Task<int> GetTotalFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter);
 
-        int CalculateTotalPages(int totalFilteredAttendances, int pageSize);
+        Task<IEnumerable<GradeViewModel>> StudentGetFilteredGradesAsync(string userId, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber, int pageSize);
+
+
+        Task<int> StudentGetTotalFilteredGradesAsync(string userId, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter);
 
         public IEnumerable<Grade> MapToGrades(IEnumerable<GradeViewModel> gradesViewModel);
     }

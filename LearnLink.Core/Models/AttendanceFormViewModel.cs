@@ -1,7 +1,6 @@
 ﻿using LearnLink.Infrastructure.Data.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using static LearnLink.Infrastructure.Data.Common.ErrorConstants;
-using static LearnLink.Infrastructure.Data.Common.DataConstants;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LearnLink.Core.Models

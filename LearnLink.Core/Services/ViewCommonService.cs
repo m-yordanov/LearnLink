@@ -47,5 +47,10 @@ namespace LearnLink.Core.Services
                 Text = s.Name
             });
         }
+
+        public int CalculateTotalPages(int entityTotal, int pageSize)
+        {
+            return (int)Math.Ceiling((double)entityTotal / pageSize);
+        }
     }
 }

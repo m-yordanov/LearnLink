@@ -1,10 +1,36 @@
-﻿@model IEnumerable<GradeViewModel>
+﻿@model GradeViewModel
 
 @{
     ViewData["Title"] = "Your Grades";
 }
+
 <div class="text-center mb-4">
-<h1>Grades</h1>
+    <h1>Grades</h1>
+</div>
+
+<button id="toggleFilters" class="btn btn-primary">Filters</button>
+
+<div id="filterSection" style="display: none;">
+    <form method="get" id="filterForm" asp-action="All" asp-controller="Grade">
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="selectedSubject">Subject</label>
+                @Html.DropDownList("SelectedSubject", Model.SubjectOptions, "-- Select Subject --", new { @class = "form-control" })
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dateAfter">After Date</label>
+                <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dateBefore">Before Date</label>
+                <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy" />
+            </div>
+            <div class="form-group col-md-3">
+                <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
+                <button type="button" id="clearFilters" class="btn btn-danger">Clear</button>
+            </div>
+        </div>
+    </form>
 </div>
 
 <table class="table">
@@ -17,14 +43,94 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var grade in Model)
+        @foreach (var grade in Model.FilteredGrades)
         {
             <tr>
-                <td>@grade.Subject</td>
+                <td>@grade.Subject.Name</td>
                 <td>@grade.Value</td>
-                <td>@grade.DateAndTime</td>
-                <td>@(grade.TeacherFirstName + " " + grade.TeacherLastName)</td>
+                <td>@grade.DateAndTime.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>@(grade.Teacher.FirstName) @(grade.Teacher.LastName)</td>
             </tr>
         }
     </tbody>
 </table>
+
+@if (Model.TotalCount == 0)
+{
+    <p>No grades found.</p>
+}
+else
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @if (Model.PageNumber > 1)
+            {
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(1)">First</a></li>
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.PageNumber - 1)">Previous</a></li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")"><a class="page-link" href="@BuildPaginationLink(i)">@i</a></li>
+            }
+
+            @if (Model.PageNumber < Model.TotalPages)
+            {
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.PageNumber + 1)">Next</a></li>
+                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.TotalPages)">Last</a></li>
+            }
+        </ul>
+    </nav>
+}
+
+@functions {
+    public string BuildPaginationLink(int pageNumber)
+    {
+        string baseUrl = $"?pageNumber={pageNumber}&pageSize=@Model.PageSize";
+
+        if (!string.IsNullOrEmpty(Model.SelectedSubject))
+        {
+            baseUrl += $"&selectedSubject={Model.SelectedSubject}";
+        }
+
+        if (Model.DateBefore != DateTime.MinValue)
+        {
+            baseUrl += $"&dateBefore={Model.DateBefore.ToString("yyyy-MM-dd")}";
+        }
+
+        if (Model.DateAfter != DateTime.MinValue)
+        {
+            baseUrl += $"&dateAfter={Model.DateAfter.ToString("yyyy-MM-dd")}";
+        }
+
+        return baseUrl;
+    }
+}
+
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("toggleFilters").addEventListener("click", function () {
+                var filterSection = document.getElementById("filterSection");
+                if (filterSection.style.display === "none") {
+                    filterSection.style.display = "block";
+                } else {
+                    filterSection.style.display = "none";
+                }
+            });
+
+            document.getElementById("applyFilters").addEventListener("click", function () {
+                document.getElementById("filterForm").submit();
+            });
+
+            document.getElementById("clearFilters").addEventListener("click", function () {
+                document.getElementById("SelectedSubject").selectedIndex = 0;
+                document.getElementById("dateAfter").value = "";
+                document.getElementById("dateBefore").value = "";
+
+                document.getElementById("filterForm").submit();
+            });
+        });
+    </script>
+}

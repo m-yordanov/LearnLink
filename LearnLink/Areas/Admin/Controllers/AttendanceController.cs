@@ -23,7 +23,7 @@ namespace LearnLink.Areas.Admin.Controllers
             var attendancesViewModel = await attendanceService.GetFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredAttendances = await attendanceService.GetTotalFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
 
-            int totalPages = attendanceService.CalculateTotalPages(totalFilteredAttendances, pageSize);
+            int totalPages = viewCommonService.CalculateTotalPages(totalFilteredAttendances, pageSize);
 
             var attendances = attendancesViewModel.Select(a => new Attendance
             {

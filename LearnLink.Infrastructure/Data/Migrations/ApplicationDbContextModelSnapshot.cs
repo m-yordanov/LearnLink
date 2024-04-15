@@ -184,7 +184,7 @@ namespace LearnLink.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Attendances");
+                    b.ToTable("Attendances", (string)null);
 
                     b.HasData(
                         new
@@ -238,7 +238,7 @@ namespace LearnLink.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Grades");
+                    b.ToTable("Grades", (string)null);
 
                     b.HasData(
                         new
@@ -291,7 +291,7 @@ namespace LearnLink.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Students");
+                    b.ToTable("Students", (string)null);
 
                     b.HasData(
                         new
@@ -319,7 +319,7 @@ namespace LearnLink.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
 
                     b.HasData(
                         new
@@ -364,7 +364,7 @@ namespace LearnLink.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Teachers");
+                    b.ToTable("Teachers", (string)null);
 
                     b.HasData(
                         new

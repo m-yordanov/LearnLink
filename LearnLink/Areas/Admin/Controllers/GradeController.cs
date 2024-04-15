@@ -1,5 +1,5 @@
-﻿using LearnLink.Core.Models;
-using LearnLink.Core.Interfaces;
+﻿using LearnLink.Core.Interfaces;
+using LearnLink.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearnLink.Areas.Admin.Controllers
@@ -22,7 +22,9 @@ namespace LearnLink.Areas.Admin.Controllers
             var gradesViewModel = await gradeService.GetFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredGrades = await gradeService.GetTotalFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
 
-            int totalPages = gradeService.CalculateTotalPages(totalFilteredGrades, pageSize);
+            int totalPages = viewCommonService.CalculateTotalPages(totalFilteredGrades, pageSize);
+
+            var subjectOptions = await viewCommonService.GetAvailableSubjectsAsync();
 
             var grades = gradeService.MapToGrades(gradesViewModel);
 
@@ -36,7 +38,7 @@ namespace LearnLink.Areas.Admin.Controllers
                 SelectedStudent = selectedStudent,
                 SelectedTeacher = selectedTeacher,
                 SelectedSubject = selectedSubject,
-                SubjectOptions = await viewCommonService.GetAvailableSubjectsAsync()
+                SubjectOptions = subjectOptions
             };
 
             return View(viewModel);
