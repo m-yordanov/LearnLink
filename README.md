@@ -1,5 +1,4 @@
 # LearnLink
-# Introduction
 Welcome to my ASP.NET project about LearnLink, an educational grading platform.
 
 # Functionality
@@ -26,7 +25,7 @@ Welcome to my ASP.NET project about LearnLink, an educational grading platform.
   </li>
 </ul>
 
-#Techincal Specifications
+# Techincal Specifications
 <li>.NET Core 6</li>
 <li>ASP.NET</li>
 <li>Entity Framework Core (ORM)</li>
