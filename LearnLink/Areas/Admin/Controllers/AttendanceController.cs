@@ -1,6 +1,7 @@
 ﻿using LearnLink.Infrastructure.Data.Models;
 using LearnLink.Core.Models;
 using LearnLink.Core.Interfaces;
+using static LearnLink.Core.Constants.MessageConstants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearnLink.Areas.Admin.Controllers
@@ -78,7 +79,8 @@ namespace LearnLink.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
+				TempData[UserMessageError] = "Failed to edit the attendance!";
+				viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
                 viewModel.SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList();
 
                 return View(viewModel);
@@ -86,14 +88,13 @@ namespace LearnLink.Areas.Admin.Controllers
 
             var result = await attendanceManagementService.UpdateAttendanceAsync(id, viewModel);
 
-            if (result)
-            {
-                return RedirectToAction(nameof(All));
-            }
-            else
+            if (!result)
             {
                 return BadRequest();
             }
+
+            TempData[UserMessageSuccess] = "You have edited the attendance!";
+            return RedirectToAction(nameof(All));
         }
 
         public async Task<IActionResult> Delete(int id)
@@ -114,14 +115,13 @@ namespace LearnLink.Areas.Admin.Controllers
         {
             var result = await attendanceManagementService.DeleteAttendanceAsync(id);
             
-            if (result)
-            {
-                return RedirectToAction(nameof(All));
-            }
-            else
+            if (!result)
             {
                 return NotFound();
             }
+
+            TempData[UserMessageSuccess] = "You have deleted the attendance!";
+            return RedirectToAction(nameof(All));
         }
     }
 }

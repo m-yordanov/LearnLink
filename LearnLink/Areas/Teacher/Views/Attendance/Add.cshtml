@@ -7,13 +7,6 @@
     <h1>@ViewData["Title"]</h1>
 </div>
 
-@if (Model.AttendanceAddedSuccessfully)
-{
-    <div class="alert alert-success" role="alert">
-        Attendance added successfully!
-    </div>
-}
-
 <div class="row">
     <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
         <form asp-controller="Attendance" asp-action="Add" method="post">

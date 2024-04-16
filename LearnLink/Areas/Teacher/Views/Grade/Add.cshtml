@@ -8,13 +8,6 @@
     <h1>@ViewData["Title"]</h1>
 </div>
 
-@if (Model.GradeAddedSuccessfully)
-{
-    <div class="alert alert-success" role="alert">
-        Grade added successfully!
-    </div>
-}
-
 <div class="row">
     <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
         <form asp-controller="Grade" asp-action="Add" method="post">

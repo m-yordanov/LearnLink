@@ -1,5 +1,6 @@
 ﻿using LearnLink.Core.Models;
 using LearnLink.Core.Interfaces;
+using static LearnLink.Core.Constants.MessageConstants;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -24,13 +25,6 @@ namespace LearnLink.Areas.Teacher.Controllers
                 StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList(),
                 SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList()
             };
-
-
-            if (TempData.ContainsKey("GradeAdded") && (bool)TempData["GradeAdded"])
-            {
-                viewModel.GradeAddedSuccessfully = true;
-                TempData.Remove("GradeAdded");
-            }
 
             return View(viewModel);
         }
@@ -61,13 +55,17 @@ namespace LearnLink.Areas.Teacher.Controllers
 
             if (!result)
             {
-                ModelState.AddModelError("", "Failed to add grade.");
+				TempData[UserMessageError] = "Failed to add the grade!";
+
+				ModelState.AddModelError("", "Failed to add grade.");
+
                 viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
                 viewModel.SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList();
+                
                 return View(viewModel);
             }
 
-            TempData["GradeAdded"] = true;
+            TempData[UserMessageSuccess] = "You have added the grade!";
             return RedirectToAction(nameof(Add));
         }
     }

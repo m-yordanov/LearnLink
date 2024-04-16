@@ -1,4 +1,5 @@
 ﻿using LearnLink.Core.Interfaces;
+using static LearnLink.Core.Constants.MessageConstants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearnLink.Areas.Admin.Controllers
@@ -38,7 +39,8 @@ namespace LearnLink.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return RedirectToAction(nameof(All));
+			TempData[UserMessageSuccess] = "You have edited the role!";
+			return RedirectToAction(nameof(All));
         }
     }
 }

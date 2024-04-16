@@ -1,5 +1,6 @@
 ﻿using LearnLink.Core.Interfaces;
 using LearnLink.Core.Models;
+using static LearnLink.Core.Constants.MessageConstants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearnLink.Areas.Admin.Controllers
@@ -73,7 +74,8 @@ namespace LearnLink.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
+				TempData[UserMessageError] = "Failed to edit the grade!";
+				viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
                 viewModel.SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList();
 
                 return View(viewModel);
@@ -85,6 +87,8 @@ namespace LearnLink.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
+            TempData[UserMessageSuccess] = "You have edited the grade!";
 
             return RedirectToAction(nameof(All));
         }
@@ -114,6 +118,7 @@ namespace LearnLink.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            TempData[UserMessageSuccess] = "You have deleted the grade!";
             return RedirectToAction(nameof(All));
         }
     }

@@ -1,9 +1,8 @@
-﻿using LearnLink.Core.Models;
-using LearnLink.Core.Interfaces;
+﻿using LearnLink.Core.Interfaces;
+using LearnLink.Core.Models;
+using static LearnLink.Core.Constants.MessageConstants;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Globalization;
-using LearnLink.Infrastructure.Data.Models.Enums;
 
 namespace LearnLink.Areas.Teacher.Controllers
 {
@@ -27,12 +26,6 @@ namespace LearnLink.Areas.Teacher.Controllers
                 SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList()
             };
 
-            if (TempData.ContainsKey("AttendanceAdded") && (bool)TempData["AttendanceAdded"])
-            {
-                viewModel.AttendanceAddedSuccessfully = true;
-                TempData.Remove("AttendanceAdded");
-            }
-
             return View(viewModel);
         }
 
@@ -41,7 +34,9 @@ namespace LearnLink.Areas.Teacher.Controllers
         {
 			if (!ModelState.IsValid)
 			{
-                if (viewModel.SelectedStudentId <= 0)
+				TempData[UserMessageError] = "Failed to add the attendance!";
+
+				if (viewModel.SelectedStudentId <= 0)
                 {
                     ViewData["SelectedStudentIdValidationError"] = "Please select a student.";
                 }
@@ -67,8 +62,8 @@ namespace LearnLink.Areas.Teacher.Controllers
                 return View(viewModel);
             }
 
-            TempData["AttendanceAdded"] = true;
-            return RedirectToAction(nameof(Add));
+			TempData[UserMessageSuccess] = "You have added the attendance!";
+			return RedirectToAction(nameof(Add));
         }
     }
 }

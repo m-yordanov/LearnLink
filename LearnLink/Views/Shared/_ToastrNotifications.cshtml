@@ -1,0 +1,19 @@
+﻿@using LearnLink.Core.Constants;
+
+@if (TempData[MessageConstants.UserMessageSuccess] != null)
+{
+    <script>
+        $(document).ready(function () {
+            toastr.success('@TempData[MessageConstants.UserMessageSuccess]');
+        });
+    </script>
+}
+
+@if (TempData[MessageConstants.UserMessageError] != null)
+{
+    <script>
+        $(document).ready(function () {
+            toastr.error('@TempData[MessageConstants.UserMessageError]');
+        });
+    </script>
+}
