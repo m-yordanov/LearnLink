@@ -1,0 +1,19 @@
+﻿@model SubjectViewModel
+
+@{
+    ViewData["Title"] = "Add Subject";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Add New Subject</h5>
+        <form asp-action="Add" method="post">
+            <div class="form-group">
+                <label for="subjectName">Subject Name:</label>
+                <input type="text" id="subjectName" name="subjectName" class="form-control" />
+                <span asp-validation-for="SubjectName" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Subject</button>
+        </form>
+    </div>
+</div>

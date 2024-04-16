@@ -1,76 +1,54 @@
-﻿@model List<string>
+﻿@model SubjectViewModel
+@{
+    ViewData["Title"] = "Subjects";
+}
 
-<div class="text-center mb-4">
-<h1>Subjects</h1>
-<button id="addSubjectBtn" class="btn btn-primary" style="margin-top: 10px;">Add Subject</button>
+<div class="text-center">
+    <h2>@ViewData["Title"]</h2>
 </div>
 
-
-
-<div class="modal" id="addSubjectModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create New Subject</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="createSubjectForm" asp-action="Create" method="post">
-                    <div class="form-group">
-                        <label for="subjectNameInput">Subject Name:</label>
-                        <input type="text" class="form-control" id="subjectNameInput" name="subjectName" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Create</button>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <form method="get" action="@Url.Action("All")">
+        <input type="text" name="searchString" placeholder="Search by subject name" value="@Model.SearchString" />
+        <button type="submit">Search</button>
+    </form>
+    <a asp-action="Add" class="btn btn-warning">Add New Subject</a>
 </div>
 
 <table class="table">
     <thead>
         <tr>
             <th>Subject Name</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var subject in Model)
+        @foreach (var subject in Model.Subjects)
         {
             <tr>
-                <td>@subject</td>
+                <td>@subject.SubjectName</td>
+                <td>
+                    <a asp-controller="Subject" asp-action="Edit" asp-route-id="@subject.Id" class="btn btn-warning btn-sm">Edit</a>
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('#addSubjectBtn').click(function () {
-                $('#addSubjectModal').modal('show');
-            });
-
-            $('#createSubjectForm').submit(function (event) {
-                event.preventDefault();
-
-                var subjectName = $('#subjectNameInput').val().trim();
-
-                if (subjectName) {
-                    $.post($(this).attr('action'), { subjectName: subjectName })
-                        .done(function () {
-                            $('#addSubjectModal').modal('hide');
-                            location.reload();
-                        })
-                        .fail(function (error) {
-                            console.error('Failed to create subject:', error);
-                            alert('Failed to create subject. Please try again.');
-                        });
-                } else {
-                    alert('Please enter a subject name.');
-                }
-            });
-        });
-    </script>
+@if (Model.TotalCount == 0)
+{
+    <p>No subjects found.</p>
+}
+else
+{
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="?searchString=@Model.SearchString&page=@i&pageSize=@Model.PageSize">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
 }
