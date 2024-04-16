@@ -1,20 +1,56 @@
 ﻿using LearnLink.Core.Interfaces;
 using LearnLink.Core.Models;
-using static LearnLink.Core.Constants.MessageConstants;
+using LearnLink.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using static LearnLink.Core.Constants.MessageConstants;
 
 namespace LearnLink.Areas.Teacher.Controllers
 {
-	public class AttendanceController : TeacherBaseController
+    public class AttendanceController : TeacherBaseController
     {
+        private readonly IAttendanceService attendanceService;
         private readonly IAttendanceManagementService attendanceManagementService;
         private readonly IViewCommonService viewCommonService;
 
-        public AttendanceController(IAttendanceManagementService _attendanceManagementService, IViewCommonService _viewCommonService)
+        public AttendanceController(IAttendanceManagementService _attendanceManagementService, IViewCommonService _viewCommonService, IAttendanceService _attendanceSerivce)
         {
             attendanceManagementService = _attendanceManagementService;
             viewCommonService = _viewCommonService;
+            attendanceService = _attendanceSerivce;
+        }
+        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
+        {
+            var attendancesViewModel = await attendanceService.GetFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter, pageNumber, pageSize);
+            var totalFilteredAttendances = await attendanceService.GetTotalFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
+
+            int totalPages = viewCommonService.CalculateTotalPages(totalFilteredAttendances, pageSize);
+
+            var attendances = attendancesViewModel.Select(a => new Attendance
+            {
+                Id = a.Id,
+                Subject = new Subject { Name = a.Subject },
+                Student = new Infrastructure.Data.Models.Student { FirstName = a.StudentFirstName, LastName = a.StudentLastName },
+                Teacher = new Infrastructure.Data.Models.Teacher { FirstName = a.TeacherFirstName, LastName = a.TeacherLastName },
+                Status = a.Status,
+                DateAndTime = a.DateAndTime
+            }).ToList();
+
+            var viewModel = new AttendanceViewModel
+            {
+                FilteredAttendances = attendances,
+                TotalCount = totalFilteredAttendances,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                TotalPages = totalPages,
+                SelectedStudent = selectedStudent,
+                SelectedTeacher = selectedTeacher,
+                SelectedSubject = selectedSubject,
+                SelectedStatus = selectedStatus,
+                SubjectOptions = await viewCommonService.GetAvailableSubjectsAsync()
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -30,6 +66,7 @@ namespace LearnLink.Areas.Teacher.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(AttendanceFormViewModel viewModel)
         {
 			if (!ModelState.IsValid)

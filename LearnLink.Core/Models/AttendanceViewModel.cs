@@ -42,10 +42,10 @@ namespace LearnLink.Core.Models
 
         public int TotalPages { get; set; }
 
-        public IEnumerable<Attendance> FilteredAttendances { get; set; }
+        public IEnumerable<Attendance> FilteredAttendances { get; set; } = new List<Attendance>();
 
-        public IEnumerable<SelectListItem> StatusOptions { get; set; }
+        public IEnumerable<SelectListItem> StatusOptions { get; set; } = new List<SelectListItem>();
 
-        public IEnumerable<SelectListItem> SubjectOptions { get; set; }
+        public IEnumerable<SelectListItem> SubjectOptions { get; set; } = new List<SelectListItem>();
     }
 }

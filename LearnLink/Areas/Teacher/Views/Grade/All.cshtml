@@ -23,12 +23,12 @@
                 @Html.DropDownList("selectedSubject", new SelectList(Model.SubjectOptions, "Value", "Text"), "-- Select Subject --", new { @class = "form-control" })
             </div>
             <div class="form-group col-md-3">
-                <label for="dateAfter">After Date</label>
-                <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy" />
+                <label for="dateBefore">Before Date</label>
+                <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd")  : string.Empty)" asp-format="dd.MM.yyyy" />
             </div>
             <div class="form-group col-md-3">
-                <label for="dateBefore">Before Date</label>
-                <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd")  : string.Empty)" asp-format="dd.MM.yyyy"/>
+                <label for="dateAfter">After Date</label>
+                <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy" />
             </div>
         </div>
         <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
@@ -44,7 +44,6 @@
             <th>Subject</th>
             <th>Value</th>
             <th>Date</th>
-            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -56,10 +55,6 @@
                 <td>@grade.Subject.Name</td>
                 <td>@grade.Value</td>
                 <td>@grade.DateAndTime.ToString("dd.MM.yyyy HH:mm")</td>
-                <td>
-                    <a asp-controller="Grade" asp-action="Edit" asp-route-id="@grade.Id" class="btn btn-warning">Edit</a>
-                    <a asp-controller="Grade" asp-action="Delete" asp-route-id="@grade.Id" class="btn btn-danger">Delete</a>
-                </td>
             </tr>
         }
     </tbody>
@@ -123,7 +118,6 @@ else
             baseUrl += $"&dateAfter={Model.DateAfter.ToString("yyyy-MM-dd")}";
         }
 
-
         return baseUrl;
     }
 }
@@ -152,6 +146,3 @@ else
         document.getElementById("filterForm").submit();
     });
 </script>
-
-
-

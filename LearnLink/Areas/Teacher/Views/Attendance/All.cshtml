@@ -1,6 +1,6 @@
-﻿@model GradeViewModel
+﻿@model AttendanceViewModel
 @{
-    ViewData["Title"] = "Grades";
+    ViewData["Title"] = "Attendances";
 }
 
 <h2 class="text-center">@ViewData["Title"]</h2>
@@ -8,7 +8,7 @@
 <button id="toggleFilters" class="btn btn-primary">Filters</button>
 
 <div id="filterSection" style="display: none;">
-    <form method="get" id="filterForm" asp-action="All" asp-controller="Grade">
+    <form method="get" id="filterForm" asp-action="All" asp-controller="Attendance">
         <div class="form-row">
             <div class="form-group col-md-3">
                 <label for="selectedStudent">Student</label>
@@ -23,12 +23,22 @@
                 @Html.DropDownList("selectedSubject", new SelectList(Model.SubjectOptions, "Value", "Text"), "-- Select Subject --", new { @class = "form-control" })
             </div>
             <div class="form-group col-md-3">
-                <label for="dateAfter">After Date</label>
-                <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy" />
+                <label for="selectedStatus">Status</label>
+                <select class="form-control" id="selectedStatus" name="selectedStatus">
+                    <option value="">-- Select Status --</option>
+                    <option value="Present" selected="@((Model.SelectedStatus == "Present") ? "selected" : null)">Present</option>
+                    <option value="Absent" selected="@((Model.SelectedStatus == "Absent") ? "selected" : null)">Absent</option>
+                    <option value="Late" selected="@((Model.SelectedStatus == "Late") ? "selected" : null)">Late</option>
+                    <option value="Excused" selected="@((Model.SelectedStatus == "Excused") ? "selected" : null)">Excused</option>
+                </select>
             </div>
             <div class="form-group col-md-3">
                 <label for="dateBefore">Before Date</label>
-                <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd")  : string.Empty)" asp-format="dd.MM.yyyy"/>
+                <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy"/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dateAfter">After Date</label>
+                <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy"/>
             </div>
         </div>
         <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
@@ -42,24 +52,19 @@
             <th>Student</th>
             <th>Teacher</th>
             <th>Subject</th>
-            <th>Value</th>
+            <th>Status</th>
             <th>Date</th>
-            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var grade in Model.FilteredGrades)
+        @foreach (var attendance in Model.FilteredAttendances)
         {
             <tr>
-                <td>@(grade.Student.FirstName) @(grade.Student.LastName)</td>
-                <td>@(grade.Teacher.FirstName) @(grade.Teacher.LastName)</td>
-                <td>@grade.Subject.Name</td>
-                <td>@grade.Value</td>
-                <td>@grade.DateAndTime.ToString("dd.MM.yyyy HH:mm")</td>
-                <td>
-                    <a asp-controller="Grade" asp-action="Edit" asp-route-id="@grade.Id" class="btn btn-warning">Edit</a>
-                    <a asp-controller="Grade" asp-action="Delete" asp-route-id="@grade.Id" class="btn btn-danger">Delete</a>
-                </td>
+                <td>@(attendance.Student.FirstName) @(attendance.Student.LastName)</td>
+                <td>@(attendance.Teacher.FirstName) @(attendance.Teacher.LastName)</td>
+                <td>@attendance.Subject.Name</td>
+                <td>@attendance.Status</td>
+                <td>@attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</td>
             </tr>
         }
     </tbody>
@@ -67,7 +72,7 @@
 
 @if (Model.TotalCount == 0)
 {
-    <p>No grades found.</p>
+    <p>No attendances found.</p>
 }
 else
 {
@@ -113,45 +118,49 @@ else
             baseUrl += $"&selectedSubject={Model.SelectedSubject}";
         }
 
-        @if (Model.DateBefore != DateTime.MinValue)
+        if (!string.IsNullOrEmpty(Model.SelectedStatus))
+        {
+            baseUrl += $"&selectedStatus={Model.SelectedStatus}";
+        }
+
+        if (Model.DateBefore != DateTime.MinValue)
         {
             baseUrl += $"&dateBefore={Model.DateBefore.ToString("yyyy-MM-dd")}";
         }
 
-        @if (Model.DateAfter != DateTime.MinValue)
+        if (Model.DateAfter != DateTime.MinValue)
         {
             baseUrl += $"&dateAfter={Model.DateAfter.ToString("yyyy-MM-dd")}";
         }
-
 
         return baseUrl;
     }
 }
 
 <script>
-    document.getElementById("toggleFilters").addEventListener("click", function () {
-        var filterSection = document.getElementById("filterSection");
-        if (filterSection.style.display === "none") {
-            filterSection.style.display = "block";
-        } else {
-            filterSection.style.display = "none";
-        }
-    });
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("toggleFilters").addEventListener("click", function () {
+            var filterSection = document.getElementById("filterSection");
+            if (filterSection.style.display === "none") {
+                filterSection.style.display = "block";
+            } else {
+                filterSection.style.display = "none";
+            }
+        });
 
-    document.getElementById("applyFilters").addEventListener("click", function () {
-        document.getElementById("filterForm").submit();
-    });
+        document.getElementById("applyFilters").addEventListener("click", function () {
+            document.getElementById("filterForm").submit();
+        });
 
-    document.getElementById("clearFilters").addEventListener("click", function () {
-        document.getElementById("selectedStudent").value = "";
-        document.getElementById("selectedTeacher").value = "";
-        document.getElementById("selectedSubject").value = "";
-        document.getElementById("dateBefore").value = "";
-        document.getElementById("dateAfter").value = "";
+        document.getElementById("clearFilters").addEventListener("click", function () {
+            document.getElementById("selectedStudent").value = "";
+            document.getElementById("selectedTeacher").value = "";
+            document.getElementById("selectedSubject").value = "";
+            document.getElementById("selectedStatus").value = "";
+            document.getElementById("dateBefore").value = "";
+            document.getElementById("dateAfter").value = "";
 
-        document.getElementById("filterForm").submit();
+            document.getElementById("filterForm").submit(); 
+        });
     });
 </script>
-
-
-

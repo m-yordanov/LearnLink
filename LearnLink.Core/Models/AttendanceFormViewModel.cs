@@ -24,7 +24,5 @@ namespace LearnLink.Core.Models
         public List<SelectListItem> SubjectOptions { get; set; } = new List<SelectListItem>();
 
         public List<SelectListItem> StatusOptions { get; set; } = new List<SelectListItem>();
-
-        public bool AttendanceAddedSuccessfully { get; set; }
     }
 }

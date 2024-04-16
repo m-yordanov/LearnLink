@@ -23,9 +23,5 @@ namespace LearnLink.Core.Models
         public List<SelectListItem> SubjectOptions { get; set; } = new List<SelectListItem>();
 
         public List<SelectListItem> StudentOptions { get; set; } = new List<SelectListItem>();
-
-        public bool GradeAddedSuccessfully { get; set; }
-
-        public bool GradeEditedSuccessfully { get; set; }
     }
 }
