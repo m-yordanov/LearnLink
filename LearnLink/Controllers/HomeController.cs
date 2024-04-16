@@ -32,13 +32,18 @@ namespace LearnLink.Controllers
                 }
                 else
                 {
-                    return View();
+                    return RedirectToAction(nameof(Unassigned));
                 }
             }
             else
             {
                 return View();
             }
+        }
+
+        public IActionResult Unassigned()
+        {
+            return View();
         }
 
         public IActionResult Privacy()
