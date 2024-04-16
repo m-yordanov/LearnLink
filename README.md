@@ -25,7 +25,7 @@ Welcome to my ASP.NET project about LearnLink, an educational grading platform.
   </li>
 </ul>
 
-# Techincal Specifications
+# Techologies Used
 <li>.NET Core 6</li>
 <li>ASP.NET</li>
 <li>Entity Framework Core (ORM)</li>
@@ -34,6 +34,9 @@ Welcome to my ASP.NET project about LearnLink, an educational grading platform.
 <li>JavaScript (toastr library)</li>
 <li>NUnit</li>
 <li>Moq</li>
+
+# Database Diagram
+![database_diagram](https://github.com/m-yordanov/LearnLink/assets/114444124/c8f524ed-5924-4b08-a9ba-fbe4094b684c)
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
