@@ -26,9 +26,9 @@ namespace LearnLink.Areas.Student.Controllers
 
             var totalFilteredAttendances = await attendanceService.StudentGetTotalFilteredAttendancesAsync(studentId, selectedSubject, dateAfter, dateBefore, selectedStatus);
 
-            var totalPages = (int)Math.Ceiling((double)totalFilteredAttendances / pageSize);
+			int totalPages = viewCommonService.CalculateTotalPages(totalFilteredAttendances, pageSize);
 
-            var subjectOptions = await viewCommonService.GetSubjectOptionsAsync();
+			var subjectOptions = await viewCommonService.GetSubjectOptionsAsync();
 
             var statusOptions = Enum.GetValues(typeof(AttendanceStatus))
                          .Cast<AttendanceStatus>()

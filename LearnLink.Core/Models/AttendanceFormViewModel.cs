@@ -1,11 +1,10 @@
 ﻿using LearnLink.Infrastructure.Data.Models.Enums;
-using System.ComponentModel.DataAnnotations;
-using static LearnLink.Infrastructure.Data.Common.ErrorConstants;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearnLink.Core.Models
 {
-    public class AttendanceFormViewModel
+	public class AttendanceFormViewModel
     {
         public int Id { get; set; }
 

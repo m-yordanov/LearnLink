@@ -111,7 +111,6 @@ namespace LearnLink.Core.Services
             attendance.SubjectId = viewModel.SelectedSubjectId;
             attendance.StudentId = viewModel.SelectedStudentId;
             attendance.Status = viewModel.Status;
-            attendance.DateAndTime = viewModel.DateAndTime;
 
             data.Update(attendance);
             await data.SaveChangesAsync();
