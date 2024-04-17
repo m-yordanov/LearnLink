@@ -1,6 +1,8 @@
 ﻿using LearnLink.Core.Interfaces;
 using static LearnLink.Core.Constants.MessageConstants;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using LearnLink.Core.Services;
 
 namespace LearnLink.Areas.Admin.Controllers
 {
@@ -24,10 +26,12 @@ namespace LearnLink.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeRole(string userId, string roleName)
         {
             if (string.IsNullOrEmpty(roleName))
             {
+                TempData[UserMessageError] = "Please select a role!";
                 ModelState.AddModelError("roleName", "Please select a role.");
                 return RedirectToAction(nameof(All));
             }
@@ -41,6 +45,24 @@ namespace LearnLink.Areas.Admin.Controllers
 
 			TempData[UserMessageSuccess] = "You have edited the role!";
 			return RedirectToAction(nameof(All));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UnassignRole(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User Id is required.");
+            }
+
+            var success = await userService.UnassignRoleAsync(userId);
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            TempData["UserMessageSuccess"] = "Role successfully unassigned.";
+            return RedirectToAction(nameof(All));
         }
     }
 }

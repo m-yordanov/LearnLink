@@ -9,5 +9,7 @@ namespace LearnLink.Core.Interfaces
         Task<List<string>> GetAllRolesAsync();
 
         Task<bool> ChangeUserRoleAsync(string userId, string roleName);
+
+        Task<bool> UnassignRoleAsync(string userId);
     }
 }

@@ -6,7 +6,7 @@
 		public const int SubjectMaxNameLength = 50;
 
         //Teacher and Student
-        public const int MaxNameLength = 30;
+        public const int MaxNameLength = 20;
 
         //UserIdentity
         public const int UserNameMinLength = 1;

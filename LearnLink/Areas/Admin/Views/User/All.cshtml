@@ -12,7 +12,7 @@
             <th>Email</th>
             <th>Full Name</th>
             <th>Role</th>
-            <th>Change Role</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -23,18 +23,29 @@
                 <td>@user.FullName</td>
                 <td>@string.Join(", ", user.Roles)</td>
                 <td>
-                    <form asp-controller="User" asp-action="ChangeRole" method="post"
-                          onsubmit="return confirm('Are you sure you want to change the role?');">
-                        <input type="hidden" name="userId" value="@user.Id" />
-                        <select name="roleName" class="form-control">
-                            <option value="">-- Select Role --</option>
-                            @foreach (var role in ViewData["Roles"] as List<string>)
-                            {
-                                <option value="@role">@role</option>
-                            }
-                        </select>
-                        <button type="submit" class="btn btn-primary">Assign</button>
-                    </form>
+                    <div class="row">
+                        <div class="col">
+                            <form asp-controller="User" asp-action="ChangeRole" method="post"
+                                  onsubmit="return confirmAction('Are you sure you want to change the role?');">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <select name="roleName" class="form-control">
+                                    <option value="">-- Select Role --</option>
+                                    @foreach (var role in ViewData["Roles"] as List<string>)
+                                    {
+                                        <option value="@role">@role</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-primary">Assign</button>
+                            </form>
+                        </div>
+                        <div class="col">
+                            <form asp-controller="User" asp-action="UnassignRole" method="post"
+                                  onsubmit="return confirmAction('Are you sure you want to unassign the role?');">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="submit" class="btn btn-danger">Unassign</button>
+                            </form>
+                        </div>
+                    </div>
                 </td>
             </tr>
         }
@@ -43,8 +54,8 @@
 
 @section Scripts {
     <script>
-        function confirmChangeRole() {
-            return confirm('Are you sure you want to assign the role?');
+        function confirmAction(message) {
+            return confirm(message);
         }
     </script>
 }
