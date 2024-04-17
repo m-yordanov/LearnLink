@@ -14,5 +14,10 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #ccd921;
+}
+
+.footer {
+    background-color: #a9a9a9;
 }
