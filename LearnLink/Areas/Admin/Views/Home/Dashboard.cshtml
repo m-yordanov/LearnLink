@@ -11,19 +11,11 @@
             <div class="card-body">
                 <h3 class="text-center">Available Actions</h3>
                 <hr>
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <a asp-controller="User" asp-action="All" class="btn btn-primary btn-block">Manage Users</a>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <a asp-controller="Grade" asp-action="All" class="btn btn-success btn-block">Manage Grades</a>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <a asp-controller="Attendance" asp-action="All" class="btn btn-warning btn-block">Manage Attendances</a>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <a asp-controller="Subject" asp-action="All" class="btn btn-info btn-block">Manage Subjects</a>
-                    </div>
+                <div class="text-center">
+                    <a asp-controller="User" asp-action="All" class="btn btn-primary mb-2 mr-2">Manage Users</a>
+                    <a asp-controller="Grade" asp-action="All" class="btn btn-success mb-2 mr-2">Manage Grades</a>
+                    <a asp-controller="Attendance" asp-action="All" class="btn btn-warning mb-2 mr-2">Manage Attendances</a>
+                    <a asp-controller="Subject" asp-action="All" class="btn btn-info mb-2">Manage Subjects</a>
                 </div>
             </div>
         </div>
