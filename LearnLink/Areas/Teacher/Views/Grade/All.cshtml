@@ -5,7 +5,7 @@
 
 <div class="text-center mb-4">
     <h2 class="text-center">@ViewData["Title"]</h2>
-    <a class="btn btn-primary" asp-area="Teacher" asp-controller="Grade" asp-action="Add">Add Grade</a>
+    <a class="btn btn-warning" asp-area="Teacher" asp-controller="Grade" asp-action="Add">Add Grade</a>
 </div>
 
 <button id="toggleFilters" class="btn btn-primary">Filters</button>
@@ -42,7 +42,7 @@
         </div>
         <div class="form-group col-md-3">
             <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
-            <button type="button" id="clearFilters" class="btn btn-danger">Clear</button>
+            <a class="btn btn-danger" asp-area="Teacher" asp-controller="Grade" asp-action="All">Clear</a>
         </div>
     </form>
 </div>
@@ -144,16 +144,6 @@ else
     });
 
     document.getElementById("applyFilters").addEventListener("click", function () {
-        document.getElementById("filterForm").submit();
-    });
-
-    document.getElementById("clearFilters").addEventListener("click", function () {
-        document.getElementById("selectedStudent").value = "";
-        document.getElementById("selectedTeacher").value = "";
-        document.getElementById("selectedSubject").value = "";
-        document.getElementById("dateBefore").value = "";
-        document.getElementById("dateAfter").value = "";
-
         document.getElementById("filterForm").submit();
     });
 </script>

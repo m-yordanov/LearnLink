@@ -5,7 +5,7 @@
 
 <div class="text-center mb-4">
     <h2 class="text-center">@ViewData["Title"]</h2>
-    <a class="btn btn-primary" asp-area="Teacher" asp-controller="Attendance" asp-action="All">Add Attendance</a>
+    <a class="btn btn-warning" asp-area="Teacher" asp-controller="Attendance" asp-action="Add">Add Attendance</a>
 </div>
 
 <button id="toggleFilters" class="btn btn-primary">Filters</button>
@@ -52,7 +52,7 @@
         </div>
         <div class="form-group col-md-3">
             <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
-            <button type="button" id="clearFilters" class="btn btn-danger">Clear</button>
+            <a class="btn btn-danger" asp-area="Teacher" asp-controller="Attendance" asp-action="All">Clear</a>
         </div>
     </form>
 </div>
@@ -152,26 +152,12 @@ else
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("toggleFilters").addEventListener("click", function () {
             var filterSection = document.getElementById("filterSection");
-            if (filterSection.style.display === "none") {
-                filterSection.style.display = "block";
-            } else {
-                filterSection.style.display = "none";
-            }
+            filterSection.style.display = filterSection.style.display === "none" ? "block" : "none";
         });
 
         document.getElementById("applyFilters").addEventListener("click", function () {
             document.getElementById("filterForm").submit();
         });
-
-        document.getElementById("clearFilters").addEventListener("click", function () {
-            document.getElementById("selectedStudent").value = "";
-            document.getElementById("selectedTeacher").value = "";
-            document.getElementById("selectedSubject").value = "";
-            document.getElementById("selectedStatus").value = "";
-            document.getElementById("dateBefore").value = "";
-            document.getElementById("dateAfter").value = "";
-
-            document.getElementById("filterForm").submit(); 
-        });
     });
 </script>
+
