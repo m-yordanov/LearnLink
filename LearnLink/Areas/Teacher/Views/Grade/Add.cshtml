@@ -1,5 +1,4 @@
 ﻿@model GradeFormViewModel
-
 @{
     ViewData["Title"] = "Add Grade";
 }
@@ -40,13 +39,11 @@
                     <span class="text-danger">@ViewData["SelectedSubjectIdValidationError"]</span>
                 }
             </div>
-
             <div class="mb-3">
                 <label asp-for="Grade" class="form-label">Grade:</label>
                 <input asp-for="Grade" class="form-control" aria-required="true" step="0.5" />
                 <span asp-validation-for="Grade" class="text-danger"></span>
             </div>
-
             <div class="mb-3">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>

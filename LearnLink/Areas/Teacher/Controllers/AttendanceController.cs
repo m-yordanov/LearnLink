@@ -4,6 +4,7 @@ using LearnLink.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using static LearnLink.Core.Constants.MessageConstants;
+using static LearnLink.Core.Constants.PaginationConstants;
 
 namespace LearnLink.Areas.Teacher.Controllers
 {
@@ -19,7 +20,7 @@ namespace LearnLink.Areas.Teacher.Controllers
             viewCommonService = _viewCommonService;
             attendanceService = _attendanceSerivce;
         }
-        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
+        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = maxPerPage)
         {
             var attendancesViewModel = await attendanceService.GetFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredAttendances = await attendanceService.GetTotalFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
@@ -71,8 +72,6 @@ namespace LearnLink.Areas.Teacher.Controllers
         {
 			if (!ModelState.IsValid)
 			{
-				TempData[UserMessageError] = "Failed to add the attendance!";
-
 				if (viewModel.SelectedStudentId <= 0)
                 {
                     ViewData["SelectedStudentIdValidationError"] = "Please select a student.";

@@ -1,5 +1,6 @@
 ﻿using LearnLink.Core.Interfaces;
 using LearnLink.Core.Models;
+using static LearnLink.Core.Constants.PaginationConstants;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -16,7 +17,7 @@ namespace LearnLink.Areas.Student.Controllers
             viewCommonService = _viewCommonService;
         }
 
-        public async Task<IActionResult> All(string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> All(string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = maxPerPage)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

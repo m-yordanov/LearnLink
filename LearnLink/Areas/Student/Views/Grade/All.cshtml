@@ -14,16 +14,22 @@
     <form method="get" id="filterForm" asp-action="All" asp-controller="Grade">
         <div class="form-row">
             <div class="form-group col-md-3">
-                <label for="selectedSubject">Subject</label>
-                @Html.DropDownList("SelectedSubject", Model.SubjectOptions, "-- Select Subject --", new { @class = "form-control" })
+                <label asp-for="SelectedSubject">Subject</label>
+                <select asp-for="SelectedSubject" class="form-control">
+                    <option value="">-- Select Subject --</option>
+                    @foreach (var subject in Model.SubjectOptions)
+                    {
+                        <option value="@subject.Text">@subject.Text</option>
+                    }
+                </select>
             </div>
             <div class="form-group col-md-3">
-                <label for="dateAfter">After Date</label>
-                <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy" />
+                <label asp-for="DateAfter">After Date</label>
+                <input asp-for="DateAfter" class="form-control" type="date" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" />
             </div>
             <div class="form-group col-md-3">
-                <label for="dateBefore">Before Date</label>
-                <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy" />
+                <label asp-for="DateBefore">Before Date</label>
+                <input asp-for="DateBefore" class="form-control" type="date" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd") : string.Empty)" />
             </div>
             <div class="form-group col-md-3">
                 <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
@@ -31,6 +37,7 @@
             </div>
         </div>
     </form>
+
 </div>
 
 <table class="table">

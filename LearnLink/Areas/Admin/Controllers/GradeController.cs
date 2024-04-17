@@ -1,6 +1,7 @@
 ﻿using LearnLink.Core.Interfaces;
 using LearnLink.Core.Models;
 using static LearnLink.Core.Constants.MessageConstants;
+using static LearnLink.Core.Constants.PaginationConstants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearnLink.Areas.Admin.Controllers
@@ -18,7 +19,7 @@ namespace LearnLink.Areas.Admin.Controllers
             viewCommonService = _viewCommonService;
         }
 
-        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
+        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = maxPerPage)
         {
             var gradesViewModel = await gradeService.GetFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredGrades = await gradeService.GetTotalFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);

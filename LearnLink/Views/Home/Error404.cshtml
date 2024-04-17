@@ -4,6 +4,10 @@
 
 
 <style>
+    body {
+        background-color: white;
+    }
+
     .error-container {
         position: absolute;
         top: 50%;
@@ -21,10 +25,15 @@
         font-size: 26px; 
         line-height: 1.5; 
     }
+
+    .error-image {
+        max-width: 80%;
+        margin-bottom: 20px;
+    }
 </style>
 
 <div class="error-container">
-    <img class="error-image" src="~/images/errors/404.jpg" alt="404 Image" />
+    <img class="error-image" src="~/images/errors/404nobg.png" alt="404 Image" />
     <p>The resource you are looking for could not be found.</p>
     <p>Go back to the <a asp-controller="Home" asp-action="Index">Home</a> Page</p>
 </div>

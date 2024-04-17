@@ -3,6 +3,7 @@ using LearnLink.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using static LearnLink.Core.Constants.MessageConstants;
+using static LearnLink.Core.Constants.PaginationConstants;
 
 namespace LearnLink.Areas.Teacher.Controllers
 {
@@ -19,7 +20,7 @@ namespace LearnLink.Areas.Teacher.Controllers
             gradeService = _gradeService;
         }
 
-        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = 1)
+        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = maxPerPage)
         {
             var gradesViewModel = await gradeService.GetFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredGrades = await gradeService.GetTotalFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);

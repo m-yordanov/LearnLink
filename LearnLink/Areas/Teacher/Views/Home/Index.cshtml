@@ -8,7 +8,7 @@
 	<h1>Welcome, @Model.FirstName!</h1>
 </div>
 
-<div class="row">
+<div class="row" style="margin-top: 50px;">
 	<div class="col-md-6">
 		<h2>Recently Added Grades</h2>
 		@foreach (var grade in Model.Grades.Take(3))
@@ -17,6 +17,7 @@
 		}
 
 		<div class="mt-4">
+			<a class="btn btn-primary" asp-area="Teacher" asp-controller="Grade" asp-action="All">View All Grades</a>
 			<a class="btn btn-primary" asp-area="Teacher" asp-controller="Grade" asp-action="Add">Add Grades</a>
 		</div>
 	</div>
@@ -29,6 +30,7 @@
 		}
 
 		<div class="mt-4">
+			<a class="btn btn-primary" asp-area="Teacher" asp-controller="Attendance" asp-action="All">View All Attendances</a>
 			<a class="btn btn-primary" asp-area="Teacher" asp-controller="Attendance" asp-action="Add">Add Attendances</a>
 		</div>
 	</div>

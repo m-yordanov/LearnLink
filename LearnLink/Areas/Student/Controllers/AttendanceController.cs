@@ -1,5 +1,6 @@
 ﻿using LearnLink.Core.Interfaces;
 using LearnLink.Core.Models;
+using static LearnLink.Core.Constants.PaginationConstants;
 using LearnLink.Infrastructure.Data.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,7 +19,7 @@ namespace LearnLink.Areas.Student.Controllers
             viewCommonService = _viewCommonService;
         }
 
-        public async Task<IActionResult> All(string selectedSubject, DateTime? dateAfter, DateTime? dateBefore, string selectedStatus, int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> All(string selectedSubject, DateTime? dateAfter, DateTime? dateBefore, string selectedStatus, int pageNumber = 1, int pageSize = maxPerPage)
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

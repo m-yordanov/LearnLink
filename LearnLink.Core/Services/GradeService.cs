@@ -17,10 +17,13 @@ namespace LearnLink.Core.Services
 
 		public async Task<IEnumerable<GradeViewModel>> GetStudentGradesAsync(string userId)
 		{
-			return await data.Grades
-				.Include(g => g.Subject)
-				.Include(g => g.Teacher)
-				.Where(g => g.Student.UserId == userId)
+            var attendances = await data.Grades
+				.Include(a => a.Subject)
+				.Include(a => a.Teacher)
+				.Where(a => a.Student.UserId == userId)
+				.ToListAsync();
+
+            return await data.Grades
 				.Select(g => new GradeViewModel
 				{
 					Subject = g.Subject.Name,

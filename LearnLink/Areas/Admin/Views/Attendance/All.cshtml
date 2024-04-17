@@ -11,39 +11,48 @@
     <form method="get" id="filterForm" asp-action="All" asp-controller="Attendance">
         <div class="form-row">
             <div class="form-group col-md-3">
-                <label for="selectedStudent">Student</label>
-                <input type="text" class="form-control" id="selectedStudent" name="selectedStudent" value="@Model.SelectedStudent" />
+                <label asp-for="SelectedStudent">Student</label>
+                <input asp-for="SelectedStudent" class="form-control" />
             </div>
             <div class="form-group col-md-3">
-                <label for="selectedTeacher">Teacher</label>
-                <input type="text" class="form-control" id="selectedTeacher" name="selectedTeacher" value="@Model.SelectedTeacher" />
+                <label asp-for="SelectedTeacher">Teacher</label>
+                <input asp-for="SelectedTeacher" class="form-control" />
             </div>
             <div class="form-group col-md-3">
-                <label for="selectedSubject">Subject</label>
-                @Html.DropDownList("selectedSubject", new SelectList(Model.SubjectOptions, "Value", "Text"), "-- Select Subject --", new { @class = "form-control" })
-            </div>
-            <div class="form-group col-md-3">
-                <label for="selectedStatus">Status</label>
-                <select class="form-control" id="selectedStatus" name="selectedStatus">
-                    <option value="">-- Select Status --</option>
-                    <option value="Present" selected="@((Model.SelectedStatus == "Present") ? "selected" : null)">Present</option>
-                    <option value="Absent" selected="@((Model.SelectedStatus == "Absent") ? "selected" : null)">Absent</option>
-                    <option value="Late" selected="@((Model.SelectedStatus == "Late") ? "selected" : null)">Late</option>
-                    <option value="Excused" selected="@((Model.SelectedStatus == "Excused") ? "selected" : null)">Excused</option>
+                <label asp-for="SelectedSubject">Subject</label>
+                <select asp-for="SelectedSubject" class="form-control">
+                    <option value="">-- Select Subject --</option>
+                    @foreach (var subject in Model.SubjectOptions)
+                    {
+                        <option value="@subject.Value">@subject.Text</option>
+                    }
                 </select>
             </div>
             <div class="form-group col-md-3">
-                <label for="dateAfter">After Date</label>
-                <input type="date" class="form-control" id="dateAfter" name="dateAfter" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy" />
+                <label asp-for="SelectedStatus">Status</label>
+                <select asp-for="SelectedStatus" class="form-control">
+                    <option value="">-- Select Status --</option>
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                    <option value="Late">Late</option>
+                    <option value="Excused">Excused</option>
+                </select>
             </div>
             <div class="form-group col-md-3">
-                <label for="dateBefore">Before Date</label>
-                <input type="date" class="form-control" id="dateBefore" name="dateBefore" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd") : string.Empty)" asp-format="dd.MM.yyyy"/>
+                <label asp-for="DateAfter">After Date</label>
+                <input asp-for="DateAfter" class="form-control" type="date" value="@((Model.DateAfter != DateTime.MinValue) ? Model.DateAfter.ToString("yyyy-MM-dd") : string.Empty)" />
+            </div>
+            <div class="form-group col-md-3">
+                <label asp-for="DateBefore">Before Date</label>
+                <input asp-for="DateBefore" class="form-control" type="date" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd") : string.Empty)" />
             </div>
         </div>
-        <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
-        <button type="button" id="clearFilters" class="btn btn-danger">Clear</button>
+        <div class="form-group col-md-3">
+            <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
+            <button type="button" id="clearFilters" class="btn btn-danger">Clear</button>
+        </div>
     </form>
+
 </div>
 
 <table class="table">
