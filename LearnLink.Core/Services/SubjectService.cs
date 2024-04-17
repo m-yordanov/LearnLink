@@ -2,7 +2,6 @@
 using LearnLink.Core.Models;
 using LearnLink.Infrastructure.Data;
 using LearnLink.Infrastructure.Data.Models;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -66,29 +65,24 @@ namespace LearnLink.Core.Services
                 throw new ArgumentException("Subject name cannot be empty or null.", nameof(subjectName));
             }
 
-            // Check if the subject already exists
             var existingSubject = await data.Subjects.FirstOrDefaultAsync(s => s.Name == subjectName);
             if (existingSubject != null)
             {
-                return false; // Subject already exists, return false indicating failure
+                return false;
             }
 
-            // Create a new Subject entity
             var newSubject = new Subject { Name = subjectName };
 
-            // Add the new subject to the database
             data.Subjects.Add(newSubject);
 
             try
             {
                 await data.SaveChangesAsync();
-                return true; // Successfully added the subject, return true
+                return true;
             }
             catch (DbUpdateException)
             {
-                // Handle any specific database exception (e.g., unique constraint violation)
-                // Log the error if needed
-                return false; // Return false indicating failure
+                return false;
             }
         }
 

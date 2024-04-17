@@ -6,29 +6,29 @@ namespace LearnLink.Infrastructure.Data.SeedDbContext
 {
     internal class SeedData
     {
-        public ApplicationUser StudentUser { get; set; }
+        public ApplicationUser StudentUser { get; set; } = null!;
 
-        public ApplicationUser TeacherUser { get; set; }
+        public ApplicationUser TeacherUser { get; set; } = null!;
 
-        public ApplicationUser AdminUser { get; set; }
+        public ApplicationUser AdminUser { get; set; } = null!;
 
-        public Student Student { get; set; }
+        public Student Student { get; set; } = null!;
 
-        public Teacher Teacher { get; set; }
+        public Teacher Teacher { get; set; } = null!;
 
-        public Subject FirstSubject { get; private set; }
+        public Subject FirstSubject { get; private set; } = null!;
 
-        public Subject SecondSubject { get; private set; }
+        public Subject SecondSubject { get; private set; } = null!;
 
-        public Subject ThirdSubject { get; private set; }
+        public Subject ThirdSubject { get; private set; } = null!;
 
-        public Attendance FirstAttendance { get; private set; }
+        public Attendance FirstAttendance { get; private set; } = null!;
         
-        public Attendance SecondAttendance { get; private set; }
+        public Attendance SecondAttendance { get; private set; } = null!;
         
-        public Grade FirstGrade { get; private set; }
+        public Grade FirstGrade { get; private set; } = null!;
         
-        public Grade SecondGrade { get; private set; }
+        public Grade SecondGrade { get; private set; } = null!;
 
         public SeedData()
         {

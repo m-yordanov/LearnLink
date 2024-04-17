@@ -11,11 +11,6 @@ namespace LearnLink.Infrastructure.Data
             : base(options)
         {
         }
-        public DbSet<Student> Students { get; set; }
-        public DbSet<Teacher> Teachers { get; set; }
-        public DbSet<Grade> Grades { get; set; }
-        public DbSet<Attendance> Attendances { get; set; }
-        public DbSet<Subject> Subjects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,5 +23,15 @@ namespace LearnLink.Infrastructure.Data
 
             base.OnModelCreating(modelBuilder);
         }
+
+        public DbSet<Student> Students { get; set; } = null!;
+        
+        public DbSet<Teacher> Teachers { get; set; } = null!;
+        
+        public DbSet<Grade> Grades { get; set; } = null!;
+        
+        public DbSet<Attendance> Attendances { get; set; } = null!;
+
+        public DbSet<Subject> Subjects { get; set; } = null!;
     }
 }

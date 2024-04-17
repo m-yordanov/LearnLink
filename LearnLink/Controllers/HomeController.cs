@@ -41,12 +41,8 @@ namespace LearnLink.Controllers
             }
         }
 
+        [Authorize]
         public IActionResult Unassigned()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }

@@ -10,7 +10,7 @@ namespace LearnLink.Infrastructure.Data.SeedDbContext
         {
             var data = new SeedData();
 
-            builder.HasData(new Subject[] {data.FirstSubject, data.SecondSubject });
+            builder.HasData(new Subject[] {data.FirstSubject, data.SecondSubject, data.ThirdSubject });
         }
     }
 }
