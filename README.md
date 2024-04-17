@@ -39,4 +39,4 @@ Welcome to my ASP.NET project about LearnLink, an educational grading platform.
 ![database_diagram](https://github.com/m-yordanov/LearnLink/assets/114444124/c8f524ed-5924-4b08-a9ba-fbe4094b684c)
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.txt) file for details.
