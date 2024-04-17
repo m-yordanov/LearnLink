@@ -43,6 +43,7 @@ namespace LearnLink.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(string subjectName)
         {
             if (string.IsNullOrEmpty(subjectName))
@@ -64,38 +65,6 @@ namespace LearnLink.Areas.Admin.Controllers
             TempData[UserMessageSuccess] = "You added the subject successfully!";
             return RedirectToAction(nameof(All));
         }
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(string subjectName)
-        //{
-        //    if (string.IsNullOrEmpty(subjectName))
-        //    {
-        //        ModelState.AddModelError("subjectName", "Please enter a subject name.");
-        //        return RedirectToAction(nameof(All));
-        //    }
-
-        //    try
-        //    {
-        //        bool success = await subjectService.CreateSubjectAsync(subjectName);
-        //        if (success)
-        //        {
-        //            TempData[UserMessageSuccess] = "You have created the subject!";
-        //            return RedirectToAction(nameof(All));
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError("subjectName", "Subject already exists.");
-        //            return RedirectToAction(nameof(All));
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TempData[UserMessageError] = "Failed to create the subject!";
-        //        ModelState.AddModelError("", $"Failed to create subject: {ex.Message}");
-        //        return RedirectToAction(nameof(All));
-        //    }
-        //}
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)

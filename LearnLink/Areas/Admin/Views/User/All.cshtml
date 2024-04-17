@@ -27,6 +27,7 @@
                         <div class="col">
                             <form asp-controller="User" asp-action="ChangeRole" method="post"
                                   onsubmit="return confirmAction('Are you sure you want to change the role?');">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="userId" value="@user.Id" />
                                 <select name="roleName" class="form-control">
                                     <option value="">-- Select Role --</option>
@@ -40,7 +41,7 @@
                         </div>
                         <div class="col">
                             <form asp-controller="User" asp-action="UnassignRole" method="post"
-                                  onsubmit="return confirmAction('Are you sure you want to unassign the role?');">
+                                  onsubmit="return confirmAction('Are you sure you want to unassign the role?');" asp-antiforgery="true">
                                 <input type="hidden" name="userId" value="@user.Id" />
                                 <button type="submit" class="btn btn-danger">Unassign</button>
                             </form>

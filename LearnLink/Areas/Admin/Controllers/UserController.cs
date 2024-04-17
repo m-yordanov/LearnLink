@@ -1,8 +1,6 @@
 ﻿using LearnLink.Core.Interfaces;
-using static LearnLink.Core.Constants.MessageConstants;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using LearnLink.Core.Services;
+using static LearnLink.Core.Constants.MessageConstants;
 
 namespace LearnLink.Areas.Admin.Controllers
 {
@@ -48,6 +46,7 @@ namespace LearnLink.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnassignRole(string userId)
         {
             if (string.IsNullOrEmpty(userId))

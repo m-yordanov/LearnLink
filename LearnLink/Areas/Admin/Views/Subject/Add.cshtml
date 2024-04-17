@@ -6,7 +6,7 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Add New Subject</h5>
-        <form asp-action="Add" method="post">
+        <form asp-action="Add" method="post" asp-antiforgery="true">
             <div class="form-group">
                 <label for="subjectName">Subject Name:</label>
                 <input type="text" id="subjectName" name="subjectName" class="form-control" />

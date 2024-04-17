@@ -71,6 +71,7 @@ namespace LearnLink.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, AttendanceFormViewModel viewModel)
         {
             if (id != viewModel.Id)
