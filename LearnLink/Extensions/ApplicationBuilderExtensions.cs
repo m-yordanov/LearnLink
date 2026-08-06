@@ -6,6 +6,11 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class ApplicationBuilderExtensions
     {
+        private const string DefaultAdminEmail = "admin@mail.com";
+
+        private const string DefaultAdminPassword = "3Z4ZSLc1jTXxYiD";
+
+
         public static async Task SeedRoles(this IApplicationBuilder app)
         {
             using (var scope = app.ApplicationServices.CreateScope())
@@ -27,19 +32,52 @@ namespace Microsoft.AspNetCore.Builder
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var email = configuration["AdminUser:Email"] ?? DefaultAdminEmail;
 
-                if (userManager != null && roleManager != null)
+                var admin = await userManager.FindByEmailAsync(email);
+
+                if (admin == null)
                 {
-                    string email = "admin@mail.com";
-
-                    var admin = await userManager.FindByEmailAsync(email);
-
-                    if (await userManager.FindByEmailAsync(email) != null)
+                    admin = new ApplicationUser
                     {
-                        await userManager.AddToRoleAsync(admin, AdminRole);
+                        UserName = email,
+                        Email = email,
+                        FirstName = "The",
+                        LastName = "Admin"
+                    };
+
+                    var password = configuration["AdminUser:Password"] ?? DefaultAdminPassword;
+
+                    var createResult = await userManager.CreateAsync(admin, password);
+
+                    if (!createResult.Succeeded)
+                    {
+                        logger.LogError("Failed to create the admin user '{Email}': {Errors}",
+                            email,
+                            string.Join("; ", createResult.Errors.Select(e => e.Description)));
+
+                        return;
                     }
+
+                    logger.LogInformation("Created the admin user '{Email}'.", email);
+                }
+
+                if (await userManager.IsInRoleAsync(admin, AdminRole))
+                {
+                    return;
+                }
+
+                var roleResult = await userManager.AddToRoleAsync(admin, AdminRole);
+
+                if (!roleResult.Succeeded)
+                {
+                    logger.LogError("Failed to add '{Email}' to the {Role} role: {Errors}",
+                        email,
+                        AdminRole,
+                        string.Join("; ", roleResult.Errors.Select(e => e.Description)));
                 }
             }
         }
