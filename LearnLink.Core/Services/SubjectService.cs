@@ -117,6 +117,7 @@ namespace LearnLink.Core.Services
 
             var viewModel = new SubjectViewModel
             {
+                Id = subject.Id,
                 SubjectName = subject.Name
             };
 
