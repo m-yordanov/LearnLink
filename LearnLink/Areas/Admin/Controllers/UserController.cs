@@ -1,5 +1,7 @@
 ﻿using LearnLink.Core.Interfaces;
+using LearnLink.Core.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using static LearnLink.Core.Constants.MessageConstants;
 
 namespace LearnLink.Areas.Admin.Controllers
@@ -63,5 +65,68 @@ namespace LearnLink.Areas.Admin.Controllers
             TempData["UserMessageSuccess"] = "Role successfully unassigned.";
             return RedirectToAction(nameof(All));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("User Id is required.");
+            }
+
+            if (id == GetCurrentUserId())
+            {
+                TempData[UserMessageError] = "You cannot delete your own account!";
+                return RedirectToAction(nameof(All));
+            }
+
+            var viewModel = await userService.GetUserForDeleteAsync(id);
+
+            if (viewModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("User Id is required.");
+            }
+
+            if (id == GetCurrentUserId())
+            {
+                TempData[UserMessageError] = "You cannot delete your own account!";
+                return RedirectToAction(nameof(All));
+            }
+
+            var result = await userService.DeleteUserAsync(id);
+
+            switch (result)
+            {
+                case UserDeleteResult.UserNotFound:
+                    return NotFound();
+
+                case UserDeleteResult.LastAdmin:
+                    TempData[UserMessageError] = "You cannot delete the last administrator!";
+                    return RedirectToAction(nameof(All));
+
+                case UserDeleteResult.Failed:
+                    TempData[UserMessageError] = "Failed to delete the user!";
+                    return RedirectToAction(nameof(All));
+
+                default:
+                    TempData[UserMessageSuccess] = "You have deleted the user!";
+                    return RedirectToAction(nameof(All));
+            }
+        }
+
+        private string? GetCurrentUserId()
+            => User.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 }

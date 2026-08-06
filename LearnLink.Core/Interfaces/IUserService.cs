@@ -11,5 +11,9 @@ namespace LearnLink.Core.Interfaces
         Task<bool> ChangeUserRoleAsync(string userId, string roleName);
 
         Task<bool> UnassignRoleAsync(string userId);
+
+        Task<UserDeleteViewModel?> GetUserForDeleteAsync(string userId);
+
+        Task<UserDeleteResult> DeleteUserAsync(string userId);
     }
 }

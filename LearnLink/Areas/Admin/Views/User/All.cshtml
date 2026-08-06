@@ -1,7 +1,10 @@
-﻿@model List<UserViewModel>
+﻿@using System.Security.Claims
+@model List<UserViewModel>
 
 @{
     ViewData["Title"] = "Users";
+    var roles = ViewData["Roles"] as List<string> ?? new List<string>();
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
 <h2 class="text-center">@ViewData["Title"]</h2>
@@ -31,7 +34,7 @@
                                 <input type="hidden" name="userId" value="@user.Id" />
                                 <select name="roleName" class="form-control">
                                     <option value="">-- Select Role --</option>
-                                    @foreach (var role in ViewData["Roles"] as List<string>)
+                                    @foreach (var role in roles)
                                     {
                                         <option value="@role">@role</option>
                                     }
@@ -45,6 +48,12 @@
                                 <input type="hidden" name="userId" value="@user.Id" />
                                 <button type="submit" class="btn btn-danger">Unassign</button>
                             </form>
+                        </div>
+                        <div class="col">
+                            @if (user.Id != currentUserId)
+                            {
+                                <a asp-controller="User" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-outline-danger">Delete</a>
+                            }
                         </div>
                     </div>
                 </td>
