@@ -30,7 +30,7 @@ namespace LearnLink.Core.Services
 
         public async Task<IEnumerable<SelectListItem>> GetStudentOptionsAsync()
         {
-            var students = await data.Students.ToListAsync();
+            var students = await data.Students.Where(s => s.IsActive).ToListAsync();
             return students.Select(s => new SelectListItem
             {
                 Value = s.Id.ToString(),

@@ -27,6 +27,9 @@ namespace LearnLink.Infrastructure.Data.Models
         [ForeignKey(nameof(UserId))]
         public ApplicationUser IdentityUser { get; set; } = null!;
 
+        [Required]
+        public bool IsActive { get; set; } = true;
+
         public ICollection<Grade> Grades { get; set; } = new List<Grade>();
 
         public ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();

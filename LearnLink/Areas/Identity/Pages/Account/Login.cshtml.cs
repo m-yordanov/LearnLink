@@ -115,6 +115,11 @@ namespace LearnLink.Areas.Identity.Pages.Account
 
                     return LocalRedirect(returnUrl);
                 }
+                else if (result.IsLockedOut)
+                {
+                    ModelState.AddModelError(string.Empty, "This account has been deactivated.");
+                    return Page();
+                }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");

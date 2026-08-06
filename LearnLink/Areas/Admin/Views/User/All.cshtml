@@ -24,6 +24,7 @@
             <th>Email</th>
             <th>Full Name</th>
             <th>Role</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -34,6 +35,16 @@
                 <td>@user.Email</td>
                 <td>@user.FullName</td>
                 <td>@string.Join(", ", user.Roles)</td>
+                <td>
+                    @if (user.IsActive)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Deactivated</span>
+                    }
+                </td>
                 <td>
                     <div class="row">
                         <div class="col">
@@ -57,6 +68,19 @@
                                 <input type="hidden" name="userId" value="@user.Id" />
                                 <button type="submit" class="btn btn-danger">Unassign</button>
                             </form>
+                        </div>
+                        <div class="col">
+                            @if (user.Id != currentUserId)
+                            {
+                                <form asp-controller="User" asp-action="SetActive" method="post" asp-antiforgery="true"
+                                      onsubmit="return confirmAction('@(user.IsActive ? "Deactivate this user? They will not be able to log in, but all their data is kept." : "Activate this user again?")');">
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    <input type="hidden" name="isActive" value="@((!user.IsActive).ToString())" />
+                                    <button type="submit" class="btn btn-secondary">
+                                        @(user.IsActive ? "Deactivate" : "Activate")
+                                    </button>
+                                </form>
+                            }
                         </div>
                         <div class="col">
                             @if (user.Id != currentUserId)

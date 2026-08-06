@@ -123,6 +123,35 @@ namespace LearnLink.Areas.Admin.Controllers
             return RedirectToAction(nameof(All));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetActive(string userId, bool isActive)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User Id is required.");
+            }
+
+            if (userId == GetCurrentUserId())
+            {
+                TempData[UserMessageError] = "You cannot deactivate your own account!";
+                return RedirectToAction(nameof(All));
+            }
+
+            var success = await userService.SetUserActiveAsync(userId, isActive);
+
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            TempData[UserMessageSuccess] = isActive
+                ? "You have activated the user!"
+                : "You have deactivated the user!";
+
+            return RedirectToAction(nameof(All));
+        }
+
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {

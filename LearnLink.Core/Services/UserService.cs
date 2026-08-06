@@ -21,6 +21,8 @@ namespace LearnLink.Core.Services
 
         public async Task<List<UserViewModel>> GetFilteredUsersAsync(string searchString, int page, int pageSize)
         {
+            var now = DateTimeOffset.UtcNow;
+
             var users = await FilterUsers(searchString)
                 .OrderBy(u => u.Email)
                 .Skip((page - 1) * pageSize)
@@ -30,6 +32,7 @@ namespace LearnLink.Core.Services
                     Id = user.Id,
                     Email = user.Email,
                     FullName = $"{user.FirstName} {user.LastName}",
+                    IsActive = user.LockoutEnd == null || user.LockoutEnd <= now,
                     Roles = data.Roles
                         .Where(r => data.UserRoles.Any(ur => ur.UserId == user.Id && ur.RoleId == r.Id))
                         .Select(r => r.Name)
@@ -143,11 +146,11 @@ namespace LearnLink.Core.Services
 
             if (oldRole == TeacherRole)
             {
-                await RemoveUserFromTeacherAsync(user);
+                await DeactivateTeacherAsync(user);
             }
             else if (oldRole == StudentRole)
             {
-                await RemoveUserFromStudentAsync(user);
+                await DeactivateStudentAsync(user);
             }
 
             return true;
@@ -176,12 +179,74 @@ namespace LearnLink.Core.Services
                     return false;
                 }
 
-                await userManager.RemoveFromRolesAsync(user, existingRoles);
+                if (existingRoles.Contains(TeacherRole))
+                {
+                    await DeactivateTeacherAsync(user);
+                }
+
+                if (existingRoles.Contains(StudentRole))
+                {
+                    await DeactivateStudentAsync(user);
+                }
 
                 return true;
             }
 
             return false;
+        }
+
+        public async Task<bool> SetUserActiveAsync(string userId, bool isActive)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return false;
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            if (!isActive)
+            {
+                await userManager.SetLockoutEnabledAsync(user, true);
+
+                var result = await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+
+                if (!result.Succeeded)
+                {
+                    return false;
+                }
+            }
+            else if (await userManager.GetLockoutEnabledAsync(user))
+            {
+                var result = await userManager.SetLockoutEndDateAsync(user, null);
+
+                if (!result.Succeeded)
+                {
+                    return false;
+                }
+            }
+
+            var student = await data.Students.FirstOrDefaultAsync(s => s.UserId == user.Id);
+
+            if (student != null)
+            {
+                student.IsActive = isActive;
+            }
+
+            var teacher = await data.Teachers.FirstOrDefaultAsync(t => t.UserId == user.Id);
+
+            if (teacher != null)
+            {
+                teacher.IsActive = isActive;
+            }
+
+            await data.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<UserDeleteViewModel?> GetUserForDeleteAsync(string userId)
@@ -315,8 +380,13 @@ namespace LearnLink.Core.Services
                 };
 
                 data.Teachers.Add(newTeacher);
-                await data.SaveChangesAsync();
             }
+            else
+            {
+                existingTeacher.IsActive = true;
+            }
+
+            await data.SaveChangesAsync();
         }
 
         private async Task MapUserToStudentAsync(ApplicationUser user)
@@ -334,28 +404,33 @@ namespace LearnLink.Core.Services
                 };
 
                 data.Students.Add(newStudent);
-                await data.SaveChangesAsync();
             }
+            else
+            {
+                existingStudent.IsActive = true;
+            }
+
+            await data.SaveChangesAsync();
         }
 
-        private async Task RemoveUserFromTeacherAsync(ApplicationUser user)
+        private async Task DeactivateTeacherAsync(ApplicationUser user)
         {
             var teacher = await data.Teachers.FirstOrDefaultAsync(t => t.UserId == user.Id);
 
             if (teacher != null)
             {
-                data.Teachers.Remove(teacher);
+                teacher.IsActive = false;
                 await data.SaveChangesAsync();
             }
         }
 
-        private async Task RemoveUserFromStudentAsync(ApplicationUser user)
+        private async Task DeactivateStudentAsync(ApplicationUser user)
         {
             var student = await data.Students.FirstOrDefaultAsync(s => s.UserId == user.Id);
 
             if (student != null)
             {
-                data.Students.Remove(student);
+                student.IsActive = false;
                 await data.SaveChangesAsync();
             }
         }
