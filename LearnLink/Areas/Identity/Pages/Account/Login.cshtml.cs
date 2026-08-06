@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using static LearnLink.Core.Constants.RoleConstants;
 
 namespace LearnLink.Areas.Identity.Pages.Account
 {
@@ -107,7 +108,7 @@ namespace LearnLink.Areas.Identity.Pages.Account
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     _logger.LogInformation("User logged in.");
 
-                    if (await _userManager.IsInRoleAsync(user, "Admin"))
+                    if (await _userManager.IsInRoleAsync(user, AdminRole))
                     {
                         return RedirectToAction("Dashboard", "Home", new { area = "Admin" });
                     }

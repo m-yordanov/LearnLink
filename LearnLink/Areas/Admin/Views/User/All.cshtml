@@ -19,7 +19,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var user in Model)
+        @foreach (var user in Model.Users)
         {
             <tr>
                 <td>@user.Email</td>
@@ -34,7 +34,7 @@
                                 <input type="hidden" name="userId" value="@user.Id" />
                                 <select name="roleName" class="form-control">
                                     <option value="">-- Select Role --</option>
-                                    @foreach (var role in roles)
+                                    @foreach (var role in Model.RoleOptions)
                                     {
                                         <option value="@role">@role</option>
                                     }

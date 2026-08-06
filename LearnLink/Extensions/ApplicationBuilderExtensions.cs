@@ -1,5 +1,6 @@
 ﻿using LearnLink.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Identity;
+using static LearnLink.Core.Constants.RoleConstants;
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -11,7 +12,7 @@ namespace Microsoft.AspNetCore.Builder
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-                var roles = new[] { "Admin", "Teacher", "Student" };
+                var roles = new[] { AdminRole, TeacherRole, StudentRole };
 
                 foreach (var role in roles)
                 {
@@ -37,7 +38,7 @@ namespace Microsoft.AspNetCore.Builder
 
                     if (await userManager.FindByEmailAsync(email) != null)
                     {
-                        await userManager.AddToRoleAsync(admin, "Admin");
+                        await userManager.AddToRoleAsync(admin, AdminRole);
                     }
                 }
             }

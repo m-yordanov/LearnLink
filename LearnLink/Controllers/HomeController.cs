@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using static LearnLink.Core.Constants.RoleConstants;
 
 namespace LearnLink.Controllers
 {
@@ -18,15 +19,15 @@ namespace LearnLink.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                if (User.IsInRole("Student"))
+                if (User.IsInRole(StudentRole))
                 {
                     return RedirectToAction("Index", "Home", new { area = "Student" });
                 }
-                else if (User.IsInRole("Teacher"))
+                else if (User.IsInRole(TeacherRole))
                 {
                     return RedirectToAction("Index", "Home", new { area = "Teacher" });
                 }
-                else if (User.IsInRole("Admin"))
+                else if (User.IsInRole(AdminRole))
                 {
                     return RedirectToAction("Dashboard", "Home", new { area = "Admin" });
                 }
