@@ -4,6 +4,7 @@ using LearnLink.Infrastructure.Data.Models;
 using LearnLink.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static LearnLink.Core.Constants.RoleConstants;
 
 namespace LearnLink.Core.Services
 {
@@ -18,39 +19,92 @@ namespace LearnLink.Core.Services
             userManager = _userManager;
         }
 
-        public async Task<List<UserViewModel>> GetAllUsersWithRolesAsync()
+        public async Task<List<UserViewModel>> GetFilteredUsersAsync(string searchString, int page, int pageSize)
         {
-            var usersWithRoles = await data.Users
+            var users = await FilterUsers(searchString)
+                .OrderBy(u => u.Email)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(user => new UserViewModel
                 {
                     Id = user.Id,
                     Email = user.Email,
                     FullName = $"{user.FirstName} {user.LastName}",
-                    Roles = data.UserRoles
-                        .Where(ur => ur.UserId == user.Id)
-                        .Select(ur => ur.RoleId)
+                    Roles = data.Roles
+                        .Where(r => data.UserRoles.Any(ur => ur.UserId == user.Id && ur.RoleId == r.Id))
+                        .Select(r => r.Name)
                         .ToList()
                 })
                 .ToListAsync();
 
-            foreach (var user in usersWithRoles)
+            foreach (var user in users.Where(u => !u.Roles.Any()))
             {
-                var roleNames = new List<string>();
-                foreach (var roleId in user.Roles)
-                {
-                    var role = await data.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
-                    if (role != null)
-                        roleNames.Add(role.Name);
-                }
-                user.Roles = roleNames.Any() ? roleNames : new List<string> { "None" };
+                user.Roles.Add(NoRole);
             }
 
-            return usersWithRoles;
+            return users;
+        }
+
+        public async Task<int> GetTotalUsersCountAsync(string searchString)
+        {
+            return await FilterUsers(searchString).CountAsync();
         }
 
         public async Task<List<string>> GetAllRolesAsync()
         {
             return await data.Roles.Select(r => r.Name).ToListAsync();
+        }
+
+        public async Task<IdentityResult> CreateUserAsync(UserFormViewModel viewModel)
+        {
+            if (!string.IsNullOrEmpty(viewModel.Role)
+                && !await data.Roles.AnyAsync(r => r.Name == viewModel.Role))
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Description = "The selected role does not exist."
+                });
+            }
+
+            var user = new ApplicationUser
+            {
+                UserName = viewModel.Email,
+                Email = viewModel.Email,
+                FirstName = viewModel.FirstName,
+                LastName = viewModel.LastName
+            };
+
+            var result = await userManager.CreateAsync(user, viewModel.Password);
+
+            if (!result.Succeeded)
+            {
+                return result;
+            }
+
+            if (string.IsNullOrEmpty(viewModel.Role))
+            {
+                return IdentityResult.Success;
+            }
+
+            var roleResult = await userManager.AddToRoleAsync(user, viewModel.Role);
+
+            if (!roleResult.Succeeded)
+            {
+                await userManager.DeleteAsync(user);
+
+                return roleResult;
+            }
+
+            if (viewModel.Role == TeacherRole)
+            {
+                await MapUserToTeacherAsync(user);
+            }
+            else if (viewModel.Role == StudentRole)
+            {
+                await MapUserToStudentAsync(user);
+            }
+
+            return IdentityResult.Success;
         }
 
         public async Task<bool> ChangeUserRoleAsync(string userId, string roleName)
@@ -78,20 +132,20 @@ namespace LearnLink.Core.Services
                 return false;
             }
 
-            if (roleName == "Teacher")
+            if (roleName == TeacherRole)
             {
                 await MapUserToTeacherAsync(user);
             }
-            else if (roleName == "Student")
+            else if (roleName == StudentRole)
             {
                 await MapUserToStudentAsync(user);
             }
 
-            if (oldRole == "Teacher")
+            if (oldRole == TeacherRole)
             {
                 await RemoveUserFromTeacherAsync(user);
             }
-            else if (oldRole == "Student")
+            else if (oldRole == StudentRole)
             {
                 await RemoveUserFromStudentAsync(user);
             }
@@ -151,7 +205,7 @@ namespace LearnLink.Core.Services
                 Id = user.Id,
                 Email = user.Email,
                 FullName = $"{user.FirstName} {user.LastName}",
-                Roles = roles.Any() ? roles.ToList() : new List<string> { "None" }
+                Roles = roles.Any() ? roles.ToList() : new List<string> { NoRole }
             };
 
             var student = await data.Students.FirstOrDefaultAsync(s => s.UserId == user.Id);
@@ -187,9 +241,9 @@ namespace LearnLink.Core.Services
                 return UserDeleteResult.UserNotFound;
             }
 
-            if (await userManager.IsInRoleAsync(user, "Admin"))
+            if (await userManager.IsInRoleAsync(user, AdminRole))
             {
-                var admins = await userManager.GetUsersInRoleAsync("Admin");
+                var admins = await userManager.GetUsersInRoleAsync(AdminRole);
 
                 if (admins.Count <= 1)
                 {
@@ -231,6 +285,19 @@ namespace LearnLink.Core.Services
             await transaction.CommitAsync();
 
             return UserDeleteResult.Success;
+        }
+
+        private IQueryable<ApplicationUser> FilterUsers(string searchString)
+        {
+            var query = data.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(u => u.Email.Contains(searchString)
+                    || (u.FirstName + " " + u.LastName).Contains(searchString));
+            }
+
+            return query;
         }
 
         private async Task MapUserToTeacherAsync(ApplicationUser user)

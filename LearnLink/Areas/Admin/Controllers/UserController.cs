@@ -3,26 +3,83 @@ using LearnLink.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using static LearnLink.Core.Constants.MessageConstants;
+using static LearnLink.Core.Constants.PaginationConstants;
 
 namespace LearnLink.Areas.Admin.Controllers
 {
     public class UserController : AdminBaseController
     {
         private readonly IUserService userService;
+        private readonly IViewCommonService viewCommonService;
 
-        public UserController(IUserService _userService)
+        public UserController(IUserService _userService, IViewCommonService _viewCommonService)
         {
             userService = _userService;
+            viewCommonService = _viewCommonService;
         }
 
-        public async Task<IActionResult> All()
+        public async Task<IActionResult> All(string searchString, int page = 1, int pageSize = maxPerPage)
         {
-            var usersWithRoles = await userService.GetAllUsersWithRolesAsync();
-            var roles = await userService.GetAllRolesAsync();
+            var users = await userService.GetFilteredUsersAsync(searchString, page, pageSize);
 
-            ViewData["Roles"] = roles;
+            var totalUsersCount = await userService.GetTotalUsersCountAsync(searchString);
 
-            return View(usersWithRoles);
+            var totalPages = viewCommonService.CalculateTotalPages(totalUsersCount, pageSize);
+
+            var viewModel = new UserListViewModel
+            {
+                Users = users,
+                RoleOptions = await userService.GetAllRolesAsync(),
+                SearchString = searchString,
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalCount = totalUsersCount,
+                TotalPages = totalPages
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Add()
+        {
+            var viewModel = new UserFormViewModel
+            {
+                RoleOptions = await userService.GetAllRolesAsync()
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(UserFormViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData[UserMessageError] = "Failed to add the user!";
+                viewModel.RoleOptions = await userService.GetAllRolesAsync();
+
+                return View(viewModel);
+            }
+
+            var result = await userService.CreateUserAsync(viewModel);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
+                TempData[UserMessageError] = "Failed to add the user!";
+                viewModel.RoleOptions = await userService.GetAllRolesAsync();
+
+                return View(viewModel);
+            }
+
+            TempData[UserMessageSuccess] = "You have added the user!";
+            return RedirectToAction(nameof(All));
         }
 
         [HttpPost]

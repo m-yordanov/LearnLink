@@ -1,12 +1,17 @@
-﻿using LearnLink.Core.Models;
+using LearnLink.Core.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace LearnLink.Core.Interfaces
 {
     public interface IUserService
     {
-        Task<List<UserViewModel>> GetAllUsersWithRolesAsync();
+        Task<List<UserViewModel>> GetFilteredUsersAsync(string searchString, int page, int pageSize);
+
+        Task<int> GetTotalUsersCountAsync(string searchString);
 
         Task<List<string>> GetAllRolesAsync();
+
+        Task<IdentityResult> CreateUserAsync(UserFormViewModel viewModel);
 
         Task<bool> ChangeUserRoleAsync(string userId, string roleName);
 
