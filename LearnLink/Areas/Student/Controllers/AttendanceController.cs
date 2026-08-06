@@ -21,7 +21,7 @@ namespace LearnLink.Areas.Student.Controllers
 
         public async Task<IActionResult> All(string selectedSubject, DateTime? dateAfter, DateTime? dateBefore, string selectedStatus, int pageNumber = 1, int pageSize = maxPerPage)
         {
-            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             var filteredAttendances = await attendanceService.StudentGetFilteredAttendancesAsync(studentId, selectedSubject, dateAfter, dateBefore, selectedStatus, pageNumber, pageSize);
 

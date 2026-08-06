@@ -17,7 +17,7 @@ namespace LearnLink.Controllers
 
         public IActionResult Index()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 if (User.IsInRole(StudentRole))
                 {

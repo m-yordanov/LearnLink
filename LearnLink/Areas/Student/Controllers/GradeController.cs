@@ -19,7 +19,7 @@ namespace LearnLink.Areas.Student.Controllers
 
         public async Task<IActionResult> All(string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = maxPerPage)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             var filteredGrades = await gradeService.StudentGetFilteredGradesAsync(userId, selectedSubject, dateBefore, dateAfter, pageNumber, pageSize);
             var totalFilteredGrades = await gradeService.StudentGetTotalFilteredGradesAsync(userId, selectedSubject, dateBefore, dateAfter);

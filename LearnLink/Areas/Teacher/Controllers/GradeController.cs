@@ -81,7 +81,7 @@ namespace LearnLink.Areas.Teacher.Controllers
                 return View(viewModel);
 			}
 
-			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var result = await gradeManagementService.AddGradeAsync(viewModel, userId);
 
             if (!result)

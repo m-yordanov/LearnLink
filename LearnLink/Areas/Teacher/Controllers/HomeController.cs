@@ -16,7 +16,7 @@ namespace LearnLink.Areas.Teacher.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var viewModel = await homeService.GetTeacherHomeViewModelAsync(userId);
 
             if (viewModel != null)

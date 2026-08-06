@@ -94,7 +94,7 @@ namespace LearnLink.Infrastructure.Data.SeedDbContext
                 Id = 1,
                 FirstName = StudentUser.FirstName,
                 LastName = StudentUser.LastName,
-                Email = StudentUser.Email,
+                Email = StudentUser.Email ?? string.Empty,
                 UserId = StudentUser.Id
             };
         }
@@ -106,7 +106,7 @@ namespace LearnLink.Infrastructure.Data.SeedDbContext
                 Id = 1,
                 FirstName = TeacherUser.FirstName,
                 LastName = TeacherUser.LastName,
-                Email = TeacherUser.Email,
+                Email = TeacherUser.Email ?? string.Empty,
                 UserId = TeacherUser.Id
             };
         }

@@ -30,12 +30,12 @@ namespace LearnLink.Core.Services
                 .Select(user => new UserViewModel
                 {
                     Id = user.Id,
-                    Email = user.Email,
+                    Email = user.Email ?? string.Empty,
                     FullName = $"{user.FirstName} {user.LastName}",
                     IsActive = user.LockoutEnd == null || user.LockoutEnd <= now,
                     Roles = data.Roles
                         .Where(r => data.UserRoles.Any(ur => ur.UserId == user.Id && ur.RoleId == r.Id))
-                        .Select(r => r.Name)
+                        .Select(r => r.Name ?? string.Empty)
                         .ToList()
                 })
                 .ToListAsync();
@@ -55,7 +55,7 @@ namespace LearnLink.Core.Services
 
         public async Task<List<string>> GetAllRolesAsync()
         {
-            return await data.Roles.Select(r => r.Name).ToListAsync();
+            return await data.Roles.Select(r => r.Name ?? string.Empty).ToListAsync();
         }
 
         public async Task<IdentityResult> CreateUserAsync(UserFormViewModel viewModel)
@@ -268,7 +268,7 @@ namespace LearnLink.Core.Services
             var viewModel = new UserDeleteViewModel
             {
                 Id = user.Id,
-                Email = user.Email,
+                Email = user.Email ?? string.Empty,
                 FullName = $"{user.FirstName} {user.LastName}",
                 Roles = roles.Any() ? roles.ToList() : new List<string> { NoRole }
             };
@@ -358,7 +358,7 @@ namespace LearnLink.Core.Services
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                query = query.Where(u => u.Email.Contains(searchString)
+                query = query.Where(u => (u.Email ?? string.Empty).Contains(searchString)
                     || (u.FirstName + " " + u.LastName).Contains(searchString));
             }
 
@@ -374,7 +374,7 @@ namespace LearnLink.Core.Services
                 var newTeacher = new Teacher
                 {
                     UserId = user.Id,
-                    Email = user.Email,
+                    Email = user.Email ?? string.Empty,
                     FirstName = user.FirstName,
                     LastName = user.LastName
                 };
@@ -398,7 +398,7 @@ namespace LearnLink.Core.Services
                 var newStudent = new Student
                 {
                     UserId = user.Id,
-                    Email = user.Email,
+                    Email = user.Email ?? string.Empty,
                     FirstName = user.FirstName,
                     LastName = user.LastName
                 };

@@ -30,26 +30,23 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-    );
+app.MapControllerRoute(
+	name: "areas",
+	pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+);
 
-    endpoints.MapControllerRoute(
-    name: "error",
-    pattern: "Home/Error/{statusCode?}",
-    defaults: new { controller = "Home", action = "Error" }
-    );
+app.MapControllerRoute(
+	name: "error",
+	pattern: "Home/Error/{statusCode?}",
+	defaults: new { controller = "Home", action = "Error" }
+);
 
-    app.MapControllerRoute(
-		name: "default",
-		pattern: "{controller=Home}/{action=Index}/{id?}"
-	);
+app.MapControllerRoute(
+	name: "default",
+	pattern: "{controller=Home}/{action=Index}/{id?}"
+);
 
-    endpoints.MapRazorPages();
-});
+app.MapRazorPages();
 
 await app.SeedRoles();
 
