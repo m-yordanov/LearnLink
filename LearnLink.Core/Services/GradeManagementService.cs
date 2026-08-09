@@ -83,6 +83,13 @@ namespace LearnLink.Core.Services
             if (teacher == null)
                 return false;
 
+            if (viewModel.SelectedStudentId <= 0 || viewModel.SelectedSubjectId <= 0)
+                return false;
+
+            var student = await data.Students.FirstOrDefaultAsync(s => s.Id == viewModel.SelectedStudentId);
+            if (student == null)
+                return false;
+
             var subject = await data.Subjects.FirstOrDefaultAsync(s => s.Id == viewModel.SelectedSubjectId);
             if (subject == null)
                 return false;
