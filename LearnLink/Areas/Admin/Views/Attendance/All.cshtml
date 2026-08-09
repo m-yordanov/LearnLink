@@ -3,6 +3,20 @@
     ViewData["Title"] = "Attendances";
 }
 
+@{
+    var filters = new Dictionary<string, string?>
+    {
+        ["selectedStudent"] = Model.SelectedStudent,
+        ["selectedTeacher"] = Model.SelectedTeacher,
+        ["selectedSubject"] = Model.SelectedSubject,
+        ["selectedStatus"] = Model.SelectedStatus,
+        ["dateBefore"] = Model.DateBefore != DateTime.MinValue ? Model.DateBefore.ToString("yyyy-MM-dd") : null,
+        ["dateAfter"] = Model.DateAfter != DateTime.MinValue ? Model.DateAfter.ToString("yyyy-MM-dd") : null,
+        ["sortBy"] = Model.SortBy,
+        ["sortDescending"] = Model.SortDescending ? "true" : "false"
+    };
+}
+
 <h2 class="text-center">@ViewData["Title"]</h2>
 
 <button id="toggleFilters" class="btn btn-primary">Filters</button>
@@ -47,6 +61,8 @@
                 <input asp-for="DateBefore" class="form-control" type="date" value="@((Model.DateBefore != DateTime.MinValue) ? Model.DateBefore.ToString("yyyy-MM-dd") : string.Empty)" />
             </div>
         </div>
+            <input type="hidden" name="sortBy" value="@Model.SortBy" />
+            <input type="hidden" name="sortDescending" value="@(Model.SortDescending ? "true" : "false")" />
         <div class="form-group col-md-3">
             <button type="button" id="applyFilters" class="btn btn-success">Apply</button>
             <a class="btn btn-danger" asp-area="Admin" asp-controller="Attendance" asp-action="All">Clear</a>
@@ -58,11 +74,56 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Student</th>
-            <th>Teacher</th>
-            <th>Subject</th>
-            <th>Status</th>
-            <th>Date</th>
+            <partial name="_SortableHeader" model="@(new SortableHeaderViewModel
+            {
+                Column = "student",
+                Label = "Student",
+                CurrentSortBy = Model.SortBy,
+                CurrentSortDescending = Model.SortDescending,
+                DefaultDescending = false,
+                PageSize = Model.PageSize,
+                Filters = filters
+            })" />
+            <partial name="_SortableHeader" model="@(new SortableHeaderViewModel
+            {
+                Column = "teacher",
+                Label = "Teacher",
+                CurrentSortBy = Model.SortBy,
+                CurrentSortDescending = Model.SortDescending,
+                DefaultDescending = false,
+                PageSize = Model.PageSize,
+                Filters = filters
+            })" />
+            <partial name="_SortableHeader" model="@(new SortableHeaderViewModel
+            {
+                Column = "subject",
+                Label = "Subject",
+                CurrentSortBy = Model.SortBy,
+                CurrentSortDescending = Model.SortDescending,
+                DefaultDescending = false,
+                PageSize = Model.PageSize,
+                Filters = filters
+            })" />
+            <partial name="_SortableHeader" model="@(new SortableHeaderViewModel
+            {
+                Column = "status",
+                Label = "Status",
+                CurrentSortBy = Model.SortBy,
+                CurrentSortDescending = Model.SortDescending,
+                DefaultDescending = false,
+                PageSize = Model.PageSize,
+                Filters = filters
+            })" />
+            <partial name="_SortableHeader" model="@(new SortableHeaderViewModel
+            {
+                Column = "date",
+                Label = "Date",
+                CurrentSortBy = Model.SortBy,
+                CurrentSortDescending = Model.SortDescending,
+                DefaultDescending = true,
+                PageSize = Model.PageSize,
+                Filters = filters
+            })" />
             <th>Actions</th>
         </tr>
     </thead>
@@ -96,15 +157,7 @@ else
         TotalPages = Model.TotalPages,
         PageSize = Model.PageSize,
         PageParameter = "pageNumber",
-        Filters = new Dictionary<string, string?>
-        {
-            ["selectedStudent"] = Model.SelectedStudent,
-            ["selectedTeacher"] = Model.SelectedTeacher,
-            ["selectedSubject"] = Model.SelectedSubject,
-            ["selectedStatus"] = Model.SelectedStatus,
-            ["dateBefore"] = Model.DateBefore != DateTime.MinValue ? Model.DateBefore.ToString("yyyy-MM-dd") : null,
-            ["dateAfter"] = Model.DateAfter != DateTime.MinValue ? Model.DateAfter.ToString("yyyy-MM-dd") : null
-        }
+        Filters = filters
     })" />
 }
 <script>

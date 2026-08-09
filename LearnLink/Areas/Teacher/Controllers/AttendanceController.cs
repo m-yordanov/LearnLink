@@ -19,9 +19,9 @@ namespace LearnLink.Areas.Teacher.Controllers
             viewCommonService = _viewCommonService;
             attendanceService = _attendanceSerivce;
         }
-        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = maxPerPage)
+        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, string sortBy = "date", bool sortDescending = true, int pageNumber = 1, int pageSize = maxPerPage)
         {
-            var attendancesViewModel = await attendanceService.GetFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter, pageNumber, pageSize);
+            var attendancesViewModel = await attendanceService.GetFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter, sortBy, sortDescending, pageNumber, pageSize);
             var totalFilteredAttendances = await attendanceService.GetTotalFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter);
 
             int totalPages = viewCommonService.CalculateTotalPages(totalFilteredAttendances, pageSize);
@@ -37,6 +37,8 @@ namespace LearnLink.Areas.Teacher.Controllers
                 SelectedTeacher = selectedTeacher,
                 SelectedSubject = selectedSubject,
                 SelectedStatus = selectedStatus,
+                SortBy = sortBy,
+                SortDescending = sortDescending,
                 SubjectOptions = await viewCommonService.GetAvailableSubjectsAsync()
             };
 

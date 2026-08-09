@@ -16,9 +16,9 @@ namespace LearnLink.Core.Services
             data = context;
         }
 
-        public async Task<IEnumerable<AttendanceViewModel>> GetFilteredAttendancesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber, int pageSize)
+        public async Task<IEnumerable<AttendanceViewModel>> GetFilteredAttendancesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, string sortBy, bool sortDescending, int pageNumber, int pageSize)
         {
-            return await FilterAttendances(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter)
+            return await ApplySorting(FilterAttendances(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter), sortBy, sortDescending)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(a => new AttendanceViewModel
@@ -45,6 +45,7 @@ namespace LearnLink.Core.Services
         {
             return await FilterStudentAttendances(userId, selectedSubject, dateAfter, dateBefore, selectedStatus)
                 .OrderByDescending(a => a.DateAndTime)
+                .ThenBy(a => a.Id)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(a => new AttendanceViewModel
@@ -62,6 +63,30 @@ namespace LearnLink.Core.Services
         {
             return await FilterStudentAttendances(userId, selectedSubject, dateAfter, dateBefore, selectedStatus)
                 .CountAsync();
+        }
+
+        private static IQueryable<Attendance> ApplySorting(IQueryable<Attendance> query, string sortBy, bool descending)
+        {
+            IOrderedQueryable<Attendance> ordered = (sortBy ?? string.Empty).ToLowerInvariant() switch
+            {
+                "student" => descending
+                    ? query.OrderByDescending(a => a.Student.FirstName).ThenByDescending(a => a.Student.LastName)
+                    : query.OrderBy(a => a.Student.FirstName).ThenBy(a => a.Student.LastName),
+                "teacher" => descending
+                    ? query.OrderByDescending(a => a.Teacher.FirstName).ThenByDescending(a => a.Teacher.LastName)
+                    : query.OrderBy(a => a.Teacher.FirstName).ThenBy(a => a.Teacher.LastName),
+                "subject" => descending
+                    ? query.OrderByDescending(a => a.Subject.Name)
+                    : query.OrderBy(a => a.Subject.Name),
+                "status" => descending
+                    ? query.OrderByDescending(a => a.Status)
+                    : query.OrderBy(a => a.Status),
+                _ => descending
+                    ? query.OrderByDescending(a => a.DateAndTime)
+                    : query.OrderBy(a => a.DateAndTime)
+            };
+
+            return ordered.ThenBy(a => a.Id);
         }
 
         private IQueryable<Attendance> FilterAttendances(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter)

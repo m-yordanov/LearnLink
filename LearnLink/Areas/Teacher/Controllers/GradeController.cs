@@ -20,9 +20,9 @@ namespace LearnLink.Areas.Teacher.Controllers
             gradeService = _gradeService;
         }
 
-        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = maxPerPage)
+        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, string sortBy = "date", bool sortDescending = true, int pageNumber = 1, int pageSize = maxPerPage)
         {
-            var gradesViewModel = await gradeService.GetFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter, pageNumber, pageSize);
+            var gradesViewModel = await gradeService.GetFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter, sortBy, sortDescending, pageNumber, pageSize);
             var totalFilteredGrades = await gradeService.GetTotalFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
 
             int totalPages = viewCommonService.CalculateTotalPages(totalFilteredGrades, pageSize);
@@ -39,6 +39,8 @@ namespace LearnLink.Areas.Teacher.Controllers
                 SelectedStudent = selectedStudent,
                 SelectedTeacher = selectedTeacher,
                 SelectedSubject = selectedSubject,
+                SortBy = sortBy,
+                SortDescending = sortDescending,
                 SubjectOptions = subjectOptions
             };
 

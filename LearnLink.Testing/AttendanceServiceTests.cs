@@ -1,4 +1,4 @@
-using LearnLink.Core.Services;
+﻿using LearnLink.Core.Services;
 using LearnLink.Infrastructure.Data;
 using LearnLink.Infrastructure.Data.Models;
 using LearnLink.Infrastructure.Data.Models.Enums;
@@ -59,7 +59,7 @@ namespace LearnLink.Testing
             var status = nameof(AttendanceStatus.Present);
 
             var page = await service.GetFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, status, null, null, 1, 50);
+                string.Empty, string.Empty, string.Empty, status, null, null, "date", true, 1, 50);
             var total = await service.GetTotalFilteredAttendancesAsync(
                 string.Empty, string.Empty, string.Empty, status, null, null);
 
@@ -70,7 +70,7 @@ namespace LearnLink.Testing
         public async Task GetFilteredAttendancesAsync_ReturnsOnlyTheRequestedStatus()
         {
             var page = await service.GetFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, nameof(AttendanceStatus.Absent), null, null, 1, 50);
+                string.Empty, string.Empty, string.Empty, nameof(AttendanceStatus.Absent), null, null, "date", true, 1, 50);
 
             Assert.That(page.Select(a => a.Status), Is.EqualTo(new[] { AttendanceStatus.Absent }));
         }
@@ -89,7 +89,7 @@ namespace LearnLink.Testing
         public async Task AnUnrecognisedStatus_IsIgnoredRatherThanThrowing(string status)
         {
             var page = await service.GetFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, status, null, null, 1, 50);
+                string.Empty, string.Empty, string.Empty, status, null, null, "date", true, 1, 50);
             var total = await service.GetTotalFilteredAttendancesAsync(
                 string.Empty, string.Empty, string.Empty, status, null, null);
 
@@ -137,6 +137,40 @@ namespace LearnLink.Testing
 
             Assert.That(page.Count(), Is.EqualTo(3));
             Assert.That(page.Any(a => a.Status == AttendanceStatus.Late), Is.False);
+        }
+
+        [Test]
+        public async Task GetFilteredAttendancesAsync_ReturnsNewestFirstByDefault()
+        {
+            var newest = NewAttendance(data.Students.First(), data.Teachers.First(), data.Subjects.First(), AttendanceStatus.Excused);
+            newest.DateAndTime = new DateTime(2026, 9, 1, 9, 0, 0);
+            data.Attendances.Add(newest);
+            data.SaveChanges();
+
+            var page = await service.GetFilteredAttendancesAsync(
+                string.Empty, string.Empty, string.Empty, string.Empty, null, null, "date", true, 1, 50);
+
+            Assert.That(page.First().Status, Is.EqualTo(AttendanceStatus.Excused));
+        }
+
+        [Test]
+        public async Task GetFilteredAttendancesAsync_BreaksTiesById()
+        {
+            var page = await service.GetFilteredAttendancesAsync(
+                string.Empty, string.Empty, string.Empty, string.Empty, null, null, "date", true, 1, 50);
+
+            Assert.That(page.Select(a => a.Id), Is.Ordered.Ascending);
+        }
+
+        [Test]
+        public async Task GetFilteredAttendancesAsync_FallsBackToTheDefaultForAnUnknownColumn()
+        {
+            var unknown = await service.GetFilteredAttendancesAsync(
+                string.Empty, string.Empty, string.Empty, string.Empty, null, null, "banana", true, 1, 50);
+            var byDate = await service.GetFilteredAttendancesAsync(
+                string.Empty, string.Empty, string.Empty, string.Empty, null, null, "date", true, 1, 50);
+
+            Assert.That(unknown.Select(a => a.Id), Is.EqualTo(byDate.Select(a => a.Id)));
         }
     }
 }

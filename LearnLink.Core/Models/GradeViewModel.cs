@@ -31,6 +31,10 @@ namespace LearnLink.Core.Models
         public int TotalPages { get; set; } 
        
         public int PageNumber { get; set; }
+
+        public string SortBy { get; set; } = "date";
+
+        public bool SortDescending { get; set; } = true;
         
         public string SelectedStudent { get; set; } = string.Empty;
         

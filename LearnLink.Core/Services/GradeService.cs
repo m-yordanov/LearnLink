@@ -15,9 +15,9 @@ namespace LearnLink.Core.Services
 			data = context;
 		}
 
-		public async Task<IEnumerable<GradeViewModel>> GetFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber, int pageSize)
+		public async Task<IEnumerable<GradeViewModel>> GetFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, string sortBy, bool sortDescending, int pageNumber, int pageSize)
 		{
-			return await FilterGrades(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter)
+			return await ApplySorting(FilterGrades(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter), sortBy, sortDescending)
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.Select(g => new GradeViewModel
@@ -44,6 +44,7 @@ namespace LearnLink.Core.Services
 		{
 			return await FilterStudentGrades(userId, selectedSubject, dateBefore, dateAfter)
 				.OrderByDescending(g => g.DateAndTime)
+				.ThenBy(g => g.Id)
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.Select(g => new GradeViewModel
@@ -61,6 +62,30 @@ namespace LearnLink.Core.Services
 		{
 			return await FilterStudentGrades(userId, selectedSubject, dateBefore, dateAfter)
 				.CountAsync();
+		}
+
+		private static IQueryable<Grade> ApplySorting(IQueryable<Grade> query, string sortBy, bool descending)
+		{
+			IOrderedQueryable<Grade> ordered = (sortBy ?? string.Empty).ToLowerInvariant() switch
+			{
+				"student" => descending
+					? query.OrderByDescending(g => g.Student.FirstName).ThenByDescending(g => g.Student.LastName)
+					: query.OrderBy(g => g.Student.FirstName).ThenBy(g => g.Student.LastName),
+				"teacher" => descending
+					? query.OrderByDescending(g => g.Teacher.FirstName).ThenByDescending(g => g.Teacher.LastName)
+					: query.OrderBy(g => g.Teacher.FirstName).ThenBy(g => g.Teacher.LastName),
+				"subject" => descending
+					? query.OrderByDescending(g => g.Subject.Name)
+					: query.OrderBy(g => g.Subject.Name),
+				"value" => descending
+					? query.OrderByDescending(g => g.Value)
+					: query.OrderBy(g => g.Value),
+				_ => descending
+					? query.OrderByDescending(g => g.DateAndTime)
+					: query.OrderBy(g => g.DateAndTime)
+			};
+
+			return ordered.ThenBy(g => g.Id);
 		}
 
 		private IQueryable<Grade> FilterGrades(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter)

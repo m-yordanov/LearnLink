@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Local-only build tweak: disables deterministic Debug builds so each rebuild produces a new
+# assembly hash, which stops Smart App Control from getting stuck on a blocked one.
+# Machine-specific workaround, not a property of the project - keep it out of the repo.
+Directory.Build.targets
