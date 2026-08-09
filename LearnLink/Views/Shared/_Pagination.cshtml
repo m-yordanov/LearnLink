@@ -1,0 +1,78 @@
+@using Microsoft.AspNetCore.WebUtilities
+@model PaginationViewModel
+
+@{
+    var activeFilters = Model.Filters
+        .Where(f => !string.IsNullOrEmpty(f.Value))
+        .ToDictionary(f => f.Key, f => f.Value);
+
+    string PageLink(int page)
+    {
+        var query = new Dictionary<string, string?>(activeFilters)
+        {
+            [Model.PageParameter] = page.ToString(),
+            ["pageSize"] = Model.PageSize.ToString()
+        };
+
+        return QueryHelpers.AddQueryString(Context.Request.Path, query);
+    }
+}
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Page navigation" class="d-flex flex-wrap align-items-center gap-2 mt-3">
+        <ul class="pagination mb-0">
+            @if (Model.HasPreviousWindow)
+            {
+                <li class="page-item">
+                    <a class="page-link" aria-label="Previous @PaginationViewModel.PagesPerWindow pages"
+                       href="@PageLink(Model.PreviousWindowPage)">&laquo;</a>
+                </li>
+            }
+
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@PageLink(Model.PreviousPage)">Previous</a>
+                </li>
+            }
+
+            @for (int i = Model.WindowStart; i <= Model.WindowEnd; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="@PageLink(i)">@i</a>
+                </li>
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@PageLink(Model.NextPage)">Next</a>
+                </li>
+            }
+
+            @if (Model.HasNextWindow)
+            {
+                <li class="page-item">
+                    <a class="page-link" aria-label="Next @PaginationViewModel.PagesPerWindow pages"
+                       href="@PageLink(Model.NextWindowPage)">&raquo;</a>
+                </li>
+            }
+        </ul>
+
+        <form method="get" class="d-flex align-items-center gap-1 ms-auto">
+            @foreach (var filter in activeFilters)
+            {
+                <input type="hidden" name="@filter.Key" value="@filter.Value" />
+            }
+            <input type="hidden" name="pageSize" value="@Model.PageSize" />
+
+            <label class="form-label mb-0 small text-muted" for="pagination-jump">Page</label>
+            <input id="pagination-jump" name="@Model.PageParameter" type="number" class="form-control form-control-sm"
+                   style="width: 5rem;" min="1" max="@Model.TotalPages" value="@Model.CurrentPage"
+                   aria-label="Go to page" />
+            <span class="small text-muted">of @Model.TotalPages</span>
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Go</button>
+        </form>
+    </nav>
+}

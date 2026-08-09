@@ -101,16 +101,17 @@
 }
 else
 {
-    <nav>
-        <ul class="pagination">
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                    <a class="page-link" href="?searchString=@Model.SearchString&page=@i&pageSize=@Model.PageSize">@i</a>
-                </li>
-            }
-        </ul>
-    </nav>
+    <partial name="_Pagination" model="@(new PaginationViewModel
+    {
+        PageNumber = Model.PageNumber,
+        TotalPages = Model.TotalPages,
+        PageSize = Model.PageSize,
+        PageParameter = "page",
+        Filters = new Dictionary<string, string?>
+        {
+            ["searchString"] = Model.SearchString
+        }
+    })" />
 }
 
 @section Scripts {

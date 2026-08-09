@@ -77,58 +77,21 @@
 }
 else
 {
-    <nav aria-label="Page navigation">
-        <ul class="pagination">
-            @if (Model.PageNumber > 1)
-            {
-                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(1)">First</a></li>
-                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.PageNumber - 1)">Previous</a></li>
-            }
-
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(i == Model.PageNumber ? "active" : "")"><a class="page-link" href="@BuildPaginationLink(i)">@i</a></li>
-            }
-
-            @if (Model.PageNumber < Model.TotalPages)
-            {
-                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.PageNumber + 1)">Next</a></li>
-                <li class="page-item"><a class="page-link" href="@BuildPaginationLink(Model.TotalPages)">Last</a></li>
-            }
-        </ul>
-    </nav>
-}
-
-@functions {
-    public string BuildPaginationLink(int pageNumber)
+    <partial name="_Pagination" model="@(new PaginationViewModel
     {
-        string baseUrl = $"?pageNumber={pageNumber}&pageSize=@Model.PageSize";
-
-        if (!string.IsNullOrEmpty(Model.SelectedSubject))
+        PageNumber = Model.PageNumber,
+        TotalPages = Model.TotalPages,
+        PageSize = Model.PageSize,
+        PageParameter = "pageNumber",
+        Filters = new Dictionary<string, string?>
         {
-            baseUrl += $"&selectedSubject={Model.SelectedSubject}";
+            ["selectedSubject"] = Model.SelectedSubject,
+            ["selectedStatus"] = Model.SelectedStatus,
+            ["dateBefore"] = Model.DateBefore != DateTime.MinValue ? Model.DateBefore.ToString("yyyy-MM-dd") : null,
+            ["dateAfter"] = Model.DateAfter != DateTime.MinValue ? Model.DateAfter.ToString("yyyy-MM-dd") : null
         }
-
-        if (Model.DateBefore != DateTime.MinValue)
-        {
-            baseUrl += $"&dateBefore={Model.DateBefore.ToString("yyyy-MM-dd")}";
-        }
-
-        if (Model.DateAfter != DateTime.MinValue)
-        {
-            baseUrl += $"&dateAfter={Model.DateAfter.ToString("yyyy-MM-dd")}";
-        }
-
-        if (!string.IsNullOrEmpty(Model.SelectedStatus))
-        {
-            baseUrl += $"&selectedStatus={Model.SelectedStatus}";
-        }
-
-        return baseUrl;
-    }
+    })" />
 }
-
-
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
