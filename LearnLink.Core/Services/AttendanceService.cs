@@ -115,14 +115,11 @@ namespace LearnLink.Core.Services
                 query = query.Where(a => a.Subject.Name == selectedSubject);
             }
 
-            if (!string.IsNullOrEmpty(selectedStatus))
+            if (!string.IsNullOrEmpty(selectedStatus)
+                && Enum.TryParse<AttendanceStatus>(selectedStatus, ignoreCase: true, out var status)
+                && Enum.IsDefined(status))
             {
-                if (!Enum.TryParse<AttendanceStatus>(selectedStatus, ignoreCase: true, out var statusEnum))
-                {
-                    throw new ArgumentException("Invalid attendance status provided.");
-                }
-
-                query = query.Where(a => a.Status == statusEnum);
+                query = query.Where(a => a.Status == status);
             }
 
             return query;

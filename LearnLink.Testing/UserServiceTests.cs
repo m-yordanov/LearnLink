@@ -303,9 +303,68 @@ namespace LearnLink.Testing
         }
 
         [Test]
+        public async Task ChangeUserRoleAsync_RejectsARoleThatDoesNotExist()
+        {
+            var user = data.AddUser("teacher@mail.com");
+            data.AddTeacher(user);
+            data.EnsureRole(TeacherRole);
+
+            userManager.Setup(m => m.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            userManager.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(new List<string> { TeacherRole });
+
+            var success = await service.ChangeUserRoleAsync(user.Id, "Janitor");
+
+            Assert.That(success, Is.False);
+            Assert.That(data.Teachers.Single().IsActive, Is.True, "a rejected change must not touch the record");
+            userManager.Verify(m => m.RemoveFromRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>()), Times.Never);
+            userManager.Verify(m => m.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Test]
+        public async Task ChangeUserRoleAsync_KeepsTheRecordActiveWhenTheRoleIsUnchanged()
+        {
+            var user = data.AddUser("teacher@mail.com");
+            data.AddTeacher(user);
+            data.EnsureRole(TeacherRole);
+
+            userManager.Setup(m => m.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            userManager.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(new List<string> { TeacherRole });
+
+            var success = await service.ChangeUserRoleAsync(user.Id, TeacherRole);
+
+            Assert.That(success, Is.True);
+            Assert.That(data.Teachers.Single().IsActive, Is.True,
+                "re-assigning the role a user already has must not deactivate their record");
+            userManager.Verify(m => m.RemoveFromRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>()), Times.Never);
+        }
+
+        [Test]
+        public async Task ChangeUserRoleAsync_AssignsTheNewRoleBeforeRemovingTheOldOne()
+        {
+            var user = data.AddUser("person@mail.com");
+            data.EnsureRole(StudentRole);
+
+            var sequence = new List<string>();
+
+            userManager.Setup(m => m.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            userManager.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(new List<string> { TeacherRole });
+            userManager.Setup(m => m.AddToRoleAsync(user, StudentRole))
+                .ReturnsAsync(IdentityResult.Success)
+                .Callback(() => sequence.Add("add"));
+            userManager.Setup(m => m.RemoveFromRolesAsync(user, It.IsAny<IEnumerable<string>>()))
+                .ReturnsAsync(IdentityResult.Success)
+                .Callback(() => sequence.Add("remove"));
+
+            await service.ChangeUserRoleAsync(user.Id, StudentRole);
+
+            Assert.That(sequence, Is.EqualTo(new[] { "add", "remove" }));
+        }
+
+        [Test]
         public async Task ChangeUserRoleAsync_KeepsGradesWhenATeacherBecomesAStudent()
         {
             var user = data.AddUser("person@mail.com");
+            data.EnsureRole(StudentRole);
             var teacher = data.AddTeacher(user);
             var otherStudent = data.AddStudent(data.AddUser("pupil@mail.com"));
             var subject = data.AddSubject("History");

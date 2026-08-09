@@ -84,6 +84,42 @@ namespace LearnLink.Testing
             Assert.That(total, Is.EqualTo(3));
         }
 
+        [TestCase("banana", TestName = "unparseable status")]
+        [TestCase("99", TestName = "numeric status outside the enum")]
+        public async Task AnUnrecognisedStatus_IsIgnoredRatherThanThrowing(string status)
+        {
+            var page = await service.GetFilteredAttendancesAsync(
+                string.Empty, string.Empty, string.Empty, status, null, null, 1, 50);
+            var total = await service.GetTotalFilteredAttendancesAsync(
+                string.Empty, string.Empty, string.Empty, status, null, null);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(page.Count(), Is.EqualTo(3), "the filter is dropped, so every row is returned");
+                Assert.That(total, Is.EqualTo(3));
+            });
+        }
+
+        [Test]
+        public async Task AnUnrecognisedStatus_IsIgnoredForStudentsToo()
+        {
+            var userId = data.Students.First().UserId;
+
+            var page = await service.StudentGetFilteredAttendancesAsync(
+                userId, string.Empty, null, null, "banana", 1, 50);
+
+            Assert.That(page.Count(), Is.EqualTo(3));
+        }
+
+        [Test]
+        public async Task StatusMatchingIsCaseInsensitive()
+        {
+            var total = await service.GetTotalFilteredAttendancesAsync(
+                string.Empty, string.Empty, string.Empty, "absent", null, null);
+
+            Assert.That(total, Is.EqualTo(1));
+        }
+
         [Test]
         public async Task StudentGetFilteredAttendancesAsync_ReturnsOnlyThatStudentsRecords()
         {

@@ -119,20 +119,28 @@ namespace LearnLink.Core.Services
                 return false;
             }
 
-            var existingRoles = await userManager.GetRolesAsync(user);
-
-            string? oldRole = existingRoles.FirstOrDefault();
-
-            if (!string.IsNullOrEmpty(oldRole))
-            {
-                await userManager.RemoveFromRolesAsync(user, existingRoles);
-            }
-
-            var result = await userManager.AddToRoleAsync(user, roleName);
-
-            if (!result.Succeeded)
+            if (!await data.Roles.AnyAsync(r => r.Name == roleName))
             {
                 return false;
+            }
+
+            var existingRoles = await userManager.GetRolesAsync(user);
+
+            if (!existingRoles.Contains(roleName))
+            {
+                var result = await userManager.AddToRoleAsync(user, roleName);
+
+                if (!result.Succeeded)
+                {
+                    return false;
+                }
+            }
+
+            var replacedRoles = existingRoles.Where(r => r != roleName).ToList();
+
+            if (replacedRoles.Any())
+            {
+                await userManager.RemoveFromRolesAsync(user, replacedRoles);
             }
 
             if (roleName == TeacherRole)
@@ -144,11 +152,12 @@ namespace LearnLink.Core.Services
                 await MapUserToStudentAsync(user);
             }
 
-            if (oldRole == TeacherRole)
+            if (replacedRoles.Contains(TeacherRole))
             {
                 await DeactivateTeacherAsync(user);
             }
-            else if (oldRole == StudentRole)
+
+            if (replacedRoles.Contains(StudentRole))
             {
                 await DeactivateStudentAsync(user);
             }

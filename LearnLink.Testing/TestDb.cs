@@ -60,7 +60,7 @@ namespace LearnLink.Testing
             return user;
         }
 
-        public static void AddRole(this LearnLinkDbContext data, ApplicationUser user, string roleName)
+        public static IdentityRole EnsureRole(this LearnLinkDbContext data, string roleName)
         {
             var role = data.Roles.FirstOrDefault(r => r.Name == roleName);
 
@@ -68,7 +68,15 @@ namespace LearnLink.Testing
             {
                 role = new IdentityRole(roleName) { NormalizedName = roleName.ToUpperInvariant() };
                 data.Roles.Add(role);
+                data.SaveChanges();
             }
+
+            return role;
+        }
+
+        public static void AddRole(this LearnLinkDbContext data, ApplicationUser user, string roleName)
+        {
+            var role = data.EnsureRole(roleName);
 
             data.UserRoles.Add(new IdentityUserRole<string> { UserId = user.Id, RoleId = role.Id });
             data.SaveChanges();
