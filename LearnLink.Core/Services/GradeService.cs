@@ -1,4 +1,4 @@
-using LearnLink.Core.Interfaces;
+﻿using LearnLink.Core.Interfaces;
 using LearnLink.Core.Models;
 using LearnLink.Infrastructure.Data;
 using LearnLink.Infrastructure.Data.Models;
@@ -13,26 +13,6 @@ namespace LearnLink.Core.Services
 		public GradeService(LearnLinkDbContext context)
 		{
 			data = context;
-		}
-
-		public async Task<IEnumerable<GradeViewModel>> GetStudentGradesAsync(string userId)
-		{
-            var attendances = await data.Grades
-				.Include(a => a.Subject)
-				.Include(a => a.Teacher)
-				.Where(a => a.Student.UserId == userId)
-				.ToListAsync();
-
-            return await data.Grades
-				.Select(g => new GradeViewModel
-				{
-					Subject = g.Subject.Name,
-					Value = g.Value,
-					DateAndTime = g.DateAndTime,
-					TeacherFirstName = g.Teacher.FirstName,
-					TeacherLastName = g.Teacher.LastName
-				})
-				.ToListAsync();
 		}
 
 		public async Task<IEnumerable<GradeViewModel>> GetFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber, int pageSize)

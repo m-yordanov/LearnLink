@@ -1,4 +1,4 @@
-using LearnLink.Core.Interfaces;
+﻿using LearnLink.Core.Interfaces;
 using LearnLink.Core.Models;
 using LearnLink.Infrastructure.Data;
 using LearnLink.Infrastructure.Data.Models;
@@ -14,24 +14,6 @@ namespace LearnLink.Core.Services
         public AttendanceService(LearnLinkDbContext context)
         {
             data = context;
-        }
-
-        public async Task<IEnumerable<AttendanceViewModel>> GetStudentAttendancesAsync(string studentId)
-        {
-            var attendances = await data.Attendances
-                .Include(a => a.Subject)
-                .Include(a => a.Teacher)
-                .Where(a => a.Student.UserId == studentId)
-                .ToListAsync();
-
-            return attendances.Select(a => new AttendanceViewModel
-            {
-                DateAndTime = a.DateAndTime,
-                Status = a.Status,
-                Subject = a.Subject.Name,
-                TeacherFirstName = a.Teacher.FirstName,
-                TeacherLastName = a.Teacher.LastName
-            });
         }
 
         public async Task<IEnumerable<AttendanceViewModel>> GetFilteredAttendancesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, int pageNumber, int pageSize)
