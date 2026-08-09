@@ -72,16 +72,6 @@ namespace LearnLink.Areas.Teacher.Controllers
         {
 			if (!ModelState.IsValid)
 			{
-				if (viewModel.SelectedStudentId <= 0)
-                {
-                    ViewData["SelectedStudentIdValidationError"] = "Please select a student.";
-                }
-
-                if (viewModel.SelectedSubjectId <= 0)
-                {
-                    ViewData["SelectedSubjectIdValidationError"] = "Please select a subject.";
-                }
-
                 viewModel.StudentOptions = (await viewCommonService.GetStudentOptionsAsync()).ToList();
                 viewModel.SubjectOptions = (await viewCommonService.GetSubjectOptionsAsync()).ToList();
                 return View(viewModel);

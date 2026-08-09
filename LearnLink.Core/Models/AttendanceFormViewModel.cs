@@ -9,10 +9,12 @@ namespace LearnLink.Core.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Please select a student.")]
-        public int SelectedStudentId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Please select a student.")]
+        public int? SelectedStudentId { get; set; }
 
         [Required(ErrorMessage = "Please select a subject.")]
-        public int SelectedSubjectId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Please select a subject.")]
+        public int? SelectedSubjectId { get; set; }
 
         [Required(ErrorMessage = "Please select the attendance status.")]
         public AttendanceStatus Status { get; set; }

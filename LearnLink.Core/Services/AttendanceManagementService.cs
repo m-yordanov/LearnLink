@@ -24,7 +24,7 @@ namespace LearnLink.Core.Services
                 return false;
             }
 
-            if (viewModel.SelectedStudentId <= 0 || viewModel.SelectedSubjectId <= 0)
+            if (viewModel.SelectedStudentId is not > 0 || viewModel.SelectedSubjectId is not > 0)
             {
                 return false;
             }
@@ -43,8 +43,8 @@ namespace LearnLink.Core.Services
 
             var attendance = new Attendance
             {
-                StudentId = viewModel.SelectedStudentId,
-                SubjectId = viewModel.SelectedSubjectId,
+                StudentId = viewModel.SelectedStudentId.Value,
+                SubjectId = viewModel.SelectedSubjectId.Value,
                 Status = viewModel.Status,
                 DateAndTime = DateTime.Now,
                 TeacherId = teacher.Id
@@ -108,8 +108,13 @@ namespace LearnLink.Core.Services
                 return false;
             }
 
-            attendance.SubjectId = viewModel.SelectedSubjectId;
-            attendance.StudentId = viewModel.SelectedStudentId;
+            if (viewModel.SelectedStudentId is not > 0 || viewModel.SelectedSubjectId is not > 0)
+            {
+                return false;
+            }
+
+            attendance.SubjectId = viewModel.SelectedSubjectId.Value;
+            attendance.StudentId = viewModel.SelectedStudentId.Value;
             attendance.Status = viewModel.Status;
 
             data.Update(attendance);

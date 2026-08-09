@@ -1,4 +1,4 @@
-using LearnLink.Core.Models;
+﻿using LearnLink.Core.Models;
 using LearnLink.Core.Services;
 using LearnLink.Infrastructure.Data;
 using LearnLink.Infrastructure.Data.Models;
@@ -34,7 +34,7 @@ namespace LearnLink.Testing
             data.Dispose();
         }
 
-        private GradeFormViewModel Form(int student, int subject) => new GradeFormViewModel
+        private GradeFormViewModel Form(int? student, int? subject) => new GradeFormViewModel
         {
             SelectedStudentId = student,
             SelectedSubjectId = subject,
@@ -59,9 +59,10 @@ namespace LearnLink.Testing
             Assert.That(data.Grades, Is.Empty);
         }
 
-        [TestCase(0, TestName = "nothing selected")]
+        [TestCase(null, TestName = "nothing selected")]
+        [TestCase(0, TestName = "zero id")]
         [TestCase(-1, TestName = "negative id")]
-        public async Task AddGradeAsync_RejectsAnUnselectedStudent(int student)
+        public async Task AddGradeAsync_RejectsAnUnselectedStudent(int? student)
         {
             var added = await service.AddGradeAsync(Form(student, subjectId), teacherUserId);
 

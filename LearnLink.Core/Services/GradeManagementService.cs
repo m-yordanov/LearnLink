@@ -83,7 +83,7 @@ namespace LearnLink.Core.Services
             if (teacher == null)
                 return false;
 
-            if (viewModel.SelectedStudentId <= 0 || viewModel.SelectedSubjectId <= 0)
+            if (viewModel.SelectedStudentId is not > 0 || viewModel.SelectedSubjectId is not > 0)
                 return false;
 
             var student = await data.Students.FirstOrDefaultAsync(s => s.Id == viewModel.SelectedStudentId);
@@ -96,7 +96,7 @@ namespace LearnLink.Core.Services
 
             var grade = new Grade
             {
-                StudentId = viewModel.SelectedStudentId,
+                StudentId = viewModel.SelectedStudentId.Value,
                 Subject = subject,
                 Value = viewModel.Grade,
                 DateAndTime = DateTime.Now,
@@ -122,8 +122,13 @@ namespace LearnLink.Core.Services
                 return false;
             }
 
-            grade.SubjectId = viewModel.SelectedSubjectId;
-            grade.StudentId = viewModel.SelectedStudentId;
+            if (viewModel.SelectedStudentId is not > 0 || viewModel.SelectedSubjectId is not > 0)
+            {
+                return false;
+            }
+
+            grade.SubjectId = viewModel.SelectedSubjectId.Value;
+            grade.StudentId = viewModel.SelectedStudentId.Value;
             grade.Value = viewModel.Grade;
 
             data.Update(grade);
