@@ -16,7 +16,7 @@ namespace LearnLink.Core.Services
             data = context;
         }
 
-        public async Task<GradeFormViewModel> EditGetGradeFormViewModelAsync(int id)
+        public async Task<GradeFormViewModel?> EditGetGradeFormViewModelAsync(int id)
         {
             var grade = await data.Grades.FindAsync(id);
             if (grade == null)
@@ -48,7 +48,7 @@ namespace LearnLink.Core.Services
             return viewModel;
         }
 
-        public async Task<GradeViewModel> DeleteGetGradeViewModelAsync(int id)
+        public async Task<GradeViewModel?> DeleteGetGradeViewModelAsync(int id)
         {
             var grade = await data.Grades
                 .Include(g => g.Student)

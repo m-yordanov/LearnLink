@@ -56,7 +56,7 @@ namespace LearnLink.Core.Services
             return true;
         }
 
-        public async Task<AttendanceFormViewModel> GetAttendanceForEditAsync(int? id)
+        public async Task<AttendanceFormViewModel?> GetAttendanceForEditAsync(int? id)
         {
             if (id == null)
             {
@@ -123,7 +123,7 @@ namespace LearnLink.Core.Services
             return true;
         }
 
-        public async Task<AttendanceViewModel> GetAttendanceForDeleteAsync(int id)
+        public async Task<AttendanceViewModel?> GetAttendanceForDeleteAsync(int id)
         {
             var attendance = await data.Attendances
                 .Include(a => a.Student)

@@ -107,7 +107,7 @@ namespace LearnLink.Core.Services
             }
         }
 
-        public async Task<SubjectViewModel> EditSubjectFormViewModelAsync(int id)
+        public async Task<SubjectViewModel?> EditSubjectFormViewModelAsync(int id)
         {
             var subject = await data.Subjects.FindAsync(id);
             if (subject == null)

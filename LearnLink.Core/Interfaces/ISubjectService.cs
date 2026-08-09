@@ -13,7 +13,7 @@ namespace LearnLink.Core.Interfaces
 
         Task<bool> UpdateSubjectAsync(int id, string newSubjectName);
 
-        Task<SubjectViewModel> EditSubjectFormViewModelAsync(int id);
+        Task<SubjectViewModel?> EditSubjectFormViewModelAsync(int id);
 
         SubjectViewModel MapToSubjectViewModel(Subject subject);
     }
