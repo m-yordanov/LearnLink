@@ -62,10 +62,10 @@
         @foreach (var attendance in Model.FilteredAttendances)
         {
             <tr>
-                <td>@attendance.Subject.Name</td>
+                <td>@attendance.Subject</td>
                 <td>@attendance.Status</td>
                 <td>@attendance.DateAndTime.ToString("dd.MM.yyyy HH:mm")</td>
-                <td>@(attendance.Teacher.FirstName) @(attendance.Teacher.LastName)</td>
+                <td>@attendance.TeacherFirstName @attendance.TeacherLastName</td>
             </tr>
         }
     </tbody>

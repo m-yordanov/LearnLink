@@ -106,18 +106,5 @@ namespace LearnLink.Core.Services
 
 			return query;
 		}
-
-		public IEnumerable<Grade> MapToGrades(IEnumerable<GradeViewModel> gradesViewModel)
-		{
-			return gradesViewModel.Select(g => new Grade
-			{
-				Id = g.Id,
-				Subject = new Subject { Name = g.Subject },
-				Student = new Student { FirstName = g.StudentFirstName, LastName = g.StudentLastName },
-				Teacher = new Teacher { FirstName = g.TeacherFirstName, LastName = g.TeacherLastName },
-				Value = g.Value,
-				DateAndTime = g.DateAndTime
-			});
-		}
     }
 }

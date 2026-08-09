@@ -28,11 +28,9 @@ namespace LearnLink.Areas.Admin.Controllers
 
             var subjectOptions = await viewCommonService.GetAvailableSubjectsAsync();
 
-            var grades = gradeService.MapToGrades(gradesViewModel);
-
             var viewModel = new GradeViewModel
             {
-                FilteredGrades = grades,
+                FilteredGrades = gradesViewModel,
                 TotalCount = totalFilteredGrades,
                 PageSize = pageSize,
                 PageNumber = pageNumber,

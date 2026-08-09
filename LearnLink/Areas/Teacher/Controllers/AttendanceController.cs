@@ -1,6 +1,5 @@
 ﻿using LearnLink.Core.Interfaces;
 using LearnLink.Core.Models;
-using LearnLink.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using static LearnLink.Core.Constants.MessageConstants;
@@ -27,19 +26,9 @@ namespace LearnLink.Areas.Teacher.Controllers
 
             int totalPages = viewCommonService.CalculateTotalPages(totalFilteredAttendances, pageSize);
 
-            var attendances = attendancesViewModel.Select(a => new Attendance
-            {
-                Id = a.Id,
-                Subject = new Subject { Name = a.Subject },
-                Student = new Infrastructure.Data.Models.Student { FirstName = a.StudentFirstName, LastName = a.StudentLastName },
-                Teacher = new Infrastructure.Data.Models.Teacher { FirstName = a.TeacherFirstName, LastName = a.TeacherLastName },
-                Status = a.Status,
-                DateAndTime = a.DateAndTime
-            }).ToList();
-
             var viewModel = new AttendanceViewModel
             {
-                FilteredAttendances = attendances,
+                FilteredAttendances = attendancesViewModel,
                 TotalCount = totalFilteredAttendances,
                 PageSize = pageSize,
                 PageNumber = pageNumber,

@@ -1,5 +1,4 @@
-﻿using LearnLink.Infrastructure.Data.Models;
-using LearnLink.Infrastructure.Data.Models.Enums;
+﻿using LearnLink.Infrastructure.Data.Models.Enums;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LearnLink.Core.Models
@@ -42,7 +41,7 @@ namespace LearnLink.Core.Models
 
         public int TotalPages { get; set; }
 
-        public IEnumerable<Attendance> FilteredAttendances { get; set; } = new List<Attendance>();
+        public IEnumerable<AttendanceViewModel> FilteredAttendances { get; set; } = new List<AttendanceViewModel>();
 
         public IEnumerable<SelectListItem> StatusOptions { get; set; } = new List<SelectListItem>();
 

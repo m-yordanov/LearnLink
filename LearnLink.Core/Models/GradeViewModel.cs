@@ -1,5 +1,4 @@
-﻿using LearnLink.Infrastructure.Data.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LearnLink.Core.Models
 {
@@ -39,7 +38,7 @@ namespace LearnLink.Core.Models
         
         public string SelectedSubject { get; set; } = string.Empty;
         
-        public IEnumerable<Grade> FilteredGrades { get; set; } = Enumerable.Empty<Grade>();
+        public IEnumerable<GradeViewModel> FilteredGrades { get; set; } = Enumerable.Empty<GradeViewModel>();
         
         public IEnumerable<SelectListItem> StudentOptions { get; set; } = Enumerable.Empty<SelectListItem>();
         

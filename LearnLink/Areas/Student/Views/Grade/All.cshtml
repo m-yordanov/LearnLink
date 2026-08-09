@@ -53,10 +53,10 @@
         @foreach (var grade in Model.FilteredGrades)
         {
             <tr>
-                <td>@grade.Subject.Name</td>
+                <td>@grade.Subject</td>
                 <td>@grade.Value</td>
                 <td>@grade.DateAndTime.ToString("dd.MM.yyyy HH:mm")</td>
-                <td>@(grade.Teacher.FirstName) @(grade.Teacher.LastName)</td>
+                <td>@grade.TeacherFirstName @grade.TeacherLastName</td>
             </tr>
         }
     </tbody>

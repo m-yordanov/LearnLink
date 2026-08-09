@@ -1,5 +1,4 @@
 ﻿using LearnLink.Core.Models;
-using LearnLink.Infrastructure.Data.Models;
 
 namespace LearnLink.Core.Interfaces
 {
@@ -12,7 +11,5 @@ namespace LearnLink.Core.Interfaces
         Task<IEnumerable<AttendanceViewModel>> StudentGetFilteredAttendancesAsync(string studentId, string selectedSubject, DateTime? dateAfter, DateTime? dateBefore, string selectedStatus, int pageNumber, int pageSize);
 
         Task<int> StudentGetTotalFilteredAttendancesAsync(string userId, string selectedSubject, DateTime? dateAfter, DateTime? dateBefore, string selectedStatus);
-
-        IEnumerable<Attendance> MapToAttendances(IEnumerable<AttendanceViewModel> attendancesViewModel);
     }
 }

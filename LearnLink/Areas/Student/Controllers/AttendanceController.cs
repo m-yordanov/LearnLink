@@ -39,11 +39,9 @@ namespace LearnLink.Areas.Student.Controllers
                              Text = s.ToString()
                          });
 
-            var attendances = attendanceService.MapToAttendances(filteredAttendances);
-
             var viewModel = new AttendanceViewModel
             {
-                FilteredAttendances = attendances,
+                FilteredAttendances = filteredAttendances,
                 SelectedSubject = selectedSubject,
                 SelectedStatus = selectedStatus,
                 PageNumber = pageNumber,

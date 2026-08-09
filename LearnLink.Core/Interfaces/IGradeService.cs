@@ -1,5 +1,4 @@
 ﻿using LearnLink.Core.Models;
-using LearnLink.Infrastructure.Data.Models;
 
 namespace LearnLink.Core.Interfaces
 {
@@ -13,7 +12,5 @@ namespace LearnLink.Core.Interfaces
 
 
         Task<int> StudentGetTotalFilteredGradesAsync(string userId, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter);
-
-        public IEnumerable<Grade> MapToGrades(IEnumerable<GradeViewModel> gradesViewModel);
     }
 }

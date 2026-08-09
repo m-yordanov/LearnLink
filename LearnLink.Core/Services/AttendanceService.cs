@@ -124,18 +124,5 @@ namespace LearnLink.Core.Services
 
             return query;
         }
-
-        public IEnumerable<Attendance> MapToAttendances(IEnumerable<AttendanceViewModel> attendancesViewModel)
-        {
-            return attendancesViewModel.Select(a => new Attendance
-            {
-                Id = a.Id,
-                Subject = new Subject { Name = a.Subject },
-                Student = new Student { FirstName = a.StudentFirstName, LastName = a.StudentLastName },
-                Teacher = new Teacher { FirstName = a.TeacherFirstName, LastName = a.TeacherLastName },
-                Status = a.Status,
-                DateAndTime = a.DateAndTime
-            });
-        }
     }
 }
