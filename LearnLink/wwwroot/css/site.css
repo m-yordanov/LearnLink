@@ -22,6 +22,21 @@ body {
     background-color: #ffd0ab;
 }
 
+.error-container {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.error-container p {
+    font-size: 26px;
+    line-height: 1.5;
+}
+
+.error-image {
+    max-width: 80%;
+    margin-bottom: 20px;
+}
+
 tbody {
     border-color: #000000;
 }

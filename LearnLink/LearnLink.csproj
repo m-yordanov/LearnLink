@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <NuGetAuditLevel>moderate</NuGetAuditLevel>
+    <UseAppHost>false</UseAppHost>
     <UserSecretsId>aspnet-LearnLink-1bf6dddd-0189-499a-8f58-a2c081af80e8</UserSecretsId>
   </PropertyGroup>
 
