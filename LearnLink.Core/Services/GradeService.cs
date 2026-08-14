@@ -15,11 +15,11 @@ namespace LearnLink.Core.Services
 			data = context;
 		}
 
-		public async Task<IEnumerable<GradeViewModel>> GetFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, string sortBy, bool sortDescending, int pageNumber, int pageSize)
+		public async Task<IEnumerable<GradeViewModel>> GetFilteredGradesAsync(GradeFilterModel filter)
 		{
-			return await ApplySorting(FilterGrades(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter), sortBy, sortDescending)
-				.Skip((pageNumber - 1) * pageSize)
-				.Take(pageSize)
+			return await ApplySorting(FilterGrades(filter), filter.SortBy, filter.SortDescending)
+				.Skip((filter.PageNumber - 1) * filter.PageSize)
+				.Take(filter.PageSize)
 				.Select(g => new GradeViewModel
 				{
 					Id = g.Id,
@@ -34,10 +34,9 @@ namespace LearnLink.Core.Services
 				.ToListAsync();
 		}
 
-		public async Task<int> GetTotalFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter)
+		public async Task<int> GetTotalFilteredGradesAsync(GradeFilterModel filter)
 		{
-			return await FilterGrades(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter)
-				.CountAsync();
+			return await FilterGrades(filter).CountAsync();
 		}
 
 		public async Task<IEnumerable<GradeViewModel>> StudentGetFilteredGradesAsync(string userId, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber, int pageSize)
@@ -88,21 +87,21 @@ namespace LearnLink.Core.Services
 			return ordered.ThenBy(g => g.Id);
 		}
 
-		private IQueryable<Grade> FilterGrades(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter)
+		private IQueryable<Grade> FilterGrades(GradeFilterModel filter)
 		{
 			var query = data.Grades.AsQueryable();
 
-			if (!string.IsNullOrEmpty(selectedStudent))
+			if (!string.IsNullOrEmpty(filter.SelectedStudent))
 			{
-				query = query.Where(g => (g.Student.FirstName + " " + g.Student.LastName).Contains(selectedStudent));
+				query = query.Where(g => (g.Student.FirstName + " " + g.Student.LastName).Contains(filter.SelectedStudent));
 			}
 
-			if (!string.IsNullOrEmpty(selectedTeacher))
+			if (!string.IsNullOrEmpty(filter.SelectedTeacher))
 			{
-				query = query.Where(g => (g.Teacher.FirstName + " " + g.Teacher.LastName).Contains(selectedTeacher));
+				query = query.Where(g => (g.Teacher.FirstName + " " + g.Teacher.LastName).Contains(filter.SelectedTeacher));
 			}
 
-			return ApplyCommonFilters(query, selectedSubject, dateBefore, dateAfter);
+			return ApplyCommonFilters(query, filter.SelectedSubject, filter.DateBefore, filter.DateAfter);
 		}
 
 		private IQueryable<Grade> FilterStudentGrades(string userId, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter)

@@ -8,42 +8,20 @@ namespace LearnLink.Areas.Admin.Controllers
 {
     public class GradeController : AdminBaseController
     {
-        private readonly IGradeService gradeService;
+        private readonly IGradeListService gradeListService;
         private readonly IGradeManagementService gradeManagementService;
         private readonly IViewCommonService viewCommonService;
 
-        public GradeController(IGradeService _gradeService, IGradeManagementService _gradeManagementService, IViewCommonService _viewCommonService)
+        public GradeController(IGradeListService _gradeListService, IGradeManagementService _gradeManagementService, IViewCommonService _viewCommonService)
         {
-            gradeService = _gradeService;
+            gradeListService = _gradeListService;
             gradeManagementService = _gradeManagementService;
             viewCommonService = _viewCommonService;
         }
 
-        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, string sortBy = "date", bool sortDescending = true, int pageNumber = 1, int pageSize = maxPerPage)
+        public async Task<IActionResult> All(GradeFilterModel filter)
         {
-            var gradesViewModel = await gradeService.GetFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter, sortBy, sortDescending, pageNumber, pageSize);
-            var totalFilteredGrades = await gradeService.GetTotalFilteredGradesAsync(selectedStudent, selectedTeacher, selectedSubject, dateBefore, dateAfter);
-
-            int totalPages = viewCommonService.CalculateTotalPages(totalFilteredGrades, pageSize);
-
-            var subjectOptions = await viewCommonService.GetAvailableSubjectsAsync();
-
-            var viewModel = new GradeViewModel
-            {
-                FilteredGrades = gradesViewModel,
-                TotalCount = totalFilteredGrades,
-                PageSize = pageSize,
-                PageNumber = pageNumber,
-                TotalPages = totalPages,
-                SelectedStudent = selectedStudent,
-                SelectedTeacher = selectedTeacher,
-                SelectedSubject = selectedSubject,
-                SortBy = sortBy,
-                SortDescending = sortDescending,
-                SubjectOptions = subjectOptions
-            };
-
-            return View(viewModel);
+            return View(await gradeListService.BuildAsync(filter));
         }
 
         [HttpGet]

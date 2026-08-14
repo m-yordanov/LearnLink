@@ -9,40 +9,19 @@ namespace LearnLink.Areas.Teacher.Controllers
 {
     public class AttendanceController : TeacherBaseController
     {
-        private readonly IAttendanceService attendanceService;
+        private readonly IAttendanceListService attendanceListService;
         private readonly IAttendanceManagementService attendanceManagementService;
         private readonly IViewCommonService viewCommonService;
 
-        public AttendanceController(IAttendanceManagementService _attendanceManagementService, IViewCommonService _viewCommonService, IAttendanceService _attendanceSerivce)
+        public AttendanceController(IAttendanceManagementService _attendanceManagementService, IViewCommonService _viewCommonService, IAttendanceListService _attendanceListService)
         {
             attendanceManagementService = _attendanceManagementService;
             viewCommonService = _viewCommonService;
-            attendanceService = _attendanceSerivce;
+            attendanceListService = _attendanceListService;
         }
-        public async Task<IActionResult> All(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, string sortBy = "date", bool sortDescending = true, int pageNumber = 1, int pageSize = maxPerPage)
+        public async Task<IActionResult> All(AttendanceFilterModel filter)
         {
-            var attendancesViewModel = await attendanceService.GetFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter, sortBy, sortDescending, pageNumber, pageSize);
-            var totalFilteredAttendances = await attendanceService.GetTotalFilteredAttendancesAsync(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter);
-
-            int totalPages = viewCommonService.CalculateTotalPages(totalFilteredAttendances, pageSize);
-
-            var viewModel = new AttendanceViewModel
-            {
-                FilteredAttendances = attendancesViewModel,
-                TotalCount = totalFilteredAttendances,
-                PageSize = pageSize,
-                PageNumber = pageNumber,
-                TotalPages = totalPages,
-                SelectedStudent = selectedStudent,
-                SelectedTeacher = selectedTeacher,
-                SelectedSubject = selectedSubject,
-                SelectedStatus = selectedStatus,
-                SortBy = sortBy,
-                SortDescending = sortDescending,
-                SubjectOptions = await viewCommonService.GetAvailableSubjectsAsync()
-            };
-
-            return View(viewModel);
+            return View(await attendanceListService.BuildAsync(filter));
         }
 
         [HttpGet]

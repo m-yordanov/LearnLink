@@ -12,7 +12,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IGradeService, GradeService>();
+            services.AddScoped<IGradeListService, GradeListService>();
             services.AddScoped<IAttendanceService, AttendanceService>();
+            services.AddScoped<IAttendanceListService, AttendanceListService>();
             services.AddScoped<IAttendanceManagementService, AttendanceManagementService>();
             services.AddScoped<IGradeManagementService, GradeManagementService>();
             services.AddScoped<IViewCommonService, ViewCommonService>();

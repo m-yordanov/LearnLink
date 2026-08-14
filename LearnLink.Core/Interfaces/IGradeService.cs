@@ -4,9 +4,9 @@ namespace LearnLink.Core.Interfaces
 {
 	public interface IGradeService
     {
-        Task<IEnumerable<GradeViewModel>> GetFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, string sortBy, bool sortDescending, int pageNumber, int pageSize);
+        Task<IEnumerable<GradeViewModel>> GetFilteredGradesAsync(GradeFilterModel filter);
 
-        Task<int> GetTotalFilteredGradesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter);
+        Task<int> GetTotalFilteredGradesAsync(GradeFilterModel filter);
 
         Task<IEnumerable<GradeViewModel>> StudentGetFilteredGradesAsync(string userId, string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber, int pageSize);
 

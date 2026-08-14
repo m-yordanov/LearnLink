@@ -1,4 +1,5 @@
-﻿using LearnLink.Core.Services;
+﻿using LearnLink.Core.Models;
+using LearnLink.Core.Services;
 using LearnLink.Infrastructure.Data;
 using LearnLink.Infrastructure.Data.Models;
 using LearnLink.Infrastructure.Data.Models.Enums;
@@ -44,11 +45,22 @@ namespace LearnLink.Testing
                 DateAndTime = new DateTime(2026, 5, 1, 9, 0, 0)
             };
 
+
+        private static AttendanceFilterModel Filter(string status = "", string sortBy = "date",
+            bool descending = true, int page = 1, int size = 50)
+            => new AttendanceFilterModel
+            {
+                SelectedStatus = status,
+                SortBy = sortBy,
+                SortDescending = descending,
+                PageNumber = page,
+                PageSize = size
+            };
+
         [Test]
         public async Task GetTotalFilteredAttendancesAsync_AppliesTheStatusFilter()
         {
-            var total = await service.GetTotalFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, nameof(AttendanceStatus.Absent), null, null);
+            var total = await service.GetTotalFilteredAttendancesAsync(Filter(status: nameof(AttendanceStatus.Absent)));
 
             Assert.That(total, Is.EqualTo(1));
         }
@@ -58,10 +70,8 @@ namespace LearnLink.Testing
         {
             var status = nameof(AttendanceStatus.Present);
 
-            var page = await service.GetFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, status, null, null, "date", true, 1, 50);
-            var total = await service.GetTotalFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, status, null, null);
+            var page = await service.GetFilteredAttendancesAsync(Filter(status: status));
+            var total = await service.GetTotalFilteredAttendancesAsync(Filter(status: status));
 
             Assert.That(total, Is.EqualTo(page.Count()));
         }
@@ -69,8 +79,7 @@ namespace LearnLink.Testing
         [Test]
         public async Task GetFilteredAttendancesAsync_ReturnsOnlyTheRequestedStatus()
         {
-            var page = await service.GetFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, nameof(AttendanceStatus.Absent), null, null, "date", true, 1, 50);
+            var page = await service.GetFilteredAttendancesAsync(Filter(status: nameof(AttendanceStatus.Absent)));
 
             Assert.That(page.Select(a => a.Status), Is.EqualTo(new[] { AttendanceStatus.Absent }));
         }
@@ -78,8 +87,7 @@ namespace LearnLink.Testing
         [Test]
         public async Task GetTotalFilteredAttendancesAsync_CountsEverythingWithoutFilters()
         {
-            var total = await service.GetTotalFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, string.Empty, null, null);
+            var total = await service.GetTotalFilteredAttendancesAsync(Filter());
 
             Assert.That(total, Is.EqualTo(3));
         }
@@ -88,10 +96,8 @@ namespace LearnLink.Testing
         [TestCase("99", TestName = "numeric status outside the enum")]
         public async Task AnUnrecognisedStatus_IsIgnoredRatherThanThrowing(string status)
         {
-            var page = await service.GetFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, status, null, null, "date", true, 1, 50);
-            var total = await service.GetTotalFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, status, null, null);
+            var page = await service.GetFilteredAttendancesAsync(Filter(status: status));
+            var total = await service.GetTotalFilteredAttendancesAsync(Filter(status: status));
 
             Assert.Multiple(() =>
             {
@@ -114,8 +120,7 @@ namespace LearnLink.Testing
         [Test]
         public async Task StatusMatchingIsCaseInsensitive()
         {
-            var total = await service.GetTotalFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, "absent", null, null);
+            var total = await service.GetTotalFilteredAttendancesAsync(Filter(status: "absent"));
 
             Assert.That(total, Is.EqualTo(1));
         }
@@ -147,8 +152,7 @@ namespace LearnLink.Testing
             data.Attendances.Add(newest);
             data.SaveChanges();
 
-            var page = await service.GetFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, string.Empty, null, null, "date", true, 1, 50);
+            var page = await service.GetFilteredAttendancesAsync(Filter());
 
             Assert.That(page.First().Status, Is.EqualTo(AttendanceStatus.Excused));
         }
@@ -156,8 +160,7 @@ namespace LearnLink.Testing
         [Test]
         public async Task GetFilteredAttendancesAsync_BreaksTiesById()
         {
-            var page = await service.GetFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, string.Empty, null, null, "date", true, 1, 50);
+            var page = await service.GetFilteredAttendancesAsync(Filter());
 
             Assert.That(page.Select(a => a.Id), Is.Ordered.Ascending);
         }
@@ -165,10 +168,8 @@ namespace LearnLink.Testing
         [Test]
         public async Task GetFilteredAttendancesAsync_FallsBackToTheDefaultForAnUnknownColumn()
         {
-            var unknown = await service.GetFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, string.Empty, null, null, "banana", true, 1, 50);
-            var byDate = await service.GetFilteredAttendancesAsync(
-                string.Empty, string.Empty, string.Empty, string.Empty, null, null, "date", true, 1, 50);
+            var unknown = await service.GetFilteredAttendancesAsync(Filter(sortBy: "banana"));
+            var byDate = await service.GetFilteredAttendancesAsync(Filter());
 
             Assert.That(unknown.Select(a => a.Id), Is.EqualTo(byDate.Select(a => a.Id)));
         }

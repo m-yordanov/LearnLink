@@ -16,11 +16,11 @@ namespace LearnLink.Core.Services
             data = context;
         }
 
-        public async Task<IEnumerable<AttendanceViewModel>> GetFilteredAttendancesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, string sortBy, bool sortDescending, int pageNumber, int pageSize)
+        public async Task<IEnumerable<AttendanceViewModel>> GetFilteredAttendancesAsync(AttendanceFilterModel filter)
         {
-            return await ApplySorting(FilterAttendances(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter), sortBy, sortDescending)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+            return await ApplySorting(FilterAttendances(filter), filter.SortBy, filter.SortDescending)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
                 .Select(a => new AttendanceViewModel
                 {
                     Id = a.Id,
@@ -35,10 +35,9 @@ namespace LearnLink.Core.Services
                 .ToListAsync();
         }
 
-        public async Task<int> GetTotalFilteredAttendancesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter)
+        public async Task<int> GetTotalFilteredAttendancesAsync(AttendanceFilterModel filter)
         {
-            return await FilterAttendances(selectedStudent, selectedTeacher, selectedSubject, selectedStatus, dateBefore, dateAfter)
-                .CountAsync();
+            return await FilterAttendances(filter).CountAsync();
         }
 
         public async Task<IEnumerable<AttendanceViewModel>> StudentGetFilteredAttendancesAsync(string userId, string selectedSubject, DateTime? dateAfter, DateTime? dateBefore, string selectedStatus, int pageNumber, int pageSize)
@@ -89,31 +88,31 @@ namespace LearnLink.Core.Services
             return ordered.ThenBy(a => a.Id);
         }
 
-        private IQueryable<Attendance> FilterAttendances(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter)
+        private IQueryable<Attendance> FilterAttendances(AttendanceFilterModel filter)
         {
             var query = data.Attendances.AsQueryable();
 
-            if (!string.IsNullOrEmpty(selectedStudent))
+            if (!string.IsNullOrEmpty(filter.SelectedStudent))
             {
-                query = query.Where(a => (a.Student.FirstName + " " + a.Student.LastName).Contains(selectedStudent));
+                query = query.Where(a => (a.Student.FirstName + " " + a.Student.LastName).Contains(filter.SelectedStudent));
             }
 
-            if (!string.IsNullOrEmpty(selectedTeacher))
+            if (!string.IsNullOrEmpty(filter.SelectedTeacher))
             {
-                query = query.Where(a => (a.Teacher.FirstName + " " + a.Teacher.LastName).Contains(selectedTeacher));
+                query = query.Where(a => (a.Teacher.FirstName + " " + a.Teacher.LastName).Contains(filter.SelectedTeacher));
             }
 
-            if (dateBefore.HasValue)
+            if (filter.DateBefore.HasValue)
             {
-                query = query.Where(a => a.DateAndTime < dateBefore);
+                query = query.Where(a => a.DateAndTime < filter.DateBefore);
             }
 
-            if (dateAfter.HasValue)
+            if (filter.DateAfter.HasValue)
             {
-                query = query.Where(a => a.DateAndTime > dateAfter);
+                query = query.Where(a => a.DateAndTime > filter.DateAfter);
             }
 
-            return ApplySubjectAndStatusFilters(query, selectedSubject, selectedStatus);
+            return ApplySubjectAndStatusFilters(query, filter.SelectedSubject, filter.SelectedStatus);
         }
 
         private IQueryable<Attendance> FilterStudentAttendances(string userId, string selectedSubject, DateTime? dateAfter, DateTime? dateBefore, string selectedStatus)

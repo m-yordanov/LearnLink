@@ -4,9 +4,9 @@ namespace LearnLink.Core.Interfaces
 {
     public interface IAttendanceService
     {
-        Task<IEnumerable<AttendanceViewModel>> GetFilteredAttendancesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter, string sortBy, bool sortDescending, int pageNumber, int pageSize);
+        Task<IEnumerable<AttendanceViewModel>> GetFilteredAttendancesAsync(AttendanceFilterModel filter);
 
-        Task<int> GetTotalFilteredAttendancesAsync(string selectedStudent, string selectedTeacher, string selectedSubject, string selectedStatus, DateTime? dateBefore, DateTime? dateAfter);
+        Task<int> GetTotalFilteredAttendancesAsync(AttendanceFilterModel filter);
 
         Task<IEnumerable<AttendanceViewModel>> StudentGetFilteredAttendancesAsync(string studentId, string selectedSubject, DateTime? dateAfter, DateTime? dateBefore, string selectedStatus, int pageNumber, int pageSize);
 
