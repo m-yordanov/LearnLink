@@ -4,6 +4,7 @@ using LearnLink.Infrastructure.Data;
 using LearnLink.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static LearnLink.Core.Constants.AccountConstants;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -45,6 +46,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
+
+                options.Lockout.MaxFailedAccessAttempts = MaxFailedAccessAttempts;
+                options.Lockout.DefaultLockoutTimeSpan = FailedAccessLockoutDuration;
+                options.Lockout.AllowedForNewUsers = true;
             })
             .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<LearnLinkDbContext>();

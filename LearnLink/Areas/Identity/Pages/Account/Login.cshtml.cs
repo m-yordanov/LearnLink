@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using static LearnLink.Core.Constants.AccountConstants;
 using static LearnLink.Core.Constants.RoleConstants;
 
 namespace LearnLink.Areas.Identity.Pages.Account
@@ -86,7 +87,6 @@ namespace LearnLink.Areas.Identity.Pages.Account
 
             returnUrl ??= Url.Content("~/");
 
-            // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
 
@@ -100,9 +100,7 @@ namespace LearnLink.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByEmailAsync(Input.Email);
@@ -117,7 +115,10 @@ namespace LearnLink.Areas.Identity.Pages.Account
                 }
                 else if (result.IsLockedOut)
                 {
-                    ModelState.AddModelError(string.Empty, "This account has been deactivated.");
+                    ModelState.AddModelError(string.Empty, await IsDeactivatedAsync(Input.Email)
+                        ? "This account has been deactivated."
+                        : $"Too many failed sign-in attempts. Please try again in {FailedAccessLockoutDuration.TotalMinutes:0} minutes.");
+
                     return Page();
                 }
                 else
@@ -127,8 +128,14 @@ namespace LearnLink.Areas.Identity.Pages.Account
                 }
             }
 
-            // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private async Task<bool> IsDeactivatedAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            return user?.LockoutEnd >= DeactivationThreshold;
         }
     }
 }

@@ -104,6 +104,17 @@ namespace LearnLink.Testing
         }
 
         [Test]
+        public async Task GetFilteredUsersAsync_StillReportsAUserServingAFailedSignInLockoutAsActive()
+        {
+            data.AddUser("clumsy@mail.com", lockoutEnd: DateTimeOffset.UtcNow.AddMinutes(15));
+
+            var users = await service.GetFilteredUsersAsync(string.Empty, 1, 10);
+
+            Assert.That(users.Single().IsActive, Is.True,
+                "mistyping a password must not make the account look deactivated");
+        }
+
+        [Test]
         public async Task GetTotalUsersCountAsync_CountsOnlyMatchingUsers()
         {
             data.AddUser("ivan@mail.com", "Ivan", "Petrov");
@@ -266,6 +277,7 @@ namespace LearnLink.Testing
             Assert.That(data.Students.Single().IsActive, Is.False);
             userManager.Verify(m => m.SetLockoutEnabledAsync(user, true), Times.Once);
             userManager.Verify(m => m.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue), Times.Once);
+            userManager.Verify(m => m.UpdateSecurityStampAsync(user), Times.Once);
         }
 
         [Test]

@@ -4,6 +4,7 @@ using LearnLink.Infrastructure.Data.Models;
 using LearnLink.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static LearnLink.Core.Constants.AccountConstants;
 using static LearnLink.Core.Constants.RoleConstants;
 
 namespace LearnLink.Core.Services
@@ -21,8 +22,6 @@ namespace LearnLink.Core.Services
 
         public async Task<List<UserViewModel>> GetFilteredUsersAsync(string searchString, int page, int pageSize)
         {
-            var now = DateTimeOffset.UtcNow;
-
             var users = await FilterUsers(searchString)
                 .OrderBy(u => u.Email)
                 .Skip((page - 1) * pageSize)

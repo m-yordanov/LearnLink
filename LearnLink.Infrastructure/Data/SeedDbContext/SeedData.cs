@@ -52,6 +52,7 @@ namespace LearnLink.Infrastructure.Data.SeedDbContext
                 NormalizedEmail = "student@mail.com",
                 FirstName = "Ivan",
                 LastName = "Petrov",
+                LockoutEnabled = true,
                 ConcurrencyStamp = "f2b24258-c192-4ef8-bfc1-b6c15d2ccf32",
                 SecurityStamp = "25e4616e-4818-4d50-b4d4-000bbf56b53e",
                 PasswordHash = "AQAAAAEAACcQAAAAEPuDCnn2OViyOCZCJDPhBC7UM/7unLPkmHsM3stDLuG8Z+O47DRS/tp7YAYBP76D/w=="
@@ -66,6 +67,7 @@ namespace LearnLink.Infrastructure.Data.SeedDbContext
                 NormalizedEmail = "teacher@mail.com",
                 FirstName = "Viktor",
                 LastName = "Georgiev",
+                LockoutEnabled = true,
                 ConcurrencyStamp = "e1f83c46-c1a5-4870-8447-b0b399035ac4",
                 SecurityStamp = "0db2227e-9f41-46a1-9df9-34e4290b622a",
                 PasswordHash = "AQAAAAEAACcQAAAAEHND0K+Y+rnCaFUzR+ussBps/28F7VBGNRvCXbOzv7mfCvU6622kNiFEdGGe1QPbTg=="
@@ -80,6 +82,7 @@ namespace LearnLink.Infrastructure.Data.SeedDbContext
                 NormalizedEmail = "admin@mail.com",
                 FirstName = "The",
                 LastName = "Admin",
+                LockoutEnabled = true,
                 ConcurrencyStamp = "007e0918-b993-45de-a254-8053bc10a141",
                 SecurityStamp = "590871c2-bbf8-4e02-9f4e-7b81b5b0e139",
                 PasswordHash = "AQAAAAEAACcQAAAAEPlrrhtGUUqffS0i23TiGtrM75PsCR59OF+/L/DrKCk4ari7AwheSuXtHYXAtyc14w=="
