@@ -33,9 +33,14 @@ namespace LearnLink.Testing
 
         public static Mock<UserManager<ApplicationUser>> CreateUserManager()
         {
-            return new Mock<UserManager<ApplicationUser>>(
+            var userManager = new Mock<UserManager<ApplicationUser>>(
                 Mock.Of<IUserStore<ApplicationUser>>(),
                 null!, null!, null!, null!, null!, null!, null!, null!);
+
+            userManager.Setup(m => m.UpdateSecurityStampAsync(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(IdentityResult.Success);
+
+            return userManager;
         }
 
         public static ApplicationUser AddUser(

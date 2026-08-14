@@ -269,6 +269,23 @@ namespace LearnLink.Testing
         }
 
         [Test]
+        public async Task SetUserActiveAsync_StampsTheUserSoTheirExistingSessionStops()
+        {
+            var user = data.AddUser("teacher@mail.com");
+            data.AddTeacher(user);
+
+            userManager.Setup(m => m.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            userManager.Setup(m => m.SetLockoutEnabledAsync(user, true)).ReturnsAsync(IdentityResult.Success);
+            userManager.Setup(m => m.SetLockoutEndDateAsync(user, It.IsAny<DateTimeOffset?>()))
+                .ReturnsAsync(IdentityResult.Success);
+
+            await service.SetUserActiveAsync(user.Id, false);
+
+            userManager.Verify(m => m.UpdateSecurityStampAsync(user), Times.Once,
+                "the lockout alone leaves the cookie the user already holds working");
+        }
+
+        [Test]
         public async Task SetUserActiveAsync_ClearsTheLockoutAndReactivatesTheStudentRecord()
         {
             var user = data.AddUser("student@mail.com", lockoutEnd: DateTimeOffset.MaxValue);
@@ -300,6 +317,8 @@ namespace LearnLink.Testing
 
             Assert.That(success, Is.True);
             Assert.That(data.Teachers.Single().IsActive, Is.False);
+            userManager.Verify(m => m.UpdateSecurityStampAsync(user), Times.Once,
+                "the removed role stays in the cookie until the stamp changes");
         }
 
         [Test]
@@ -336,6 +355,41 @@ namespace LearnLink.Testing
             Assert.That(data.Teachers.Single().IsActive, Is.True,
                 "re-assigning the role a user already has must not deactivate their record");
             userManager.Verify(m => m.RemoveFromRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>()), Times.Never);
+            userManager.Verify(m => m.UpdateSecurityStampAsync(It.IsAny<ApplicationUser>()), Times.Never,
+                "a no-op change must not sign the user out");
+        }
+
+        [Test]
+        public async Task ChangeUserRoleAsync_StampsTheUserWhenTheRoleChanges()
+        {
+            var user = data.AddUser("person@mail.com");
+            data.EnsureRole(StudentRole);
+
+            userManager.Setup(m => m.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            userManager.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(new List<string> { TeacherRole });
+            userManager.Setup(m => m.AddToRoleAsync(user, StudentRole)).ReturnsAsync(IdentityResult.Success);
+            userManager.Setup(m => m.RemoveFromRolesAsync(user, It.IsAny<IEnumerable<string>>()))
+                .ReturnsAsync(IdentityResult.Success);
+
+            await service.ChangeUserRoleAsync(user.Id, StudentRole);
+
+            userManager.Verify(m => m.UpdateSecurityStampAsync(user), Times.Once,
+                "a demoted user keeps their old rights until the cookie is rejected");
+        }
+
+        [Test]
+        public async Task ChangeUserRoleAsync_StampsTheUserWhenTheyHadNoRoleBefore()
+        {
+            var user = data.AddUser("person@mail.com");
+            data.EnsureRole(StudentRole);
+
+            userManager.Setup(m => m.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            userManager.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(new List<string>());
+            userManager.Setup(m => m.AddToRoleAsync(user, StudentRole)).ReturnsAsync(IdentityResult.Success);
+
+            await service.ChangeUserRoleAsync(user.Id, StudentRole);
+
+            userManager.Verify(m => m.UpdateSecurityStampAsync(user), Times.Once);
         }
 
         [Test]

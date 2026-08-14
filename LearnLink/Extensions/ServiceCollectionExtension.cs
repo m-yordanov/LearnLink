@@ -49,6 +49,11 @@ namespace Microsoft.Extensions.DependencyInjection
             .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<LearnLinkDbContext>();
 
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.FromMinutes(1);
+            });
+
             return services;
         }
     }

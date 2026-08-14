@@ -32,7 +32,7 @@ namespace LearnLink.Core.Services
                     Id = user.Id,
                     Email = user.Email ?? string.Empty,
                     FullName = $"{user.FirstName} {user.LastName}",
-                    IsActive = user.LockoutEnd == null || user.LockoutEnd <= now,
+                    IsActive = user.LockoutEnd == null || user.LockoutEnd < DeactivationThreshold,
                     Roles = data.Roles
                         .Where(r => data.UserRoles.Any(ur => ur.UserId == user.Id && ur.RoleId == r.Id))
                         .Select(r => r.Name ?? string.Empty)
@@ -126,7 +126,9 @@ namespace LearnLink.Core.Services
 
             var existingRoles = await userManager.GetRolesAsync(user);
 
-            if (!existingRoles.Contains(roleName))
+            var roleWasAdded = !existingRoles.Contains(roleName);
+
+            if (roleWasAdded)
             {
                 var result = await userManager.AddToRoleAsync(user, roleName);
 
@@ -160,6 +162,11 @@ namespace LearnLink.Core.Services
             if (replacedRoles.Contains(StudentRole))
             {
                 await DeactivateStudentAsync(user);
+            }
+
+            if (roleWasAdded || replacedRoles.Any())
+            {
+                await userManager.UpdateSecurityStampAsync(user);
             }
 
             return true;
@@ -198,6 +205,8 @@ namespace LearnLink.Core.Services
                     await DeactivateStudentAsync(user);
                 }
 
+                await userManager.UpdateSecurityStampAsync(user);
+
                 return true;
             }
 
@@ -222,7 +231,7 @@ namespace LearnLink.Core.Services
             {
                 await userManager.SetLockoutEnabledAsync(user, true);
 
-                var result = await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+                var result = await userManager.SetLockoutEndDateAsync(user, DeactivatedLockoutEnd);
 
                 if (!result.Succeeded)
                 {
@@ -238,6 +247,8 @@ namespace LearnLink.Core.Services
                     return false;
                 }
             }
+
+            await userManager.UpdateSecurityStampAsync(user);
 
             var student = await data.Students.FirstOrDefaultAsync(s => s.UserId == user.Id);
 
