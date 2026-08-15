@@ -3,7 +3,7 @@
 
 // Write your JavaScript code.
 
-var message = function () {
+if (window.toastr) {
     toastr.options = {
         "closeButton": true,
         "debug": false,
@@ -20,18 +20,5 @@ var message = function () {
         "hideEasing": "linear",
         "showMethod": "slideDown",
         "hideMethod": "fadeOut"
-    }
-    var showSuccess = function(message)
-    {
-        toastr["success"](message);
-    }
-
-    var showError = function (message) {
-        toastr["error"](message);
-    }
-
-    return {
-        showSuccess,
-        showError
-    }
-}();
+    };
+}
