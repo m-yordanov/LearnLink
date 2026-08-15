@@ -1,0 +1,4 @@
+@{
+    var pageTitle = ViewData["Title"]?.ToString();
+}
+<title>@(string.IsNullOrWhiteSpace(pageTitle) ? "LearnLink" : pageTitle + " - LearnLink")</title>
