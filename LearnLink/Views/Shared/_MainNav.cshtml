@@ -1,0 +1,52 @@
+@{
+    var area = ViewContext.RouteData.Values["area"]?.ToString();
+}
+
+@if (area == "Admin")
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Admin" asp-controller="Home" asp-action="Dashboard">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Admin" asp-controller="User" asp-action="All">Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Admin" asp-controller="Grade" asp-action="All">Grades</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Admin" asp-controller="Attendance" asp-action="All">Attendances</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Admin" asp-controller="Subject" asp-action="All">Subjects</a>
+    </li>
+}
+else if (area == "Teacher")
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Teacher" asp-controller="Home" asp-action="Index">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Teacher" asp-controller="Grade" asp-action="All">Grades</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Teacher" asp-controller="Attendance" asp-action="All">Attendances</a>
+    </li>
+}
+else if (area == "Student")
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Student" asp-controller="Home" asp-action="Index">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Student" asp-controller="Grade" asp-action="All">Grades</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Student" asp-controller="Attendance" asp-action="All">Attendances</a>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+    </li>
+}

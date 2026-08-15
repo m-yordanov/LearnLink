@@ -1,5 +1,6 @@
-﻿@using LearnLink.Core.Constants;
-
+@{
+    var isAdminArea = ViewContext.RouteData.Values["area"]?.ToString() == "Admin";
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <partial name="_PageTitle" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href ="~/lib/toastr/toastr.min.css" />
+    <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LearnLink.styles.css" asp-append-version="true" />
 </head>
@@ -22,9 +23,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+                        <partial name="_MainNav" />
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -40,6 +39,10 @@
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; @DateTime.Now.Year - LearnLink
+            @if (isAdminArea)
+            {
+                <text>- </text><span class="text-danger">This area is only for Administrators!</span>
+            }
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
