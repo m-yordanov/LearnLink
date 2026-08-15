@@ -1,5 +1,6 @@
 using LearnLink.Core.Interfaces;
 using LearnLink.Core.Models;
+using static LearnLink.Core.Constants.PaginationConstants;
 
 namespace LearnLink.Core.Services
 {
@@ -16,14 +17,18 @@ namespace LearnLink.Core.Services
 
         public async Task<GradeViewModel> BuildAsync(GradeFilterModel filter)
         {
-            var grades = await gradeService.GetFilteredGradesAsync(filter);
             var totalCount = await gradeService.GetTotalFilteredGradesAsync(filter);
+            var totalPages = viewCommonService.CalculateTotalPages(totalCount, filter.PageSize);
+
+            filter.PageNumber = ClampToLastPage(filter.PageNumber, totalPages);
+
+            var grades = await gradeService.GetFilteredGradesAsync(filter);
 
             return new GradeViewModel
             {
                 FilteredGrades = grades,
                 TotalCount = totalCount,
-                TotalPages = viewCommonService.CalculateTotalPages(totalCount, filter.PageSize),
+                TotalPages = totalPages,
                 PageNumber = filter.PageNumber,
                 PageSize = filter.PageSize,
                 SelectedStudent = filter.SelectedStudent,

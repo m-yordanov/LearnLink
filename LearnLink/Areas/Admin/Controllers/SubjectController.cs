@@ -3,11 +3,14 @@ using LearnLink.Core.Models;
 using LearnLink.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using static LearnLink.Core.Constants.MessageConstants;
+using static LearnLink.Core.Constants.PaginationConstants;
 
 namespace LearnLink.Areas.Admin.Controllers
 {
     public class SubjectController : AdminBaseController
     {
+        private const int defaultSubjectsPerPage = 10;
+
         private readonly ISubjectService subjectService;
         private readonly IViewCommonService viewCommonService;
 
@@ -16,14 +19,17 @@ namespace LearnLink.Areas.Admin.Controllers
             subjectService = _subjectService;
             viewCommonService = _viewCommonService;
         }
-        public async Task<IActionResult> All(string searchString, int page = 1, int pageSize = 10)
+        public async Task<IActionResult> All(string searchString, int page = 1, int pageSize = defaultSubjectsPerPage)
         {
-            var subjects = await subjectService.GetFilteredSubjectsAsync(searchString, page, pageSize);
+            pageSize = ClampPageSize(pageSize, defaultSubjectsPerPage);
 
             var totalSubjectsCount = await subjectService.GetTotalSubjectsCountAsync(searchString);
 
             var totalPages = viewCommonService.CalculateTotalPages(totalSubjectsCount, pageSize);
 
+            page = ClampToLastPage(page, totalPages);
+
+            var subjects = await subjectService.GetFilteredSubjectsAsync(searchString, page, pageSize);
 
             var viewModel = new SubjectViewModel
             {

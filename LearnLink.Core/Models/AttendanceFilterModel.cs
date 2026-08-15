@@ -20,8 +20,20 @@ namespace LearnLink.Core.Models
 
         public bool SortDescending { get; set; } = true;
 
-        public int PageNumber { get; set; } = 1;
+        private int pageNumber = 1;
 
-        public int PageSize { get; set; } = maxPerPage;
+        private int pageSize = maxPerPage;
+
+        public int PageNumber
+        {
+            get => pageNumber;
+            set => pageNumber = ClampPageNumber(value);
+        }
+
+        public int PageSize
+        {
+            get => pageSize;
+            set => pageSize = ClampPageSize(value);
+        }
     }
 }

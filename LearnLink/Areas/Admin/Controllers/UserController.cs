@@ -20,11 +20,15 @@ namespace LearnLink.Areas.Admin.Controllers
 
         public async Task<IActionResult> All(string searchString, int page = 1, int pageSize = maxPerPage)
         {
-            var users = await userService.GetFilteredUsersAsync(searchString, page, pageSize);
+            pageSize = ClampPageSize(pageSize);
 
             var totalUsersCount = await userService.GetTotalUsersCountAsync(searchString);
 
             var totalPages = viewCommonService.CalculateTotalPages(totalUsersCount, pageSize);
+
+            page = ClampToLastPage(page, totalPages);
+
+            var users = await userService.GetFilteredUsersAsync(searchString, page, pageSize);
 
             var viewModel = new UserListViewModel
             {

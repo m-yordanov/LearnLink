@@ -21,10 +21,15 @@ namespace LearnLink.Areas.Student.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            var filteredGrades = await gradeService.StudentGetFilteredGradesAsync(userId, selectedSubject, dateBefore, dateAfter, pageNumber, pageSize);
+            pageSize = ClampPageSize(pageSize);
+
             var totalFilteredGrades = await gradeService.StudentGetTotalFilteredGradesAsync(userId, selectedSubject, dateBefore, dateAfter);
 
             int totalPages = viewCommonService.CalculateTotalPages(totalFilteredGrades, pageSize);
+
+            pageNumber = ClampToLastPage(pageNumber, totalPages);
+
+            var filteredGrades = await gradeService.StudentGetFilteredGradesAsync(userId, selectedSubject, dateBefore, dateAfter, pageNumber, pageSize);
 
             var subjectOptions = await viewCommonService.GetAvailableSubjectsAsync();
 

@@ -23,11 +23,15 @@ namespace LearnLink.Areas.Student.Controllers
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            var filteredAttendances = await attendanceService.StudentGetFilteredAttendancesAsync(studentId, selectedSubject, dateAfter, dateBefore, selectedStatus, pageNumber, pageSize);
+            pageSize = ClampPageSize(pageSize);
 
             var totalFilteredAttendances = await attendanceService.StudentGetTotalFilteredAttendancesAsync(studentId, selectedSubject, dateAfter, dateBefore, selectedStatus);
 
 			int totalPages = viewCommonService.CalculateTotalPages(totalFilteredAttendances, pageSize);
+
+            pageNumber = ClampToLastPage(pageNumber, totalPages);
+
+            var filteredAttendances = await attendanceService.StudentGetFilteredAttendancesAsync(studentId, selectedSubject, dateAfter, dateBefore, selectedStatus, pageNumber, pageSize);
 
 			var subjectOptions = await viewCommonService.GetSubjectOptionsAsync();
 
