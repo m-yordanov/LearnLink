@@ -125,7 +125,7 @@ namespace LearnLink.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            TempData["UserMessageSuccess"] = "Role successfully unassigned.";
+            TempData[UserMessageSuccess] = "Role successfully unassigned.";
             return RedirectToAction(nameof(All));
         }
 
