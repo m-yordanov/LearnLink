@@ -21,6 +21,8 @@ namespace LearnLink.Areas.Admin.Controllers
 
         public async Task<IActionResult> All(GradeFilterModel filter)
         {
+            this.WarnAboutIgnoredFilters();
+
             return View(await gradeListService.BuildAsync(filter));
         }
 

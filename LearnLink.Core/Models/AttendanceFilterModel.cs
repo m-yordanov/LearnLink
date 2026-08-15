@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using static LearnLink.Core.Constants.PaginationConstants;
 
 namespace LearnLink.Core.Models
 {
+    [ValidateNever]
     public class AttendanceFilterModel
     {
         public string SelectedStudent { get; set; } = string.Empty;

@@ -21,6 +21,8 @@ namespace LearnLink.Areas.Admin.Controllers
         }
         public async Task<IActionResult> All(string searchString, int page = 1, int pageSize = defaultSubjectsPerPage)
         {
+            this.WarnAboutIgnoredFilters();
+
             pageSize = ClampPageSize(pageSize, defaultSubjectsPerPage);
 
             var totalSubjectsCount = await subjectService.GetTotalSubjectsCountAsync(searchString);

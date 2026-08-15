@@ -21,6 +21,8 @@ namespace LearnLink.Areas.Teacher.Controllers
         }
         public async Task<IActionResult> All(AttendanceFilterModel filter)
         {
+            this.WarnAboutIgnoredFilters();
+
             return View(await attendanceListService.BuildAsync(filter));
         }
 

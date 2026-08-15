@@ -19,6 +19,8 @@ namespace LearnLink.Areas.Student.Controllers
 
         public async Task<IActionResult> All(string selectedSubject, DateTime? dateBefore, DateTime? dateAfter, int pageNumber = 1, int pageSize = maxPerPage)
         {
+            this.WarnAboutIgnoredFilters();
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             pageSize = ClampPageSize(pageSize);
