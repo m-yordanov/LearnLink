@@ -26,7 +26,7 @@ Welcome to my ASP.NET project about LearnLink, an educational grading platform.
 </ul>
 
 # Techologies Used
-<li>.NET Core 6</li>
+<li>.NET Core 10</li>
 <li>ASP.NET</li>
 <li>Entity Framework Core (ORM)</li>
 <li>MS SQL Server</li>
